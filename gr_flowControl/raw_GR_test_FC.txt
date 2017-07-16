@@ -1,0 +1,864 @@
+The tests:
+
+So the test now is to run a bit of load first with 1 thread and then with not much just 8, and do the simple operation of inserting.
+I will insert 1 row per table first and then batches of 50.
+whole set of test can be found here (github link) 
+Table definition here (github link)
+
+I will use the following:
+group_replication_flow_control_certifier_threshold = 25000
+group_replication_flow_control_applier_threshold   = 25000
+group_replication_flow_control_mode                = QUOTA
+
+And after 
+group_replication_flow_control_certifier_threshold = 25
+group_replication_flow_control_applier_threshold   = 25
+group_replication_flow_control_mode                = QUOTA
+
+Note both FLOW variables are marked as dynamic as such "... This variable can be changed without resetting Group Replication."
+
+Let us see what will happen:
+
+Test1 
+One thread 1 insert per statement and 2500 FC
+set global group_replication_flow_control_certifier_threshold=25000;
+set global group_replication_flow_control_applier_threshold=25000;
+
+
+
+
+==================================
+tests  1 worker
+==================================
+
+All tests with ONE worker
+---------------------------------------------
+Test 1
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=1,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=1,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+Test 2
+1 thread
+50 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=1,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=50,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+
+Test3
+8 Threads
+1 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=8,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=1,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+
+Test4
+8 thread
+50 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=8,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=50,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+Test5 --- FC reduced
+set global group_replication_flow_control_certifier_threshold=25;
+set global group_replication_flow_control_applier_threshold=25;
+
+1 thread 
+1 batch
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=1,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=1,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+
+Test6
+1 thread
+50 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=1,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=50,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+
+Test7
+8 Threads
+1 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=8,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=1,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+Test8
+8 thread
+50 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=8,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=50,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+
+Test1
+
+
+gr2
++---------------+
+| last_executed |
++---------------+
+| 1981          |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 2039          |
++---------------+
++----------+
+| real_lag |
++----------+
+|     	58 |
++----------+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 1599          |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 2040          |
++---------------+
++----------+
+| real_lag |
++----------+
+|      441 |
++----------+
+
+
+
+
+
+ThreadID = 1000 Tot Execution time = 42003 Max Execution time = 383 Min Execution time = 42
+Number of Innodb_rows_inserted = 2000 xsec = 45
+
+Test2
+
+gr2
++---------------+
+| last_executed |
++---------------+
+| 2475          |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 2548          |
++---------------+
++----------+
+| real_lag |
++----------+
+|     	73 |
++----------+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 2094          |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 2548          |
++---------------+
++----------+
+| real_lag |
++----------+
+|      454 |
++----------+
+
+
+ThreadID = 1000 Tot Execution time = 71045 Max Execution time = 1143 Min Execution time = 47
+Number of Innodb_rows_inserted = 100000 xsec = 1369
+
+
+Test 3
+
+gr2
++---------------+
+| last_executed |
++---------------+
+| 3275          |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 6559          |
++---------------+
++----------+
+| real_lag |
++----------+
+|     3284 |
++----------+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 2895          |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 6559          |
++---------------+
++----------+
+| real_lag |
++----------+
+|     3664 |
++----------+
+
+
+ThreadID = 1001 Tot Execution time = 82995 Max Execution time = 942 Min Execution time = 58
+ThreadID = 1005 Tot Execution time = 83495 Max Execution time = 833 Min Execution time = 59
+ThreadID = 1002 Tot Execution time = 83495 Max Execution time = 833 Min Execution time = 66
+ThreadID = 1000 Tot Execution time = 83702 Max Execution time = 816 Min Execution time = 58
+ThreadID = 1003 Tot Execution time = 83883 Max Execution time = 942 Min Execution time = 66
+ThreadID = 1006 Tot Execution time = 84001 Max Execution time = 787 Min Execution time = 66
+ThreadID = 1004 Tot Execution time = 84041 Max Execution time = 816 Min Execution time = 66
+ThreadID = 1007 Tot Execution time = 84368 Max Execution time = 875 Min Execution time = 58
+Number of Innodb_rows_inserted = 16000 xsec = 186
+
+Test4
+
+gr2
++---------------+
+| last_executed |
++---------------+
+| 7233          |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 10567         |
++---------------+
++----------+
+| real_lag |
++----------+
+|     3334 |
++----------+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 6718          |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 10567         |
++---------------+
++----------+
+| real_lag |
++----------+
+|     3849 |
++----------+
+
+
+ThreadID = 1000 Tot Execution time = 107334 Max Execution time = 1710 Min Execution time = 86
+ThreadID = 1003 Tot Execution time = 107853 Max Execution time = 2019 Min Execution time = 67
+ThreadID = 1002 Tot Execution time = 108658 Max Execution time = 2136 Min Execution time = 90
+ThreadID = 1007 Tot Execution time = 108660 Max Execution time = 2294 Min Execution time = 83
+ThreadID = 1005 Tot Execution time = 108759 Max Execution time = 1919 Min Execution time = 74
+ThreadID = 1006 Tot Execution time = 108815 Max Execution time = 1972 Min Execution time = 75
+ThreadID = 1001 Tot Execution time = 109681 Max Execution time = 1769 Min Execution time = 84
+ThreadID = 1004 Tot Execution time = 109857 Max Execution time = 2077 Min Execution time = 58
+
+Number of Innodb_rows_inserted = 799996 xsec = 7142
+
+
+Test5
+
+gr2
++---------------+
+| last_executed |
++---------------+
+| 15083         |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 15083         |
++---------------+
++----------+
+| real_lag |
++----------+
+|      	 0 |
++----------+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 15083         |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 15083         |
++---------------+
++----------+
+| real_lag |
++----------+
+|      	 0 |
++----------+
+
+ThreadID = 1000 Tot Execution time = 151722 Max Execution time = 1104 Min Execution time = 42
+Number of Innodb_rows_inserted = 2000 xsec = 12
+
+
+test6
+
+gr2
++---------------+
+| last_executed |
++---------------+
+| 15591         |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 15591         |
++---------------+
++----------+
+| real_lag |
++----------+
+|      	 0 |
++----------+
+
+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 15437         |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 15591         |
++---------------+
++----------+
+| real_lag |
++----------+
+|      154 |
++----------+
+
+
+ThreadID = 1000 Tot Execution time = 167759 Max Execution time = 909 Min Execution time = 50
+Number of Innodb_rows_inserted = 100000 xsec = 588
+
+Test7
+
+
+gr2
+
++---------------+
+| last_executed |
++---------------+
+| 19599         |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 19599         |
++---------------+
++----------+
+| real_lag |
++----------+
+|      	 0 |
++----------+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 17002         |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 19599         |
++---------------+
++----------+
+| real_lag |
++----------+
+|     2597 |
++----------+
+
+ThreadID = 1000 Tot Execution time = 378660 Max Execution time = 1265 Min Execution time = 58
+ThreadID = 1004 Tot Execution time = 385473 Max Execution time = 1266 Min Execution time = 50
+ThreadID = 1005 Tot Execution time = 389521 Max Execution time = 1265 Min Execution time = 49
+ThreadID = 1003 Tot Execution time = 390568 Max Execution time = 1266 Min Execution time = 58
+ThreadID = 1006 Tot Execution time = 390560 Max Execution time = 1212 Min Execution time = 58
+ThreadID = 1001 Tot Execution time = 391515 Max Execution time = 1216 Min Execution time = 58
+ThreadID = 1002 Tot Execution time = 396615 Max Execution time = 1266 Min Execution time = 67
+ThreadID = 1007 Tot Execution time = 396701 Max Execution time = 1265 Min Execution time = 58
+Number of Innodb_rows_inserted = 16000 xsec = 40
+
+test8
+
+gr2
+
++---------------+
+| last_executed |
++---------------+
+| 23607         |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 23607         |
++---------------+
++----------+
+| real_lag |
++----------+
+|        0 |
++----------+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 20605         |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 23607         |
++---------------+
++----------+
+| real_lag |
++----------+
+|     3002 |
++----------+
+
+ThreadID = 1006 Tot Execution time = 397364 Max Execution time = 2054 Min Execution time = 77
+ThreadID = 1003 Tot Execution time = 397452 Max Execution time = 1951 Min Execution time = 89
+ThreadID = 1005 Tot Execution time = 400491 Max Execution time = 2009 Min Execution time = 83
+ThreadID = 1004 Tot Execution time = 402374 Max Execution time = 1560 Min Execution time = 88
+ThreadID = 1001 Tot Execution time = 402480 Max Execution time = 2350 Min Execution time = 73
+ThreadID = 1002 Tot Execution time = 403693 Max Execution time = 2345 Min Execution time = 87
+ThreadID = 1007 Tot Execution time = 404934 Max Execution time = 2350 Min Execution time = 87
+ThreadID = 1000 Tot Execution time = 409429 Max Execution time = 1951 Min Execution time = 75
+
+Number of Innodb_rows_inserted = 799998 xsec = 1946
+
+
+
+==================================
+tests  8 workers
+==================================
+
+
+Each slave is using multiple thread workers:
+set global slave_preserve_commit_order=1;
+set global slave_parallel_type=LOGICAL_CLOCK;
+set global slave_parallel_workers=8;
+
+
+show global variables like 'slave_parallel_workers';
++------------------------+-------+
+| Variable_name          | Value |
++------------------------+-------+
+| slave_parallel_workers | 8     |
++------------------------+-------+
+
+
+Test 1
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=1,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=1,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+Test 2
+1 thread
+50 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=1,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=50,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+
+Test3
+8 Threads
+1 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=8,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=1,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+
+Test4
+8 thread
+50 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=8,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=50,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+Test5 --- FC reduced
+set global group_replication_flow_control_certifier_threshold=25;
+set global group_replication_flow_control_applier_threshold=25;
+
+1 thread 
+1 batch
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=1,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=1,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+
+Test6
+1 thread
+50 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=1,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=50,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+
+Test7
+8 Threads
+1 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=8,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=1,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+Test8
+8 thread
+50 batch insert
+./run.sh windmills.cnf "main@pctInsert=100,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=00,main@repeatNumber=500,main@poolNumber=8,main@droptable=true,net.tc.stresstool.actions.InsertBase@batchSize=50,main@connUrl=jdbc:mysql://192.168.1.50:3310,main@user=stress_g"
+
+RESULTS
+==================
+
+test 1
+
+gr2 
++---------------+
+| last_executed |
++---------------+
+| 302096        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 302096        |
++---------------+
++----------+
+| real_lag |
++----------+
+|        0 |
++----------+
+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 301833        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 302096        |
++---------------+
++----------+
+| real_lag |
++----------+
+|      263 |
++----------+
+
+ThreadID = 1000 Tot Execution time = Max Execution time = 326 Min Execution time = 4
+Number of Innodb_rows_inserted = 2000 xsec = 43
+
+Test2
+gr2
++---------------+
+| last_executed |
++---------------+
+| 302644        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 302644        |
++---------------+
++----------+
+| real_lag |
++----------+
+|        0 |
++----------+
+
+gr3 
++---------------+
+| last_executed |
++---------------+
+| 302408        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 302644        |
++---------------+
++----------+
+| real_lag |
++----------+
+|      308 |
++----------+
+
+ThreadID = 1000 Tot Execution time = 76075 Max Execution time = 901 Min Execution time = 50
+Number of Innodb_rows_inserted = 100000 xsec = 1282
+
+
+
+
+Test3 
+gr2
++---------------+
+| last_executed |
++---------------+
+| 306652        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 306652        |
++---------------+
++----------+
+| real_lag |
++----------+
+|        0 |
++----------+
+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 303188        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 306652        |
++---------------+
++----------+
+| real_lag |
++----------+
+|     3464 |
++----------+
+ThreadID = 1004 Tot Execution time = 90738 Max Execution time = 933 Min Execution time = 50
+ThreadID = 1003 Tot Execution time = 91621 Max Execution time = 867 Min Execution time = 50
+ThreadID = 1000 Tot Execution time = 91673 Max Execution time = 892 Min Execution time = 50
+ThreadID = 1007 Tot Execution time = 91803 Max Execution time = 896 Min Execution time = 50
+ThreadID = 1001 Tot Execution time = 91881 Max Execution time = 892 Min Execution time = 50
+ThreadID = 1006 Tot Execution time = 91947 Max Execution time = 917 Min Execution time = 50
+ThreadID = 1005 Tot Execution time = 92258 Max Execution time = 893 Min Execution time = 50
+ThreadID = 1002 Tot Execution time = 92388 Max Execution time = 890 Min Execution time = 50
+
+Number of Innodb_rows_inserted = 16000 xsec = 168
+
+Test 4
+gr2
++---------------+
+| last_executed |
++---------------+
+| 310660        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 310660        |
++---------------+
++----------+
+| real_lag |
++----------+
+|        0 |
++----------+
+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 306990        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 310620        |
++---------------+
++----------+
+| real_lag |
++----------+
+|     3630 |
++----------+
+
+ThreadID = 1002 Tot Execution time = 114707 Max Execution time = 2394 Min Execution time = 87
+ThreadID = 1007 Tot Execution time = 114990 Max Execution time = 2137 Min Execution time = 67
+ThreadID = 1006 Tot Execution time = 116022 Max Execution time = 2337 Min Execution time = 75
+ThreadID = 1003 Tot Execution time = 116002 Max Execution time = 2545 Min Execution time = 72
+ThreadID = 1000 Tot Execution time = 116179 Max Execution time = 2019 Min Execution time = 91
+ThreadID = 1004 Tot Execution time = 116257 Max Execution time = 1727 Min Execution time = 91
+ThreadID = 1005 Tot Execution time = 116355 Max Execution time = 2545 Min Execution time = 71
+ThreadID = 1001 Tot Execution time = 117056 Max Execution time = 2545 Min Execution time = 58
+
+Number of Innodb_rows_inserted = 799995 xsec = 6722
+
+
+test5
+
+
+gr2
++---------------+
+| last_executed |
++---------------+
+| 311168        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 311168        |
++---------------+
++----------+
+| real_lag |
++----------+
+|      	 0 |
++----------+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 311052        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 311066        |
++---------------+
++----------+
+| real_lag |
++----------+
+|       14 |
++----------+
+
+
+ThreadID = 1000 Tot Execution time = 85745 Max Execution time = 908 Min Execution time = 37
+Number of Innodb_rows_inserted = 2000 xsec = 22
+
+
+test6
+
+gr2
++---------------+
+| last_executed |
++---------------+
+| 311499        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 311501        |
++---------------+
++----------+
+| real_lag |
++----------+
+|      	 2 |
++----------+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 311356        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 311501        |
++---------------+
++----------+
+| real_lag |
++----------+
+|      145 |
++----------+
+
+
+ThreadID = 1000 Tot Execution time = 153386 Max Execution time = 901 Min Execution time = 58
+Number of Innodb_rows_inserted = 100000 xsec = 641
+
+Test7
+
+gr2
++---------------+
+| last_executed |
++---------------+
+| 312736        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 312745        |
++---------------+
++----------+
+| real_lag |
++----------+
+|      	 9 |
++----------+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 314380        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 315205        |
++---------------+
++----------+
+| real_lag |
++----------+
+|      825 |
++----------+
+
+
+ThreadID = 1004 Tot Execution time = 376212 Max Execution time = 1269 Min Execution time = 65
+ThreadID = 1006 Tot Execution time = 376329 Max Execution time = 1268 Min Execution time = 58
+ThreadID = 1003 Tot Execution time = 377279 Max Execution time = 1269 Min Execution time = 58
+ThreadID = 1002 Tot Execution time = 383259 Max Execution time = 1268 Min Execution time = 58
+ThreadID = 1007 Tot Execution time = 383254 Max Execution time = 1209 Min Execution time = 58
+ThreadID = 1000 Tot Execution time = 385211 Max Execution time = 1268 Min Execution time = 75
+ThreadID = 1005 Tot Execution time = 386294 Max Execution time = 1209 Min Execution time = 67
+ThreadID = 1001 Tot Execution time = 391357 Max Execution time = 1269 Min Execution time = 58
+
+Number of Innodb_rows_inserted = 16000 xsec = 40
+
+
+Test8
+
+gr2
++---------------+
+| last_executed |
++---------------+
+| 327654        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 327660        |
++---------------+
++----------+
+| real_lag |
++----------+
+|      	 6 |
++----------+
+
+
+gr3
++---------------+
+| last_executed |
++---------------+
+| 326297        |
++---------------+
++---------------+
+| last_received |
++---------------+
+| 327660        |
++---------------+
++----------+
+| real_lag |
++----------+
+|     1363 |
++----------+
+
+
+ThreadID = 1000 Tot Execution time = 395999 Max Execution time = 2926 Min Execution time = 79
+ThreadID = 1004 Tot Execution time = 398108 Max Execution time = 2367 Min Execution time = 74
+ThreadID = 1003 Tot Execution time = 399059 Max Execution time = 2781 Min Execution time = 83
+ThreadID = 1006 Tot Execution time = 401968 Max Execution time = 2460 Min Execution time = 82
+ThreadID = 1005 Tot Execution time = 406140 Max Execution time = 2447 Min Execution time = 80
+ThreadID = 1001 Tot Execution time = 411051 Max Execution time = 2926 Min Execution time = 91
+ThreadID = 1002 Tot Execution time = 416904 Max Execution time = 2753 Min Execution time = 92
+ThreadID = 1007 Tot Execution time = 417113 Max Execution time = 3202 Min Execution time = 86
+
+Number of Innodb_rows_inserted = 799999 xsec = 1904
+
