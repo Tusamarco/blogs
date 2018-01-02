@@ -1,0 +1,1048 @@
+
+
+
+--Firewall--
+
+to add always to have the java app run
+--------------------------------
+delete from mysql_query_rules where rule_id BETWEEN 900 and 999;
+insert into mysql_query_rules (rule_id,proxy_port,schemaname,username,destination_hostgroup,active,retries,digest,apply,flagout) values(999,6033,'windmills','pxc_test',50,1,3,'0x839B1DCE7A8B247A',1,1000);
+insert into mysql_query_rules (rule_id,proxy_port,schemaname,username,destination_hostgroup,active,retries,digest,apply,flagout) values(998,6033,'windmills','pxc_test',50,1,3,'0x85C190665EED4E62',1,1000);
+insert into mysql_query_rules (rule_id,proxy_port,schemaname,username,destination_hostgroup,active,retries,digest,apply,flagout) values(997,6033,'windmills','pxc_test',50,1,3,'0x32DD8987F5DA033D',1,1000);
+insert into mysql_query_rules (rule_id,proxy_port,schemaname,username,destination_hostgroup,active,retries,digest,apply,flagout) values(996,6033,'windmills','pxc_test',50,1,3,'0xE8D83AF1402367ED',1,1000);
+insert into mysql_query_rules (rule_id,proxy_port,schemaname,username,destination_hostgroup,active,retries,digest,apply,flagout) values(995,6033,'windmills','pxc_test',50,1,3,'0xC51BDBBD6C9BB1D7',1,1000);
+insert into mysql_query_rules (rule_id,proxy_port,schemaname,username,destination_hostgroup,active,retries,digest,apply,flagout) values(994,6033,'windmills','pxc_test',50,1,3,'0xCB7CE42345F287E0',1,1000);
+insert into mysql_query_rules (rule_id,proxy_port,schemaname,username,destination_hostgroup,active,retries,digest,apply,flagout) values(993,6033,'windmills','pxc_test',50,1,3,'0xEDF9C60BDFD2F5B0',1,1000);
+insert into mysql_query_rules (rule_id,proxy_port,schemaname,username,destination_hostgroup,active,retries,digest,apply,flagout) values(992,6033,'windmills','pxc_test',50,1,3,'0x463081F825D85DA4',1,1000);
+
+
+insert into mysql_query_rules (rule_id,username,schemaname,match_digest,error_msg,active,apply) values(1000,'pxc_test','windmills','.','You cannot pass.....I am a servant of the Secret Fire, wielder of the flame of Anor,. You cannot pass.',1, 1); 
+
+insert into mysql_query_rules (rule_id,proxy_port,schemaname,username,destination_hostgroup,active,retries,match_digest,apply,flagin) values(1040,6033,'windmills','pxc_test',50,1,3,'^SELECT.*FOR UPDATE',1,1000);
+insert into mysql_query_rules (rule_id,proxy_port,schemaname,username,destination_hostgroup,active,retries,match_digest,apply,flagin) values(1041,6033,'windmills','pxc_test',50,1,3,'^SELECT.*@@',1,1000);
+
+insert into mysql_query_rules (rule_id,proxy_port,schemaname,username,destination_hostgroup,active,retries,match_digest,apply,flagin) values(1042,6033,'windmills','pxc_test',52,1,3,'^SELECT.*$',1,1000); 
+
+
+
+
+>select hostgroup,schemaname,count_star,digest,replace(replace(digest_text,'.','\.'),'?','.*') QR from stats_mysql_query_digest where schemaname='windmills' order by count_star desc;
++-----------+------------+------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| hostgroup | schemaname | count_star | digest             | QR                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
++-----------+------------+------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 50        | windmills  | 2283480    | 0xDB3A841EF5443C35 | commit                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 52        | windmills  | 573331     | 0x52A98085A233E516 | SELECT wmillAUTOINC\.id,wmillAUTOINC\.millid,wmillAUTOINC\.location FROM wmillAUTOINC WHERE wmillAUTOINC\.millid=.* and wmillAUTOINC\.active=.*                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 573002     | 0x65D8D9CE86CFEF55 | SELECT wmillMIDUUID\.millid,wmillMIDUUID\.id,wmillMIDUUID\. kwatts_s,wmillMIDUUID\.date,wmillMIDUUID\.time,wmillMIDUUID\.active FROM wmillMIDUUID WHERE wmillMIDUUID\.id=.*                                                                                                                                                                                                                                                                                                                    |
+| 52        | windmills  | 572548     | 0xAA7890053BE65C74 | SELECT wmillMIDUUID\.millid,wmillMIDUUID\.active,wmillMIDUUID\.date FROM wmillMIDUUID WHERE wmillMIDUUID\.millid=.* and wmillMIDUUID\.active=.*                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 572235     | 0xEDA4CB62AAF33779 | SELECT wmillMID\.millid,wmillMID\.id FROM wmillMID WHERE wmillMID\.millid=.* and wmillMID\.active=.*                                                                                                                                                                                                                                                                                                                                                                                           |
+| 52        | windmills  | 571986     | 0x3E5515D17A41C76E | SELECT wmillAUTOINC\.millid,wmillAUTOINC\.id FROM wmillAUTOINC WHERE wmillAUTOINC\.id=.*                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 52        | windmills  | 571787     | 0xA21B933926349C22 | SELECT wmillMIDPart\.millid,wmillMIDPart\.id,wmillMIDPart\. kwatts_s,wmillMIDPart\.date,wmillMIDPart\.time,wmillMIDPart\.active FROM wmillMIDPart WHERE wmillMIDPart\.millid=.* and wmillMIDPart\.active=.*                                                                                                                                                                                                                                                                                    |
+| 52        | windmills  | 571570     | 0x86169FE6EFE9C706 | SELECT wmillMIDUUID\.millid,wmillMIDUUID\.id,wmillMIDUUID\. kwatts_s,wmillMIDUUID\.date,wmillMIDUUID\.time,wmillMIDUUID\.active FROM wmillMIDUUID WHERE wmillMIDUUID\.millid=.* and wmillMIDUUID\.active=.*                                                                                                                                                                                                                                                                                    |
+| 52        | windmills  | 571510     | 0x775D586B0D478A12 | SELECT wmillMIDUUID\.millid,wmillMIDUUID\.id FROM wmillMIDUUID WHERE wmillMIDUUID\.millid=.* and wmillMIDUUID\.active=.*                                                                                                                                                                                                                                                                                                                                                                       |
+| 52        | windmills  | 571419     | 0x01A0709C4C8CA6E2 | SELECT wmillAUTOINC\.id,wmillAUTOINC\.millid,wmillAUTOINC\.location FROM wmillAUTOINC WHERE wmillAUTOINC\.id=.*                                                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 571288     | 0xE0BC90C7382A63A3 | SELECT wmillMID\.millid,wmillMID\.id,wmillMID\. kwatts_s,wmillMID\.date,wmillMID\.time,wmillMID\.active FROM wmillMID WHERE wmillMID\.id=.*                                                                                                                                                                                                                                                                                                                                                    |
+| 52        | windmills  | 571253     | 0x80CD436FE5FB0036 | SELECT wmillMIDPart\.millid,wmillMIDPart\.id FROM wmillMIDPart WHERE wmillMIDPart\.id=.*                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 52        | windmills  | 571027     | 0xA995256D14B31516 | SELECT wmillMIDUUID\.id,wmillMIDUUID\.millid,wmillMIDUUID\.location FROM wmillMIDUUID WHERE wmillMIDUUID\.id=.*                                                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 571019     | 0x38B67C055BA324F1 | SELECT wmillMID\.millid,wmillMID\.active,wmillMID\.date FROM wmillMID WHERE wmillMID\.id=.*                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 52        | windmills  | 571012     | 0x2BD3FCB8B88BF79A | SELECT wmillMIDPart\.millid,wmillMIDPart\.active,wmillMIDPart\.date FROM wmillMIDPart WHERE wmillMIDPart\.id=.*                                                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 570936     | 0x3C2BEAB51B189470 | SELECT wmillMIDPart\.uuid,wmillMIDPart\.date,wmillMIDPart\.kwatts_s FROM wmillMIDPart WHERE wmillMIDPart\.millid=.* and wmillMIDPart\.active=.*                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 570910     | 0xC549B45E4C2814A9 | SELECT wmillMIDUUID\.millid,wmillMIDUUID\.active,wmillMIDUUID\.date FROM wmillMIDUUID WHERE wmillMIDUUID\.id=.*                                                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 570827     | 0xC28CB530E54DB97F | SELECT wmillMID\.millid,wmillMID\.id FROM wmillMID WHERE wmillMID\.id=.*                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 52        | windmills  | 570634     | 0x4F59AAE610074F4F | SELECT wmillMID\.uuid,wmillMID\.date,wmillMID\.kwatts_s FROM wmillMID WHERE wmillMID\.millid=.* and wmillMID\.active=.*                                                                                                                                                                                                                                                                                                                                                                        |
+| 52        | windmills  | 570513     | 0xF8DADDA0F3500839 | SELECT wmillAUTOINC\.millid,wmillAUTOINC\.id,wmillAUTOINC\. kwatts_s,wmillAUTOINC\.date,wmillAUTOINC\.time,wmillAUTOINC\.active FROM wmillAUTOINC WHERE wmillAUTOINC\.millid=.* and wmillAUTOINC\.active=.*                                                                                                                                                                                                                                                                                    |
+| 52        | windmills  | 570466     | 0x8328ACAD328C1532 | SELECT wmillMIDPart\.id,wmillMIDPart\.millid,wmillMIDPart\.location FROM wmillMIDPart WHERE wmillMIDPart\.id=.*                                                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 570455     | 0x23A25B17A4CFE0E8 | SELECT wmillMID\.millid,wmillMID\.id,wmillMID\. kwatts_s,wmillMID\.date,wmillMID\.time,wmillMID\.active FROM wmillMID WHERE wmillMID\.millid=.* and wmillMID\.active=.*                                                                                                                                                                                                                                                                                                                        |
+| 52        | windmills  | 570415     | 0x740B98529B9DFB6E | SELECT wmillAUTOINC\.millid,wmillAUTOINC\.active,wmillAUTOINC\.date FROM wmillAUTOINC WHERE wmillAUTOINC\.millid=.* and wmillAUTOINC\.active=.*                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 570381     | 0x6C62C8A62C3C2924 | SELECT wmillMIDUUID\.millid,wmillMIDUUID\.id FROM wmillMIDUUID WHERE wmillMIDUUID\.id=.*                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 52        | windmills  | 570196     | 0x27905E5442A328CA | SELECT wmillAUTOINC\.uuid,wmillAUTOINC\.date,wmillAUTOINC\.kwatts_s FROM wmillAUTOINC WHERE wmillAUTOINC\.millid=.* and wmillAUTOINC\.active=.*                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 570162     | 0x1952BDD14F38A54A | SELECT wmillMIDPart\.id,wmillMIDPart\.millid,wmillMIDPart\.location FROM wmillMIDPart WHERE wmillMIDPart\.millid=.* and wmillMIDPart\.active=.*                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 570158     | 0x7AB8069357C3CF7F | SELECT wmillMID\.millid,wmillMID\.active,wmillMID\.date FROM wmillMID WHERE wmillMID\.millid=.* and wmillMID\.active=.*                                                                                                                                                                                                                                                                                                                                                                        |
+| 52        | windmills  | 570157     | 0x582A70FC589B0F4A | SELECT wmillMIDPart\.uuid,wmillMIDPart\.date,wmillMIDPart\.kwatts_s FROM wmillMIDPart WHERE wmillMIDPart\.id=.*                                                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 570077     | 0x5B93FE26A590DA6B | SELECT wmillMID\.uuid,wmillMID\.date,wmillMID\.kwatts_s FROM wmillMID WHERE wmillMID\.id=.*                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 52        | windmills  | 570043     | 0x0576942CFFE55E6F | SELECT wmillMIDUUID\.uuid,wmillMIDUUID\.date,wmillMIDUUID\.kwatts_s FROM wmillMIDUUID WHERE wmillMIDUUID\.millid=.* and wmillMIDUUID\.active=.*                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 570026     | 0xF1AF104A0738028A | SELECT wmillMIDUUID\.uuid,wmillMIDUUID\.date,wmillMIDUUID\.kwatts_s FROM wmillMIDUUID WHERE wmillMIDUUID\.id=.*                                                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 569927     | 0xC08303AEAAC8AEF1 | SELECT wmillMIDPart\.millid,wmillMIDPart\.id FROM wmillMIDPart WHERE wmillMIDPart\.millid=.* and wmillMIDPart\.active=.*                                                                                                                                                                                                                                                                                                                                                                       |
+| 52        | windmills  | 569920     | 0x81F42A936CC84CE8 | SELECT wmillAUTOINC\.uuid,wmillAUTOINC\.date,wmillAUTOINC\.kwatts_s FROM wmillAUTOINC WHERE wmillAUTOINC\.id=.*                                                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 569801     | 0x1A2FE62FB3801542 | SELECT wmillMID\.id,wmillMID\.millid,wmillMID\.location FROM wmillMID WHERE wmillMID\.id=.*                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 52        | windmills  | 569617     | 0xC3FC4D1341A33F4B | SELECT wmillMIDPart\.millid,wmillMIDPart\.id,wmillMIDPart\. kwatts_s,wmillMIDPart\.date,wmillMIDPart\.time,wmillMIDPart\.active FROM wmillMIDPart WHERE wmillMIDPart\.id=.*                                                                                                                                                                                                                                                                                                                    |
+| 52        | windmills  | 569597     | 0x47652FF712AFEF58 | SELECT wmillMIDPart\.millid,wmillMIDPart\.active,wmillMIDPart\.date FROM wmillMIDPart WHERE wmillMIDPart\.millid=.* and wmillMIDPart\.active=.*                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 569370     | 0xAEDDA15B44918929 | SELECT wmillAUTOINC\.millid,wmillAUTOINC\.active,wmillAUTOINC\.date FROM wmillAUTOINC WHERE wmillAUTOINC\.id=.*                                                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 569201     | 0x010B454C12663C67 | SELECT wmillAUTOINC\.millid,wmillAUTOINC\.id,wmillAUTOINC\. kwatts_s,wmillAUTOINC\.date,wmillAUTOINC\.time,wmillAUTOINC\.active FROM wmillAUTOINC WHERE wmillAUTOINC\.id=.*                                                                                                                                                                                                                                                                                                                    |
+| 52        | windmills  | 569050     | 0x7331F5BD45BBEC2E | SELECT wmillMIDUUID\.id,wmillMIDUUID\.millid,wmillMIDUUID\.location FROM wmillMIDUUID WHERE wmillMIDUUID\.millid=.* and wmillMIDUUID\.active=.*                                                                                                                                                                                                                                                                                                                                                |
+| 52        | windmills  | 568353     | 0xBE46613938CA2BBE | SELECT wmillAUTOINC\.millid,wmillAUTOINC\.id FROM wmillAUTOINC WHERE wmillAUTOINC\.millid=.* and wmillAUTOINC\.active=.*                                                                                                                                                                                                                                                                                                                                                                       |
+| 52        | windmills  | 568092     | 0xEB64116A51568A19 | SELECT wmillMID\.id,wmillMID\.millid,wmillMID\.location FROM wmillMID WHERE wmillMID\.millid=.* and wmillMID\.active=.*                                                                                                                                                                                                                                                                                                                                                                        |
+| 50        | windmills  | 4355       | 0xC51BDBBD6C9BB1D7 | SET autocommit=.*                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| 50        | windmills  | 2479       | 0x18CA8FF2C9C53276 | SHOW GLOBAL STATUS                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 50        | windmills  | 2181       | 0x32DD8987F5DA033D | SET character_set_results = NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| 50        | windmills  | 2181       | 0xE8D83AF1402367ED | SHOW CHARACTER SET                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 50        | windmills  | 2181       | 0xCB7CE42345F287E0 | SHOW COLLATION                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 50        | windmills  | 2181       | 0xEDF9C60BDFD2F5B0 | SELECT @@session\.auto_increment_increment                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 50        | windmills  | 2181       | 0x85C190665EED4E62 | SHOW VARIABLES WHERE Variable_name =.* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* |
+| 52        | windmills  | 155        | 0xC53929F3C07B0484 | Select MAX(id) as id FROM wmillMIDUUID                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 52        | windmills  | 148        | 0xE298850CC5C6C0D7 | Select MAX(millid) as millid ,MAX(active) as active FROM wmillMID                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| 52        | windmills  | 141        | 0xA4BD7B2208318194 | Select MAX(millid) as millid ,MAX(active) as active FROM wmillMIDUUID                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 52        | windmills  | 139        | 0x3C4BA35749FF75EF | Select MAX(millid) as millid ,MAX(active) as active FROM wmillAUTOINC                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 52        | windmills  | 128        | 0xAF1689DD505D48B4 | Select MAX(id) as id FROM wmillMIDPart                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 52        | windmills  | 127        | 0xF6C69F245DAA4093 | Select MAX(id) as id FROM wmillAUTOINC                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 52        | windmills  | 119        | 0x05EE128C69D33D89 | Select MAX(id) as id FROM wmillMID                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 50        | windmills  | 106        | 0x7CDEEF2FF695B7F8 | SELECT @@session\.tx_isolation                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 52        | windmills  | 103        | 0x351425DA08EF69A6 | Select MAX(millid) as millid ,MAX(active) as active FROM wmillMIDPart                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 50        | windmills  | 14         | 0xDD3B740D393F9FA4 | rollback                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 52        | windmills  | 14         | 0x463081F825D85DA4 | select Select_priv, Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_priv,Alter_priv,Create_tmp_table_priv,Lock_tables_priv,Create_view_priv,Show_view_priv,Create_routine_priv,Execute_priv,Event_priv,Trigger_priv from mysql\.user where user=substring(CURRENT_USER(),.*,locate(.*,CURRENT_USER())-.*) and host=substring(CURRENT_USER(),locate(.*,CURRENT_USER())+.*)                                                                                                      |
+| 52        | windmills  | 14         | 0x839B1DCE7A8B247A | select Process_priv, Repl_client_priv,Show_db_priv,File_priv,Create_tablespace_priv, CURRENT_USER() from mysql\.user where user=substring(CURRENT_USER(),.*,locate(.*,CURRENT_USER())-.*) and host=substring(CURRENT_USER(),locate(.*,CURRENT_USER())+.*)                                                                                                                                                                                                                                      |
+| 52        | windmills  | 1          | 0x620B328FE9D6D71A | SELECT DATABASE()                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| 50        | windmills  | 1          | 0x48DFD6866239BFA1 | show schemas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| 50        | windmills  | 1          | 0x02033E45904D3DF0 | show databases                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 50        | windmills  | 1          | 0x99531AEFF718C501 | show tables                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
++-----------+------------+------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+64 rows in set (0.00 sec)
+
+
+
+
+
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(100,6033,'pxc_test',50,'windmills',1,3,1,1000,'commit');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(101,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillAUTOINC\.id,wmillAUTOINC\.millid,wmillAUTOINC\.location FROM wmillAUTOINC WHERE wmillAUTOINC\.millid=.* and wmillAUTOINC\.active=.*');                                                                                                                                                                                                                                                                                                                                                
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(102,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDUUID\.millid,wmillMIDUUID\.id,wmillMIDUUID\. kwatts_s,wmillMIDUUID\.date,wmillMIDUUID\.time,wmillMIDUUID\.active FROM wmillMIDUUID WHERE wmillMIDUUID\.id=.*');                                                                                                                                                                                                                                                                                                                    
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(103,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDUUID\.millid,wmillMIDUUID\.active,wmillMIDUUID\.date FROM wmillMIDUUID WHERE wmillMIDUUID\.millid=.* and wmillMIDUUID\.active=.*');                                                                                                                                                                                                                                                                                                                                                
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(104,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMID\.millid,wmillMID\.id FROM wmillMID WHERE wmillMID\.millid=.* and wmillMID\.active=.*');                                                                                                                                                                                                                                                                                                                                                                                           
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(105,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillAUTOINC\.millid,wmillAUTOINC\.id FROM wmillAUTOINC WHERE wmillAUTOINC\.id=.*');   
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(106,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDPart\.millid,wmillMIDPart\.id,wmillMIDPart\. kwatts_s,wmillMIDPart\.date,wmillMIDPart\.time,wmillMIDPart\.active FROM wmillMIDPart WHERE wmillMIDPart\.millid=.* and wmillMIDPart\.active=.*');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(107,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDUUID\.millid,wmillMIDUUID\.id,wmillMIDUUID\. kwatts_s,wmillMIDUUID\.date,wmillMIDUUID\.time,wmillMIDUUID\.active FROM wmillMIDUUID WHERE wmillMIDUUID\.millid=.* and wmillMIDUUID\.active=.*');                                                                                                                                                                                                                                                                                    
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(108,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDUUID\.millid,wmillMIDUUID\.id FROM wmillMIDUUID WHERE wmillMIDUUID\.millid=.* and wmillMIDUUID\.active=.*');                                                                                                                                                                                                                                                                                                                                                                       
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(109,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillAUTOINC\.id,wmillAUTOINC\.millid,wmillAUTOINC\.location FROM wmillAUTOINC WHERE wmillAUTOINC\.id=.*');                                                                                                                                                                                                                                                                                                                                                                                
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(110,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMID\.millid,wmillMID\.id,wmillMID\. kwatts_s,wmillMID\.date,wmillMID\.time,wmillMID\.active FROM wmillMID WHERE wmillMID\.id=.*');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(111,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDPart\.millid,wmillMIDPart\.id FROM wmillMIDPart WHERE wmillMIDPart\.id=.*');                                                                                                                                                                                                                                                                                                                                                                                                       
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(112,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDUUID\.id,wmillMIDUUID\.millid,wmillMIDUUID\.location FROM wmillMIDUUID WHERE wmillMIDUUID\.id=.*');                                                                                                                                                                                                                                                                                                                                                                                
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(113,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMID\.millid,wmillMID\.active,wmillMID\.date FROM wmillMID WHERE wmillMID\.id=.*');                                                                                                                                                                                                                                                                                                                                                                                                    
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(114,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDPart\.millid,wmillMIDPart\.active,wmillMIDPart\.date FROM wmillMIDPart WHERE wmillMIDPart\.id=.*');                                                                                                                                                                                                                                                                                                                                                                                
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(115,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDPart\.uuid,wmillMIDPart\.date,wmillMIDPart\.kwatts_s FROM wmillMIDPart WHERE wmillMIDPart\.millid=.* and wmillMIDPart\.active=.*');                                                                                                                                                                                                                                                                                                                                                
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(116,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDUUID\.millid,wmillMIDUUID\.active,wmillMIDUUID\.date FROM wmillMIDUUID WHERE wmillMIDUUID\.id=.*');                                                                                                                                                                                                                                                                                                                                             
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(117,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMID\.millid,wmillMID\.id FROM wmillMID WHERE wmillMID\.id=.*');                                                                                                                                                                                                                                                                                                                                                                             
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(118,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMID\.uuid,wmillMID\.date,wmillMID\.kwatts_s FROM wmillMID WHERE wmillMID\.millid=.* and wmillMID\.active=.*');                                                                                                                                                                                                                                                                                                                                                                        
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(119,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillAUTOINC\.millid,wmillAUTOINC\.id,wmillAUTOINC\. kwatts_s,wmillAUTOINC\.date,wmillAUTOINC\.time,wmillAUTOINC\.active FROM wmillAUTOINC WHERE wmillAUTOINC\.millid=.* and wmillAUTOINC\.active=.*');                                                                                                                                                                                                                                                                                    
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(120,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDPart\.id,wmillMIDPart\.millid,wmillMIDPart\.location FROM wmillMIDPart WHERE wmillMIDPart\.id=.*');                                                                                                                                                                                                                                                                                 
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(121,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMID\.millid,wmillMID\.id,wmillMID\. kwatts_s,wmillMID\.date,wmillMID\.time,wmillMID\.active FROM wmillMID WHERE wmillMID\.millid=.* and wmillMID\.active=.*');                                                                                                                                                                                                                                                                                                                        
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(122,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillAUTOINC\.millid,wmillAUTOINC\.active,wmillAUTOINC\.date FROM wmillAUTOINC WHERE wmillAUTOINC\.millid=.* and wmillAUTOINC\.active=.*');                                                                                                                                                                                                                                                                                                                     
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(123,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDUUID\.millid,wmillMIDUUID\.id FROM wmillMIDUUID WHERE wmillMIDUUID\.id=.*');                                                                                                                                                                                                                                                                                                                                             
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(124,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillAUTOINC\.uuid,wmillAUTOINC\.date,wmillAUTOINC\.kwatts_s FROM wmillAUTOINC WHERE wmillAUTOINC\.millid=.* and wmillAUTOINC\.active=.*');                                                                                                                                                                                                                                                                                                                                                
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(125,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDPart\.id,wmillMIDPart\.millid,wmillMIDPart\.location FROM wmillMIDPart WHERE wmillMIDPart\.millid=.* and wmillMIDPart\.active=.*');                                                                                                                                                                                                                                                                                                                                               
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(126,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMID\.millid,wmillMID\.active,wmillMID\.date FROM wmillMID WHERE wmillMID\.millid=.* and wmillMID\.active=.*');                                                                                                                                                                                                                                                                                                                                                
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(127,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDPart\.uuid,wmillMIDPart\.date,wmillMIDPart\.kwatts_s FROM wmillMIDPart WHERE wmillMIDPart\.id=.*');                                                                                                                                                                                                                                                                                                                                                                     
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(128,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMID\.uuid,wmillMID\.date,wmillMID\.kwatts_s FROM wmillMID WHERE wmillMID\.id=.*');                                                                                                                                                                                                                                                                                                                                                                             
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(129,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDUUID\.uuid,wmillMIDUUID\.date,wmillMIDUUID\.kwatts_s FROM wmillMIDUUID WHERE wmillMIDUUID\.millid=.* and wmillMIDUUID\.active=.*');                                                                                                                                                                                                                                                                                                                                                
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(130,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDUUID\.uuid,wmillMIDUUID\.date,wmillMIDUUID\.kwatts_s FROM wmillMIDUUID WHERE wmillMIDUUID\.id=.*');                                                                                                                                                                                                                                                                                                                                             
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(131,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDPart\.millid,wmillMIDPart\.id FROM wmillMIDPart WHERE wmillMIDPart\.millid=.* and wmillMIDPart\.active=.*');                                                                                                                                                                                                                                                                                                                                                                       
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(132,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillAUTOINC\.uuid,wmillAUTOINC\.date,wmillAUTOINC\.kwatts_s FROM wmillAUTOINC WHERE wmillAUTOINC\.id=.*');                                                                                                                                                                                                                                                                                                                                                                    
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(133,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMID\.id,wmillMID\.millid,wmillMID\.location FROM wmillMID WHERE wmillMID\.id=.*');                                                                                                                                                                                                                                                                                                                                                                             
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(134,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDPart\.millid,wmillMIDPart\.id,wmillMIDPart\. kwatts_s,wmillMIDPart\.date,wmillMIDPart\.time,wmillMIDPart\.active FROM wmillMIDPart WHERE wmillMIDPart\.id=.*');                                                                                                                                                                                                                                                                                                                    
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(135,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDPart\.millid,wmillMIDPart\.active,wmillMIDPart\.date FROM wmillMIDPart WHERE wmillMIDPart\.millid=.* and wmillMIDPart\.active=.*');                                                                                                                                                                                                                                                                                                                 
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(136,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillAUTOINC\.millid,wmillAUTOINC\.active,wmillAUTOINC\.date FROM wmillAUTOINC WHERE wmillAUTOINC\.id=.*');                                                                                                                                                                                                                                                                                                                                             
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(137,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillAUTOINC\.millid,wmillAUTOINC\.id,wmillAUTOINC\. kwatts_s,wmillAUTOINC\.date,wmillAUTOINC\.time,wmillAUTOINC\.active FROM wmillAUTOINC WHERE wmillAUTOINC\.id=.*');                                                                                                                                                                                                                                                                                                                    
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(138,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMIDUUID\.id,wmillMIDUUID\.millid,wmillMIDUUID\.location FROM wmillMIDUUID WHERE wmillMIDUUID\.millid=.* and wmillMIDUUID\.active=.*');                                                                                                                                                                                                                                                                                                                 
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(139,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillAUTOINC\.millid,wmillAUTOINC\.id FROM wmillAUTOINC WHERE wmillAUTOINC\.millid=.* and wmillAUTOINC\.active=.*');                                                                                                                                                                                                                                                                                                                                             
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(140,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT wmillMID\.id,wmillMID\.millid,wmillMID\.location FROM wmillMID WHERE wmillMID\.millid=.* and wmillMID\.active=.*');                                                                                                                                                                                                                                                                                                                                                                    
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(141,6033,'pxc_test',52,'windmills',1,3,1,1000,'SET autocommit=.*');                                                                                                                                                                                                                                                                                                                                                                     
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(142,6033,'pxc_test',52,'windmills',1,3,1,1000,'SHOW GLOBAL STATUS');                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(143,6033,'pxc_test',52,'windmills',1,3,1,1000,'SET character_set_results = NULL');                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(144,6033,'pxc_test',52,'windmills',1,3,1,1000,'SHOW CHARACTER SET');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(145,6033,'pxc_test',52,'windmills',1,3,1,1000,'SHOW COLLATION');                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(146,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT @@session\.auto_increment_increment');                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(147,6033,'pxc_test',52,'windmills',1,3,1,1000,'SHOW VARIABLES WHERE Variable_name =.* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .* OR Variable_name = .*');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(148,6033,'pxc_test',52,'windmills',1,3,1,1000,'Select MAX\(id\) as id\s* FROM wmillMIDUUID');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(149,6033,'pxc_test',52,'windmills',1,3,1,1000,'Select MAX\(millid\) as millid ,MAX\(active\) as active\s*FROM wmillMIDUUID');                                                                                                                                                                                                                                                                                                                                                                                                                          
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(150,6033,'pxc_test',52,'windmills',1,3,1,1000,'Select MAX\(millid\) as millid ,MAX\(active\) as active\s*FROM wmillAUTOINC');                                                                                                                                                                                                                                                                                                                                                                                                                          
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(151,6033,'pxc_test',52,'windmills',1,3,1,1000,'Select MAX\(id\) as id\s*FROM wmillMIDPart');                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(152,6033,'pxc_test',52,'windmills',1,3,1,1000,'Select MAX\(id\) as id\s*FROM wmillAUTOINC');                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(153,6033,'pxc_test',52,'windmills',1,3,1,1000,'Select MAX\(id\) as id\s*FROM wmillMID');                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(154,6033,'pxc_test',52,'windmills',1,3,1,1000,'SELECT @@session\.tx_isolation');                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(155,6033,'pxc_test',52,'windmills',1,3,1,1000,'Select MAX\(millid\) as millid ,MAX\(active\) as active\s*FROM wmillMIDPart');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(156,6033,'pxc_test',50,'windmills',1,3,1,1000,'rollback');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,match_digest) values(157,6033,'pxc_test',52,'windmills',1,3,1,1000,'Select MAX\(millid\) as millid ,MAX\(active\) as active\s*FROM wmillMID');
+
+
+
+
+
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(200,6033,'pxc_test',50,'windmills',1,3,1,1000,'0xDB3A841EF5443C35');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(201,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x52A98085A233E516');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(202,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x65D8D9CE86CFEF55');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(203,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xAA7890053BE65C74');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(204,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xEDA4CB62AAF33779');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(205,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x3E5515D17A41C76E');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(206,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xA21B933926349C22');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(207,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x86169FE6EFE9C706');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(208,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x775D586B0D478A12');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(209,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x01A0709C4C8CA6E2');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(210,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xE0BC90C7382A63A3');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(211,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x80CD436FE5FB0036');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(212,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xA995256D14B31516');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(213,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x38B67C055BA324F1');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(214,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x2BD3FCB8B88BF79A');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(215,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x3C2BEAB51B189470');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(216,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xC549B45E4C2814A9');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(217,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xC28CB530E54DB97F');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(218,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x4F59AAE610074F4F');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(219,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xF8DADDA0F3500839');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(220,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x8328ACAD328C1532');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(221,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x23A25B17A4CFE0E8');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(222,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x740B98529B9DFB6E');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(223,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x6C62C8A62C3C2924');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(224,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x27905E5442A328CA');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(225,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x1952BDD14F38A54A');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(226,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x7AB8069357C3CF7F');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(227,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x582A70FC589B0F4A');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(228,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x5B93FE26A590DA6B');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(229,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x0576942CFFE55E6F');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(230,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xF1AF104A0738028A');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(231,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xC08303AEAAC8AEF1');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(232,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x81F42A936CC84CE8');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(233,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x1A2FE62FB3801542');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(234,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xC3FC4D1341A33F4B');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(235,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x47652FF712AFEF58');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(236,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xAEDDA15B44918929');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(237,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x010B454C12663C67');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(238,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x7331F5BD45BBEC2E');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(239,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xBE46613938CA2BBE');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(240,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xEB64116A51568A19');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(241,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xC51BDBBD6C9BB1D7');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(242,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x18CA8FF2C9C53276');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(243,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x32DD8987F5DA033D');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(244,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xE8D83AF1402367ED');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(245,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xCB7CE42345F287E0');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(246,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xEDF9C60BDFD2F5B0');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(247,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x85C190665EED4E62');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(248,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xC53929F3C07B0484');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(249,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xE298850CC5C6C0D7');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(250,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xA4BD7B2208318194');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(251,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x3C4BA35749FF75EF');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(252,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xAF1689DD505D48B4');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(253,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xF6C69F245DAA4093');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(254,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x05EE128C69D33D89');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(255,6033,'pxc_test',52,'windmills',1,3,1,1000,'0x7CDEEF2FF695B7F8');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(256,6033,'pxc_test',50,'windmills',1,3,1,1000,'0x351425DA08EF69A6');
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,schemaname,active,retries,apply,flagout,digest) values(257,6033,'pxc_test',52,'windmills',1,3,1,1000,'0xDD3B740D393F9FA4');
+
+
+
+
+============================================
+Application section commands and statistics
+============================================
+
+
+
+Base line
+========
+app1
+[root@rms1 stresstool]# ./run.sh windmills.cnf "main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18"
+“Running stressTool with additional parameters from command line main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18”
+Testing Logger :STATS
+Testing Logger :APPLICATION
+Testing Logger :PCONNECTION
+Testing Logger :PERFORMANCE
+Testing Logger :com.zaxxer.hikari
+Testing Logger :PACTIONS
+Testing Logger :SQL
+Testing Logger :MONITORS
+Testing Logger :ACTIONS
+------------------------------  Threads EXECUTION INFORMATION -----------------------------------------
+------------------------------ Insert
+------------------------------ Update
+------------------------------ Delete
+------------------------------ Select
+ThreadID = 2004 Tot Execution time = 195177 Max Execution time = 128518298 Min Execution time = 11006176
+ThreadID = 2005 Tot Execution time = 195958 Max Execution time = 72709609 Min Execution time = 11179481
+ThreadID = 2001 Tot Execution time = 197072 Max Execution time = 69223896 Min Execution time = 11408373
+ThreadID = 2002 Tot Execution time = 197159 Max Execution time = 77684553 Min Execution time = 11130513
+ThreadID = 2016 Tot Execution time = 198381 Max Execution time = 98861183 Min Execution time = 11027404
+ThreadID = 2009 Tot Execution time = 198943 Max Execution time = 84055868 Min Execution time = 11075727
+ThreadID = 2012 Tot Execution time = 199741 Max Execution time = 71444592 Min Execution time = 11804360
+ThreadID = 2000 Tot Execution time = 199852 Max Execution time = 86882683 Min Execution time = 11189866
+ThreadID = 2010 Tot Execution time = 200722 Max Execution time = 67862570 Min Execution time = 10870538
+ThreadID = 2013 Tot Execution time = 201262 Max Execution time = 95321938 Min Execution time = 11409819
+ThreadID = 2015 Tot Execution time = 201506 Max Execution time = 72443357 Min Execution time = 10422159
+ThreadID = 2017 Tot Execution time = 201985 Max Execution time = 106460916 Min Execution time = 11170731
+ThreadID = 2014 Tot Execution time = 202832 Max Execution time = 123932304 Min Execution time = 11218661
+ThreadID = 2008 Tot Execution time = 204268 Max Execution time = 75962513 Min Execution time = 11370190
+ThreadID = 2006 Tot Execution time = 205321 Max Execution time = 93379599 Min Execution time = 10842406
+ThreadID = 2007 Tot Execution time = 206958 Max Execution time = 77134923 Min Execution time = 10858635
+ThreadID = 2003 Tot Execution time = 207614 Max Execution time = 72184432 Min Execution time = 11656525
+ThreadID = 2011 Tot Execution time = 209778 Max Execution time = 67545277 Min Execution time = 11266799
+------------------------------ STATUS DATABASE INFORMATION -----------------------------------------
+Provider  = STATUS
+Start time  = 18/01/01 08:03:41:0313 PM
+End time  = 18/01/01 08:07:14:0912 PM
+Total Kbyte IN  = 290175339 xsec = 1362325
+Total Kbyte OUT  = 150902726 xsec = 708463
+Total Execution time = 213
+Inserts = 0 xsec = 0
+Replace = 0 xsec = 0
+Updates = 0 xsec = 0
+Deletes = 0 xsec = 0
+Selects = 1058317 xsec = 4968
+Begins = 0 xsec = 0
+Commits = 0 xsec = 0
+Number of Connections = 950 xsec = 4
+Number of Temporary table on disk = 219
+Number of Questions = 1062666 xsec = 4989
+Number of Max_used_connections = 0 xsec = 0
+Number of Opened_tables = 1 xsec = 0
+------------------------------------ DELAYS ------------------------------------------------
+Delayed insert threads   = 0 xsec = 0
+Delayed Errors  = 0 xsec = 0
+Delayed writes  = 0 xsec = 0
+Not flushed delayed rows = 0 xsec = 0
+------------------------------------ LOCKS ------------------------------------------------
+Number of Table_locks_immediate = 1522 xsec = 7
+Number of Table_locks_waited = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL ACTIONS -----------------------------------
+Number of Innodb_buffer_pool_pages_flushed = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_rnd = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_seq = 0 xsec = 0
+Number of Innodb_buffer_pool_read_requests = 5018221 xsec = 23559
+Number of Innodb_buffer_pool_reads = 0 xsec = 0
+Number of Innodb_data_fsyncs = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL Dirty Page -----------------------------------
+Number of Innodb_buffer_pool_pages_dirty = 0 xsec = 0
+--------------------------------- INNODB DATA READS ----------------------------------------
+Number of Innodb Reads from BPool (not from disk) = 5018221 xsec = 23559
+Number of Innodb_data_reads = 0 xsec = 0
+Number of Innodb_rows_read = 0 xsec = 0
+Number of Innodb_pages_read = 0 xsec = 0
+----------------------------------INNODB DATA WRITES ---------------------------------------
+Number of Innodb_data_writes = 0 xsec = 0
+Number of Innodb_rows_inserted = 0 xsec = 0
+Number of Innodb_rows_updated = 0 xsec = 0
+Number of Innodb_rows_deleted = 0 xsec = 0
+Number of Innodb_pages_written = 0 xsec = 0
+Number of Innodb_pages_created = 0 xsec = 0
+-----------------------------------INNODB DBLBUFFER WRITES ---------------------------------
+Number of Innodb_dblwr_writes = 0 xsec = 0
+Number of Innodb_dblwr_pages_written = 0 xsec = 0
+-----------------------------------INNODB LOG Activities ---------------------------------
+Number of Innodb_log_waits = 0 xsec = 0
+Number of Innodb_log_write_requests = 0 xsec = 0
+Number of Innodb_log_writes = 0 xsec = 0
+Number of Innodb_os_log_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_writes = 0 xsec = 0
+Number of Innodb_os_log_written = 0 xsec = 0
+----------------------------------- Handlers  ---------------------------------------
+Number of Handler_commit = 2113226 xsec = 9921
+Number of Handler_delete = 0 xsec = 0
+Number of Handler_discover = 0 xsec = 0
+Number of Handler_prepare = 0 xsec = 0
+Number of Handler_read_first = 0 xsec = 0
+Number of Handler_read_key = 1617449 xsec = 7593
+Number of Handler_read_last = 129 xsec = 0
+Number of Handler_read_next = 0 xsec = 0
+Number of Handler_read_prev = 0 xsec = 0
+Number of Handler_read_rnd = 0 xsec = 0
+Number of Handler_read_rnd_next = 1765297 xsec = 8287
+Number of Handler_rollback = 0 xsec = 0
+Number of Handler_savepoint = 0 xsec = 0
+Number of Handler_savepoint_rollback = 0 xsec = 0
+Number of Handler_update = 31991 xsec = 150
+Number of Handler_write = 1013110 xsec = 4756
+-----------------------------------MyIsam Key Buffer ---------------------------------------
+Number of Key_reads = 0 xsec = 0
+Number of Key_writes = 0 xsec = 0
+Number of Key_read_requests = 64 xsec = 0
+Number of Key_write_requests = 0 xsec = 0
+Number of Key_blocks_not_flushed = 0 xsec = 0
+Number of Key_blocks_unused = 0 xsec = 0
+Number of Key_blocks_used = 0 xsec = 0
+----------------------------------- QUERY CACHE --------------------------------------------
+Number of Qcache_hits = 0 xsec = 0
+Number of Qcache_inserts = 0 xsec = 0
+Number of Qcache_not_cached = 0 xsec = 0
+Number of Qcache_lowmem_prunes = 0 xsec = 0
+Number of Qcache_free_memory = 0 xsec = 0
+Number of Qcache_queries_in_cache = 0 xsec = 0
+Number of Qcache_total_blocks = 0 xsec = 0
+------------------------------------ THREADS    --------------------------------------------
+Number of Threads_cached = -30
+Number of Threads_connected = 680
+Number of Threads_created = 650
+Number of Threads_running = 9
+
+
+app2
+[root@rms2 stresstool]#  ./run.sh windmills.cnf "main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18"
+“Running stressTool with additional parameters from command line main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18”
+Testing Logger :STATS
+Testing Logger :APPLICATION
+Testing Logger :PCONNECTION
+Testing Logger :PERFORMANCE
+Testing Logger :com.zaxxer.hikari
+Testing Logger :PACTIONS
+Testing Logger :SQL
+Testing Logger :MONITORS
+Testing Logger :ACTIONS
+------------------------------  Threads EXECUTION INFORMATION -----------------------------------------
+------------------------------ Insert
+------------------------------ Update
+------------------------------ Delete
+------------------------------ Select
+ThreadID = 2015 Tot Execution time = 191685 Max Execution time = 86183276 Min Execution time = 11023362
+ThreadID = 2012 Tot Execution time = 191756 Max Execution time = 92537431 Min Execution time = 10974668
+ThreadID = 2010 Tot Execution time = 195231 Max Execution time = 88641913 Min Execution time = 10745654
+ThreadID = 2006 Tot Execution time = 195545 Max Execution time = 93067786 Min Execution time = 10852214
+ThreadID = 2008 Tot Execution time = 195639 Max Execution time = 100096517 Min Execution time = 11356834
+ThreadID = 2002 Tot Execution time = 196283 Max Execution time = 108436737 Min Execution time = 10612292
+ThreadID = 2016 Tot Execution time = 196855 Max Execution time = 94407839 Min Execution time = 10720173
+ThreadID = 2013 Tot Execution time = 197360 Max Execution time = 89044101 Min Execution time = 11173813
+ThreadID = 2007 Tot Execution time = 197708 Max Execution time = 94690578 Min Execution time = 11307709
+ThreadID = 2005 Tot Execution time = 198434 Max Execution time = 225605816 Min Execution time = 10639430
+ThreadID = 2000 Tot Execution time = 199173 Max Execution time = 98355692 Min Execution time = 11285227
+ThreadID = 2001 Tot Execution time = 199618 Max Execution time = 92133561 Min Execution time = 11290438
+ThreadID = 2003 Tot Execution time = 200716 Max Execution time = 109629628 Min Execution time = 11006541
+ThreadID = 2014 Tot Execution time = 200776 Max Execution time = 94297788 Min Execution time = 10384242
+ThreadID = 2009 Tot Execution time = 201300 Max Execution time = 91715235 Min Execution time = 10926769
+ThreadID = 2017 Tot Execution time = 201823 Max Execution time = 99194744 Min Execution time = 10825134
+ThreadID = 2004 Tot Execution time = 204056 Max Execution time = 98908856 Min Execution time = 10811460
+ThreadID = 2011 Tot Execution time = 205201 Max Execution time = 93262564 Min Execution time = 10725543
+------------------------------ STATUS DATABASE INFORMATION -----------------------------------------
+Provider  = STATUS
+Start time  = 18/01/01 08:00:16:0527 PM
+End time  = 18/01/01 08:03:45:0679 PM
+Total Kbyte IN  = 289534705 xsec = 1385333
+Total Kbyte OUT  = 150699553 xsec = 721050
+Total Execution time = 209
+Inserts = 0 xsec = 0
+Replace = 0 xsec = 0
+Updates = 0 xsec = 0
+Deletes = 0 xsec = 0
+Selects = 1056887 xsec = 5056
+Begins = 0 xsec = 0
+Commits = 0 xsec = 0
+Number of Connections = 944 xsec = 4
+Number of Temporary table on disk = 218
+Number of Questions = 1061208 xsec = 5077
+Number of Max_used_connections = 0 xsec = 0
+Number of Opened_tables = 1 xsec = 0
+------------------------------------ DELAYS ------------------------------------------------
+Delayed insert threads   = 0 xsec = 0
+Delayed Errors  = 0 xsec = 0
+Delayed writes  = 0 xsec = 0
+Not flushed delayed rows = 0 xsec = 0
+------------------------------------ LOCKS ------------------------------------------------
+Number of Table_locks_immediate = 1510 xsec = 7
+Number of Table_locks_waited = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL ACTIONS -----------------------------------
+Number of Innodb_buffer_pool_pages_flushed = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_rnd = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_seq = 0 xsec = 0
+Number of Innodb_buffer_pool_read_requests = 5011676 xsec = 23979
+Number of Innodb_buffer_pool_reads = 0 xsec = 0
+Number of Innodb_data_fsyncs = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL Dirty Page -----------------------------------
+Number of Innodb_buffer_pool_pages_dirty = 0 xsec = 0
+--------------------------------- INNODB DATA READS ----------------------------------------
+Number of Innodb Reads from BPool (not from disk) = 5011676 xsec = 23979
+Number of Innodb_data_reads = 0 xsec = 0
+Number of Innodb_rows_read = 0 xsec = 0
+Number of Innodb_pages_read = 0 xsec = 0
+----------------------------------INNODB DATA WRITES ---------------------------------------
+Number of Innodb_data_writes = 0 xsec = 0
+Number of Innodb_rows_inserted = 0 xsec = 0
+Number of Innodb_rows_updated = 0 xsec = 0
+Number of Innodb_rows_deleted = 0 xsec = 0
+Number of Innodb_pages_written = 0 xsec = 0
+Number of Innodb_pages_created = 0 xsec = 0
+-----------------------------------INNODB DBLBUFFER WRITES ---------------------------------
+Number of Innodb_dblwr_writes = 0 xsec = 0
+Number of Innodb_dblwr_pages_written = 0 xsec = 0
+-----------------------------------INNODB LOG Activities ---------------------------------
+Number of Innodb_log_waits = 0 xsec = 0
+Number of Innodb_log_write_requests = 0 xsec = 0
+Number of Innodb_log_writes = 0 xsec = 0
+Number of Innodb_os_log_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_writes = 0 xsec = 0
+Number of Innodb_os_log_written = 0 xsec = 0
+----------------------------------- Handlers  ---------------------------------------
+Number of Handler_commit = 2110408 xsec = 10097
+Number of Handler_delete = 0 xsec = 0
+Number of Handler_discover = 0 xsec = 0
+Number of Handler_prepare = 0 xsec = 0
+Number of Handler_read_first = 0 xsec = 0
+Number of Handler_read_key = 1614627 xsec = 7725
+Number of Handler_read_last = 129 xsec = 0
+Number of Handler_read_next = 0 xsec = 0
+Number of Handler_read_prev = 0 xsec = 0
+Number of Handler_read_rnd = 0 xsec = 0
+Number of Handler_read_rnd_next = 1754576 xsec = 8395
+Number of Handler_rollback = 0 xsec = 0
+Number of Handler_savepoint = 0 xsec = 0
+Number of Handler_savepoint_rollback = 0 xsec = 0
+Number of Handler_update = 31242 xsec = 149
+Number of Handler_write = 1007055 xsec = 4818
+-----------------------------------MyIsam Key Buffer ---------------------------------------
+Number of Key_reads = 0 xsec = 0
+Number of Key_writes = 0 xsec = 0
+Number of Key_read_requests = 64 xsec = 0
+Number of Key_write_requests = 0 xsec = 0
+Number of Key_blocks_not_flushed = 0 xsec = 0
+Number of Key_blocks_unused = 0 xsec = 0
+Number of Key_blocks_used = 0 xsec = 0
+----------------------------------- QUERY CACHE --------------------------------------------
+Number of Qcache_hits = 0 xsec = 0
+Number of Qcache_inserts = 0 xsec = 0
+Number of Qcache_not_cached = 0 xsec = 0
+Number of Qcache_lowmem_prunes = 0 xsec = 0
+Number of Qcache_free_memory = 0 xsec = 0
+Number of Qcache_queries_in_cache = 0 xsec = 0
+Number of Qcache_total_blocks = 0 xsec = 0
+------------------------------------ THREADS    --------------------------------------------
+Number of Threads_cached = -30
+Number of Threads_connected = 680
+Number of Threads_created = 650
+Number of Threads_running = 7
+
+with rules and text
+app1
+[root@rms1 stresstool]# ./run.sh windmills.cnf "main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18"
+“Running stressTool with additional parameters from command line main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18”
+Testing Logger :STATS
+Testing Logger :APPLICATION
+Testing Logger :PCONNECTION
+Testing Logger :PERFORMANCE
+Testing Logger :com.zaxxer.hikari
+Testing Logger :PACTIONS
+Testing Logger :SQL
+Testing Logger :MONITORS
+Testing Logger :ACTIONS
+------------------------------  Threads EXECUTION INFORMATION -----------------------------------------
+------------------------------ Insert
+------------------------------ Update
+------------------------------ Delete
+------------------------------ Select
+ThreadID = 2004 Tot Execution time = 162152 Max Execution time = 63936217 Min Execution time = 9615029
+ThreadID = 2016 Tot Execution time = 166122 Max Execution time = 69297125 Min Execution time = 9490532
+ThreadID = 2011 Tot Execution time = 168783 Max Execution time = 65799103 Min Execution time = 9660194
+ThreadID = 2014 Tot Execution time = 178755 Max Execution time = 95449837 Min Execution time = 9581353
+ThreadID = 2010 Tot Execution time = 179295 Max Execution time = 105673088 Min Execution time = 9239713
+ThreadID = 2008 Tot Execution time = 180888 Max Execution time = 102140543 Min Execution time = 9062478
+ThreadID = 2001 Tot Execution time = 181277 Max Execution time = 129012468 Min Execution time = 9652011
+ThreadID = 2000 Tot Execution time = 181647 Max Execution time = 123219675 Min Execution time = 8951761
+ThreadID = 2006 Tot Execution time = 181804 Max Execution time = 92409876 Min Execution time = 9232387
+ThreadID = 2005 Tot Execution time = 183101 Max Execution time = 115553622 Min Execution time = 9515538
+ThreadID = 2007 Tot Execution time = 186564 Max Execution time = 97934232 Min Execution time = 9860160
+ThreadID = 2002 Tot Execution time = 187253 Max Execution time = 109521837 Min Execution time = 9284344
+ThreadID = 2013 Tot Execution time = 196925 Max Execution time = 86897542 Min Execution time = 9801798
+ThreadID = 2003 Tot Execution time = 197521 Max Execution time = 85827082 Min Execution time = 10244773
+ThreadID = 2017 Tot Execution time = 197597 Max Execution time = 76092362 Min Execution time = 9743571
+ThreadID = 2015 Tot Execution time = 198496 Max Execution time = 95947740 Min Execution time = 9770753
+ThreadID = 2009 Tot Execution time = 201863 Max Execution time = 92526292 Min Execution time = 10315494
+ThreadID = 2012 Tot Execution time = 204320 Max Execution time = 86663006 Min Execution time = 9890068
+------------------------------ STATUS DATABASE INFORMATION -----------------------------------------
+Provider  = STATUS
+Start time  = 18/01/01 08:19:10:0812 PM
+End time  = 18/01/01 08:22:38:0776 PM
+Total Kbyte IN  = 416867747 xsec = 2013853
+Total Kbyte OUT  = 227047451 xsec = 1096847
+Total Execution time = 207
+Inserts = 0 xsec = 0
+Replace = 0 xsec = 0
+Updates = 0 xsec = 0
+Deletes = 0 xsec = 0
+Selects = 1601326 xsec = 7735
+Begins = 0 xsec = 0
+Commits = 0 xsec = 0
+Number of Connections = 488 xsec = 2
+Number of Temporary table on disk = 173
+Number of Questions = 1603223 xsec = 7745
+Number of Max_used_connections = 0 xsec = 0
+Number of Opened_tables = 8 xsec = 0
+------------------------------------ DELAYS ------------------------------------------------
+Delayed insert threads   = 0 xsec = 0
+Delayed Errors  = 0 xsec = 0
+Delayed writes  = 0 xsec = 0
+Not flushed delayed rows = 0 xsec = 0
+------------------------------------ LOCKS ------------------------------------------------
+Number of Table_locks_immediate = 570 xsec = 2
+Number of Table_locks_waited = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL ACTIONS -----------------------------------
+Number of Innodb_buffer_pool_pages_flushed = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_rnd = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_seq = 0 xsec = 0
+Number of Innodb_buffer_pool_read_requests = 7597505 xsec = 36702
+Number of Innodb_buffer_pool_reads = 0 xsec = 0
+Number of Innodb_data_fsyncs = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL Dirty Page -----------------------------------
+Number of Innodb_buffer_pool_pages_dirty = 0 xsec = 0
+--------------------------------- INNODB DATA READS ----------------------------------------
+Number of Innodb Reads from BPool (not from disk) = 7597505 xsec = 36702
+Number of Innodb_data_reads = 0 xsec = 0
+Number of Innodb_rows_read = 0 xsec = 0
+Number of Innodb_pages_read = 0 xsec = 0
+----------------------------------INNODB DATA WRITES ---------------------------------------
+Number of Innodb_data_writes = 0 xsec = 0
+Number of Innodb_rows_inserted = 0 xsec = 0
+Number of Innodb_rows_updated = 0 xsec = 0
+Number of Innodb_rows_deleted = 0 xsec = 0
+Number of Innodb_pages_written = 0 xsec = 0
+Number of Innodb_pages_created = 0 xsec = 0
+-----------------------------------INNODB DBLBUFFER WRITES ---------------------------------
+Number of Innodb_dblwr_writes = 0 xsec = 0
+Number of Innodb_dblwr_pages_written = 0 xsec = 0
+-----------------------------------INNODB LOG Activities ---------------------------------
+Number of Innodb_log_waits = 0 xsec = 0
+Number of Innodb_log_write_requests = 0 xsec = 0
+Number of Innodb_log_writes = 0 xsec = 0
+Number of Innodb_os_log_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_writes = 0 xsec = 0
+Number of Innodb_os_log_written = 0 xsec = 0
+----------------------------------- Handlers  ---------------------------------------
+Number of Handler_commit = 3200380 xsec = 15460
+Number of Handler_delete = 0 xsec = 0
+Number of Handler_discover = 0 xsec = 0
+Number of Handler_prepare = 0 xsec = 0
+Number of Handler_read_first = 0 xsec = 0
+Number of Handler_read_key = 2409921 xsec = 11642
+Number of Handler_read_last = 422 xsec = 2
+Number of Handler_read_next = 0 xsec = 0
+Number of Handler_read_prev = 0 xsec = 0
+Number of Handler_read_rnd = 0 xsec = 0
+Number of Handler_read_rnd_next = 539918 xsec = 2608
+Number of Handler_rollback = 0 xsec = 0
+Number of Handler_savepoint = 0 xsec = 0
+Number of Handler_savepoint_rollback = 0 xsec = 0
+Number of Handler_update = 9842 xsec = 47
+Number of Handler_write = 323850 xsec = 1564
+-----------------------------------MyIsam Key Buffer ---------------------------------------
+Number of Key_reads = 0 xsec = 0
+Number of Key_writes = 0 xsec = 0
+Number of Key_read_requests = 48 xsec = 0
+Number of Key_write_requests = 0 xsec = 0
+Number of Key_blocks_not_flushed = 0 xsec = 0
+Number of Key_blocks_unused = 0 xsec = 0
+Number of Key_blocks_used = 0 xsec = 0
+----------------------------------- QUERY CACHE --------------------------------------------
+Number of Qcache_hits = 0 xsec = 0
+Number of Qcache_inserts = 0 xsec = 0
+Number of Qcache_not_cached = 0 xsec = 0
+Number of Qcache_lowmem_prunes = 0 xsec = 0
+Number of Qcache_free_memory = 0 xsec = 0
+Number of Qcache_queries_in_cache = 0 xsec = 0
+Number of Qcache_total_blocks = 0 xsec = 0
+------------------------------------ THREADS    --------------------------------------------
+Number of Threads_cached = -13
+Number of Threads_connected = 224
+Number of Threads_created = 211
+Number of Threads_running = 6
+
+Close
+[root@rms1 stresstool]# 
+
+app2
+[root@rms2 stresstool]#  ./run.sh windmills.cnf "main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18"
+“Running stressTool with additional parameters from command line main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18”
+Testing Logger :STATS
+Testing Logger :APPLICATION
+Testing Logger :PCONNECTION
+Testing Logger :PERFORMANCE
+Testing Logger :com.zaxxer.hikari
+Testing Logger :PACTIONS
+Testing Logger :SQL
+Testing Logger :MONITORS
+Testing Logger :ACTIONS
+------------------------------  Threads EXECUTION INFORMATION -----------------------------------------
+------------------------------ Insert
+------------------------------ Update
+------------------------------ Delete
+------------------------------ Select
+ThreadID = 2014 Tot Execution time = 155898 Max Execution time = 76726993 Min Execution time = 8696181
+ThreadID = 2015 Tot Execution time = 156204 Max Execution time = 75139455 Min Execution time = 9274482
+ThreadID = 2002 Tot Execution time = 156209 Max Execution time = 80610355 Min Execution time = 9191558
+ThreadID = 2007 Tot Execution time = 159314 Max Execution time = 75570775 Min Execution time = 9329610
+ThreadID = 2010 Tot Execution time = 159969 Max Execution time = 75366410 Min Execution time = 9903369
+ThreadID = 2011 Tot Execution time = 162259 Max Execution time = 75494882 Min Execution time = 9343584
+ThreadID = 2004 Tot Execution time = 162381 Max Execution time = 82242909 Min Execution time = 9696992
+ThreadID = 2012 Tot Execution time = 177295 Max Execution time = 112204283 Min Execution time = 9079643
+ThreadID = 2017 Tot Execution time = 177721 Max Execution time = 130662164 Min Execution time = 8912485
+ThreadID = 2016 Tot Execution time = 177966 Max Execution time = 127744762 Min Execution time = 9378237
+ThreadID = 2000 Tot Execution time = 182418 Max Execution time = 135479387 Min Execution time = 8618561
+ThreadID = 2008 Tot Execution time = 185631 Max Execution time = 98855419 Min Execution time = 8582692
+ThreadID = 2001 Tot Execution time = 185744 Max Execution time = 107648993 Min Execution time = 9348168
+ThreadID = 2006 Tot Execution time = 185960 Max Execution time = 107951187 Min Execution time = 9301060
+ThreadID = 2009 Tot Execution time = 191618 Max Execution time = 81878174 Min Execution time = 10591659
+ThreadID = 2003 Tot Execution time = 199103 Max Execution time = 97691229 Min Execution time = 9513608
+ThreadID = 2013 Tot Execution time = 199906 Max Execution time = 92133363 Min Execution time = 8879259
+ThreadID = 2005 Tot Execution time = 200731 Max Execution time = 76872417 Min Execution time = 9592982
+------------------------------ STATUS DATABASE INFORMATION -----------------------------------------
+Provider  = STATUS
+Start time  = 18/01/01 08:15:45:0867 PM
+End time  = 18/01/01 08:19:10:0033 PM
+Total Kbyte IN  = 266134831 xsec = 1304582
+Total Kbyte OUT  = 142071190 xsec = 696427
+Total Execution time = 204
+Inserts = 0 xsec = 0
+Replace = 0 xsec = 0
+Updates = 0 xsec = 0
+Deletes = 0 xsec = 0
+Selects = 1001173 xsec = 4907
+Begins = 0 xsec = 0
+Commits = 0 xsec = 0
+Number of Connections = 471 xsec = 2
+Number of Temporary table on disk = 173
+Number of Questions = 1003017 xsec = 4916
+Number of Max_used_connections = 0 xsec = 0
+Number of Opened_tables = 4 xsec = 0
+------------------------------------ DELAYS ------------------------------------------------
+Delayed insert threads   = 0 xsec = 0
+Delayed Errors  = 0 xsec = 0
+Delayed writes  = 0 xsec = 0
+Not flushed delayed rows = 0 xsec = 0
+------------------------------------ LOCKS ------------------------------------------------
+Number of Table_locks_immediate = 565 xsec = 2
+Number of Table_locks_waited = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL ACTIONS -----------------------------------
+Number of Innodb_buffer_pool_pages_flushed = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_rnd = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_seq = 0 xsec = 0
+Number of Innodb_buffer_pool_read_requests = 4737795 xsec = 23224
+Number of Innodb_buffer_pool_reads = 0 xsec = 0
+Number of Innodb_data_fsyncs = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL Dirty Page -----------------------------------
+Number of Innodb_buffer_pool_pages_dirty = 0 xsec = 0
+--------------------------------- INNODB DATA READS ----------------------------------------
+Number of Innodb Reads from BPool (not from disk) = 4737795 xsec = 23224
+Number of Innodb_data_reads = 0 xsec = 0
+Number of Innodb_rows_read = 0 xsec = 0
+Number of Innodb_pages_read = 0 xsec = 0
+----------------------------------INNODB DATA WRITES ---------------------------------------
+Number of Innodb_data_writes = 0 xsec = 0
+Number of Innodb_rows_inserted = 0 xsec = 0
+Number of Innodb_rows_updated = 0 xsec = 0
+Number of Innodb_rows_deleted = 0 xsec = 0
+Number of Innodb_pages_written = 0 xsec = 0
+Number of Innodb_pages_created = 0 xsec = 0
+-----------------------------------INNODB DBLBUFFER WRITES ---------------------------------
+Number of Innodb_dblwr_writes = 0 xsec = 0
+Number of Innodb_dblwr_pages_written = 0 xsec = 0
+-----------------------------------INNODB LOG Activities ---------------------------------
+Number of Innodb_log_waits = 0 xsec = 0
+Number of Innodb_log_write_requests = 0 xsec = 0
+Number of Innodb_log_writes = 0 xsec = 0
+Number of Innodb_os_log_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_writes = 0 xsec = 0
+Number of Innodb_os_log_written = 0 xsec = 0
+----------------------------------- Handlers  ---------------------------------------
+Number of Handler_commit = 2000108 xsec = 9804
+Number of Handler_delete = 0 xsec = 0
+Number of Handler_discover = 0 xsec = 0
+Number of Handler_prepare = 0 xsec = 0
+Number of Handler_read_first = 0 xsec = 0
+Number of Handler_read_key = 1505372 xsec = 7379
+Number of Handler_read_last = 114 xsec = 0
+Number of Handler_read_next = 0 xsec = 0
+Number of Handler_read_prev = 0 xsec = 0
+Number of Handler_read_rnd = 0 xsec = 0
+Number of Handler_read_rnd_next = 529567 xsec = 2595
+Number of Handler_rollback = 0 xsec = 0
+Number of Handler_savepoint = 0 xsec = 0
+Number of Handler_savepoint_rollback = 0 xsec = 0
+Number of Handler_update = 8540 xsec = 41
+Number of Handler_write = 315825 xsec = 1548
+-----------------------------------MyIsam Key Buffer ---------------------------------------
+Number of Key_reads = 0 xsec = 0
+Number of Key_writes = 0 xsec = 0
+Number of Key_read_requests = 48 xsec = 0
+Number of Key_write_requests = 0 xsec = 0
+Number of Key_blocks_not_flushed = 0 xsec = 0
+Number of Key_blocks_unused = 0 xsec = 0
+Number of Key_blocks_used = 0 xsec = 0
+----------------------------------- QUERY CACHE --------------------------------------------
+Number of Qcache_hits = 0 xsec = 0
+Number of Qcache_inserts = 0 xsec = 0
+Number of Qcache_not_cached = 0 xsec = 0
+Number of Qcache_lowmem_prunes = 0 xsec = 0
+Number of Qcache_free_memory = 0 xsec = 0
+Number of Qcache_queries_in_cache = 0 xsec = 0
+Number of Qcache_total_blocks = 0 xsec = 0
+------------------------------------ THREADS    --------------------------------------------
+Number of Threads_cached = -27
+Number of Threads_connected = 210
+Number of Threads_created = 183
+Number of Threads_running = 5
+
+Close
+[root@rms2 stresstool]# 
+
+
+
+with rules and digest
+=====================
+app1
+[root@rms1 stresstool]# ./run.sh windmills.cnf "main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18"
+“Running stressTool with additional parameters from command line main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18”
+Testing Logger :STATS
+Testing Logger :APPLICATION
+Testing Logger :PCONNECTION
+Testing Logger :PERFORMANCE
+Testing Logger :com.zaxxer.hikari
+Testing Logger :PACTIONS
+Testing Logger :SQL
+Testing Logger :MONITORS
+Testing Logger :ACTIONS
+------------------------------  Threads EXECUTION INFORMATION -----------------------------------------
+------------------------------ Insert
+------------------------------ Update
+------------------------------ Delete
+------------------------------ Select
+ThreadID = 2009 Tot Execution time = 153283 Max Execution time = 86521157 Min Execution time = 8864263
+ThreadID = 2004 Tot Execution time = 153423 Max Execution time = 86137298 Min Execution time = 9361570
+ThreadID = 2000 Tot Execution time = 160015 Max Execution time = 88562597 Min Execution time = 9396167
+ThreadID = 2015 Tot Execution time = 163589 Max Execution time = 88829711 Min Execution time = 9568208
+ThreadID = 2007 Tot Execution time = 164546 Max Execution time = 89767794 Min Execution time = 9282266
+ThreadID = 2013 Tot Execution time = 164777 Max Execution time = 101869809 Min Execution time = 8895073
+ThreadID = 2012 Tot Execution time = 165503 Max Execution time = 94123747 Min Execution time = 9167651
+ThreadID = 2014 Tot Execution time = 167315 Max Execution time = 89693498 Min Execution time = 8900641
+ThreadID = 2016 Tot Execution time = 168342 Max Execution time = 100421563 Min Execution time = 9213735
+ThreadID = 2003 Tot Execution time = 169897 Max Execution time = 114782216 Min Execution time = 9439330
+ThreadID = 2011 Tot Execution time = 170879 Max Execution time = 114599327 Min Execution time = 8968712
+ThreadID = 2005 Tot Execution time = 173926 Max Execution time = 109842682 Min Execution time = 9345873
+ThreadID = 2008 Tot Execution time = 174415 Max Execution time = 111764323 Min Execution time = 9047297
+ThreadID = 2001 Tot Execution time = 176576 Max Execution time = 87725296 Min Execution time = 9141703
+ThreadID = 2010 Tot Execution time = 201085 Max Execution time = 89724880 Min Execution time = 9810280
+ThreadID = 2002 Tot Execution time = 205366 Max Execution time = 106071109 Min Execution time = 9676215
+ThreadID = 2006 Tot Execution time = 207755 Max Execution time = 99220462 Min Execution time = 9785738
+ThreadID = 2017 Tot Execution time = 210190 Max Execution time = 89792877 Min Execution time = 10590113
+------------------------------ STATUS DATABASE INFORMATION -----------------------------------------
+Provider  = STATUS
+Start time  = 18/01/02 06:59:38:0377 PM
+End time  = 18/01/02 07:03:12:0242 PM
+Total Kbyte IN  = 392979858 xsec = 1844975
+Total Kbyte OUT  = 213149192 xsec = 1000700
+Total Execution time = 213
+Inserts = 0 xsec = 0
+Replace = 0 xsec = 0
+Updates = 0 xsec = 0
+Deletes = 0 xsec = 0
+Selects = 1501393 xsec = 7048
+Begins = 0 xsec = 0
+Commits = 0 xsec = 0
+Number of Connections = 528 xsec = 2
+Number of Temporary table on disk = 219
+Number of Questions = 1503692 xsec = 7059
+Number of Max_used_connections = 0 xsec = 0
+Number of Opened_tables = 0 xsec = 0
+------------------------------------ DELAYS ------------------------------------------------
+Delayed insert threads   = 0 xsec = 0
+Delayed Errors  = 0 xsec = 0
+Delayed writes  = 0 xsec = 0
+Not flushed delayed rows = 0 xsec = 0
+------------------------------------ LOCKS ------------------------------------------------
+Number of Table_locks_immediate = 858 xsec = 4
+Number of Table_locks_waited = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL ACTIONS -----------------------------------
+Number of Innodb_buffer_pool_pages_flushed = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_rnd = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_seq = 0 xsec = 0
+Number of Innodb_buffer_pool_read_requests = 7121549 xsec = 33434
+Number of Innodb_buffer_pool_reads = 0 xsec = 0
+Number of Innodb_data_fsyncs = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL Dirty Page -----------------------------------
+Number of Innodb_buffer_pool_pages_dirty = 0 xsec = 0
+--------------------------------- INNODB DATA READS ----------------------------------------
+Number of Innodb Reads from BPool (not from disk) = 7121549 xsec = 33434
+Number of Innodb_data_reads = 0 xsec = 0
+Number of Innodb_rows_read = 0 xsec = 0
+Number of Innodb_pages_read = 0 xsec = 0
+----------------------------------INNODB DATA WRITES ---------------------------------------
+Number of Innodb_data_writes = 0 xsec = 0
+Number of Innodb_rows_inserted = 0 xsec = 0
+Number of Innodb_rows_updated = 0 xsec = 0
+Number of Innodb_rows_deleted = 0 xsec = 0
+Number of Innodb_pages_written = 0 xsec = 0
+Number of Innodb_pages_created = 0 xsec = 0
+-----------------------------------INNODB DBLBUFFER WRITES ---------------------------------
+Number of Innodb_dblwr_writes = 0 xsec = 0
+Number of Innodb_dblwr_pages_written = 0 xsec = 0
+-----------------------------------INNODB LOG Activities ---------------------------------
+Number of Innodb_log_waits = 0 xsec = 0
+Number of Innodb_log_write_requests = 0 xsec = 0
+Number of Innodb_log_writes = 0 xsec = 0
+Number of Innodb_os_log_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_writes = 0 xsec = 0
+Number of Innodb_os_log_written = 0 xsec = 0
+----------------------------------- Handlers  ---------------------------------------
+Number of Handler_commit = 3000342 xsec = 14086
+Number of Handler_delete = 0 xsec = 0
+Number of Handler_discover = 0 xsec = 0
+Number of Handler_prepare = 0 xsec = 0
+Number of Handler_read_first = 0 xsec = 0
+Number of Handler_read_key = 2259844 xsec = 10609
+Number of Handler_read_last = 271 xsec = 1
+Number of Handler_read_next = 0 xsec = 0
+Number of Handler_read_prev = 0 xsec = 0
+Number of Handler_read_rnd = 0 xsec = 0
+Number of Handler_read_rnd_next = 881037 xsec = 4136
+Number of Handler_rollback = 0 xsec = 0
+Number of Handler_savepoint = 0 xsec = 0
+Number of Handler_savepoint_rollback = 0 xsec = 0
+Number of Handler_update = 11147 xsec = 52
+Number of Handler_write = 501222 xsec = 2353
+-----------------------------------MyIsam Key Buffer ---------------------------------------
+Number of Key_reads = 0 xsec = 0
+Number of Key_writes = 0 xsec = 0
+Number of Key_read_requests = 64 xsec = 0
+Number of Key_write_requests = 0 xsec = 0
+Number of Key_blocks_not_flushed = 0 xsec = 0
+Number of Key_blocks_unused = 0 xsec = 0
+Number of Key_blocks_used = 0 xsec = 0
+----------------------------------- QUERY CACHE --------------------------------------------
+Number of Qcache_hits = 0 xsec = 0
+Number of Qcache_inserts = 0 xsec = 0
+Number of Qcache_not_cached = 0 xsec = 0
+Number of Qcache_lowmem_prunes = 0 xsec = 0
+Number of Qcache_free_memory = 0 xsec = 0
+Number of Qcache_queries_in_cache = 0 xsec = 0
+Number of Qcache_total_blocks = 0 xsec = 0
+------------------------------------ THREADS    --------------------------------------------
+Number of Threads_cached = -27
+Number of Threads_connected = 257
+Number of Threads_created = 230
+Number of Threads_running = 6
+
+App2
+[root@rms2 stresstool]#  ./run.sh windmills.cnf "main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18"
+“Running stressTool with additional parameters from command line main@pctInsert=0,main@pctUpdate=00,main@pctDelete=0,main@pctSelect=100,main@repeatNumber=10000,main@poolNumber=18”
+Testing Logger :STATS
+Testing Logger :APPLICATION
+Testing Logger :PCONNECTION
+Testing Logger :PERFORMANCE
+Testing Logger :com.zaxxer.hikari
+Testing Logger :PACTIONS
+Testing Logger :SQL
+Testing Logger :MONITORS
+Testing Logger :ACTIONS
+------------------------------  Threads EXECUTION INFORMATION -----------------------------------------
+------------------------------ Insert
+------------------------------ Update
+------------------------------ Delete
+------------------------------ Select
+ThreadID = 2010 Tot Execution time = 149333 Max Execution time = 69075159 Min Execution time = 9095394
+ThreadID = 2005 Tot Execution time = 153522 Max Execution time = 70436026 Min Execution time = 9117615
+ThreadID = 2006 Tot Execution time = 161254 Max Execution time = 79636032 Min Execution time = 9196335
+ThreadID = 2008 Tot Execution time = 161292 Max Execution time = 69888954 Min Execution time = 8981571
+ThreadID = 2000 Tot Execution time = 161799 Max Execution time = 70069564 Min Execution time = 9358510
+ThreadID = 2003 Tot Execution time = 162937 Max Execution time = 89650322 Min Execution time = 8849537
+ThreadID = 2007 Tot Execution time = 171829 Max Execution time = 88323831 Min Execution time = 8196028
+ThreadID = 2002 Tot Execution time = 176390 Max Execution time = 87751872 Min Execution time = 8938398
+ThreadID = 2011 Tot Execution time = 177894 Max Execution time = 86424728 Min Execution time = 9387110
+ThreadID = 2014 Tot Execution time = 178341 Max Execution time = 106712933 Min Execution time = 9231630
+ThreadID = 2015 Tot Execution time = 179378 Max Execution time = 114968759 Min Execution time = 9212426
+ThreadID = 2016 Tot Execution time = 199666 Max Execution time = 90537361 Min Execution time = 8820450
+ThreadID = 2001 Tot Execution time = 200113 Max Execution time = 79145720 Min Execution time = 8609645
+ThreadID = 2004 Tot Execution time = 200755 Max Execution time = 97821109 Min Execution time = 9416955
+ThreadID = 2017 Tot Execution time = 201822 Max Execution time = 92026801 Min Execution time = 9671154
+ThreadID = 2013 Tot Execution time = 204541 Max Execution time = 84130829 Min Execution time = 9117393
+ThreadID = 2009 Tot Execution time = 204809 Max Execution time = 79918722 Min Execution time = 9588154
+ThreadID = 2012 Tot Execution time = 205960 Max Execution time = 92528451 Min Execution time = 9498694
+------------------------------ STATUS DATABASE INFORMATION -----------------------------------------
+Provider  = STATUS
+Start time  = 18/01/02 06:56:12:0138 PM
+End time  = 18/01/02 06:59:41:0845 PM
+Total Kbyte IN  = 290986299 xsec = 1392278
+Total Kbyte OUT  = 155870339 xsec = 745791
+Total Execution time = 209
+Inserts = 0 xsec = 0
+Replace = 0 xsec = 0
+Updates = 0 xsec = 0
+Deletes = 0 xsec = 0
+Selects = 1097862 xsec = 5252
+Begins = 0 xsec = 0
+Commits = 0 xsec = 0
+Number of Connections = 525 xsec = 2
+Number of Temporary table on disk = 174
+Number of Questions = 1100137 xsec = 5263
+Number of Max_used_connections = 0 xsec = 0
+Number of Opened_tables = 1 xsec = 0
+------------------------------------ DELAYS ------------------------------------------------
+Delayed insert threads   = 0 xsec = 0
+Delayed Errors  = 0 xsec = 0
+Delayed writes  = 0 xsec = 0
+Not flushed delayed rows = 0 xsec = 0
+------------------------------------ LOCKS ------------------------------------------------
+Number of Table_locks_immediate = 844 xsec = 4
+Number of Table_locks_waited = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL ACTIONS -----------------------------------
+Number of Innodb_buffer_pool_pages_flushed = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_rnd = 0 xsec = 0
+Number of Innodb_buffer_pool_read_ahead_seq = 0 xsec = 0
+Number of Innodb_buffer_pool_read_requests = 5203968 xsec = 24899
+Number of Innodb_buffer_pool_reads = 0 xsec = 0
+Number of Innodb_data_fsyncs = 0 xsec = 0
+-----------------------------INNODB BUFFER POOL Dirty Page -----------------------------------
+Number of Innodb_buffer_pool_pages_dirty = 0 xsec = 0
+--------------------------------- INNODB DATA READS ----------------------------------------
+Number of Innodb Reads from BPool (not from disk) = 5203968 xsec = 24899
+Number of Innodb_data_reads = 0 xsec = 0
+Number of Innodb_rows_read = 0 xsec = 0
+Number of Innodb_pages_read = 0 xsec = 0
+----------------------------------INNODB DATA WRITES ---------------------------------------
+Number of Innodb_data_writes = 0 xsec = 0
+Number of Innodb_rows_inserted = 0 xsec = 0
+Number of Innodb_rows_updated = 0 xsec = 0
+Number of Innodb_rows_deleted = 0 xsec = 0
+Number of Innodb_pages_written = 0 xsec = 0
+Number of Innodb_pages_created = 0 xsec = 0
+-----------------------------------INNODB DBLBUFFER WRITES ---------------------------------
+Number of Innodb_dblwr_writes = 0 xsec = 0
+Number of Innodb_dblwr_pages_written = 0 xsec = 0
+-----------------------------------INNODB LOG Activities ---------------------------------
+Number of Innodb_log_waits = 0 xsec = 0
+Number of Innodb_log_write_requests = 0 xsec = 0
+Number of Innodb_log_writes = 0 xsec = 0
+Number of Innodb_os_log_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_fsyncs = 0 xsec = 0
+Number of Innodb_os_log_pending_writes = 0 xsec = 0
+Number of Innodb_os_log_written = 0 xsec = 0
+----------------------------------- Handlers  ---------------------------------------
+Number of Handler_commit = 2193352 xsec = 10494
+Number of Handler_delete = 0 xsec = 0
+Number of Handler_discover = 0 xsec = 0
+Number of Handler_prepare = 0 xsec = 0
+Number of Handler_read_first = 0 xsec = 0
+Number of Handler_read_key = 1656306 xsec = 7924
+Number of Handler_read_last = 275 xsec = 1
+Number of Handler_read_next = 0 xsec = 0
+Number of Handler_read_prev = 0 xsec = 0
+Number of Handler_read_rnd = 0 xsec = 0
+Number of Handler_read_rnd_next = 875111 xsec = 4187
+Number of Handler_rollback = 0 xsec = 0
+Number of Handler_savepoint = 0 xsec = 0
+Number of Handler_savepoint_rollback = 0 xsec = 0
+Number of Handler_update = 11290 xsec = 54
+Number of Handler_write = 495754 xsec = 2372
+-----------------------------------MyIsam Key Buffer ---------------------------------------
+Number of Key_reads = 0 xsec = 0
+Number of Key_writes = 0 xsec = 0
+Number of Key_read_requests = 48 xsec = 0
+Number of Key_write_requests = 0 xsec = 0
+Number of Key_blocks_not_flushed = 0 xsec = 0
+Number of Key_blocks_unused = 0 xsec = 0
+Number of Key_blocks_used = 0 xsec = 0
+----------------------------------- QUERY CACHE --------------------------------------------
+Number of Qcache_hits = 0 xsec = 0
+Number of Qcache_inserts = 0 xsec = 0
+Number of Qcache_not_cached = 0 xsec = 0
+Number of Qcache_lowmem_prunes = 0 xsec = 0
+Number of Qcache_free_memory = 0 xsec = 0
+Number of Qcache_queries_in_cache = 0 xsec = 0
+Number of Qcache_total_blocks = 0 xsec = 0
+------------------------------------ THREADS    --------------------------------------------
+Number of Threads_cached = -27
+Number of Threads_connected = 260
+Number of Threads_created = 233
+Number of Threads_running = 7
+
+
+
