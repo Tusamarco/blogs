@@ -1,0 +1,162 @@
+#v2
+[main]
+#connection oriented settings
+connUrl=jdbc:mysql://127.0.0.1:6033
+database=windmills
+user=m8_test
+password=test
+skipPermissionTest=true
+connParameters=autoReconnect=true  
+connectionPool=false
+connectionPoolClass= 
+selectForceAutocommitOff=true
+stickyconnection=false
+useConnectionPool=true
+connectionPoolType=1
+#at the moment we only support hikari
+
+FKEnable=false
+createTable=true 
+dbType=MySQL 
+doDelete=false 
+doReport=true 
+doSimple=false 
+doSimplePk=false 
+droptable=false
+ignoreBinlog=false
+operationShort=false  
+poolNumber=1
+pctInsert=100
+pctUpdate=100 
+pctSelect=100 
+pctDelete=100
+#repeatNumber=1
+repeatNumber=5000
+HardStopLimit=10
+UseHardStop=true
+StatIntervalMs=1000
+StatLoops = 100
+SemaphoreCountdownTime = 3
+# table engine comma separated with % value; 
+TableEngine=InnoDB|90,MyISAM|10
+truncate=false
+# Interactive mode [0 no|1 console output|2 console output + not exit until question is answered ] default 2 
+interactive = 2
+
+
+DeleteClass=net.tc.stresstool.actions.DeleteBase 
+SelectClass=net.tc.stresstool.actions.SelectBase
+InsertClass=net.tc.stresstool.actions.InsertBase
+#InsertClass=net.tc.stresstool.actions.InsertEmployeesTest
+UpdateClass=net.tc.stresstool.actions.UpdateBase
+ValueProvider=net.tc.stresstool.value.BasicFileValueProvider
+
+
+
+#logPathStats=/tmp/stats.csv
+#logPathStatReport=/tmp/reportstat.txt
+#logPathReport=/tmp/report.txt
+appendLogStat=true
+insertStatHeaders=true
+appendLogReport=true
+
+datafilepath=/opt/shakespere.txt
+
+
+#manage the calendar options
+# YYYY-MM-DD HH:MM:SS
+# daysdiffernce is the target/final date of the period 
+calendardate=2017-09-30 00:00:01 
+daysdiffernce=180
+
+
+[logs]
+stresstool=log4j.cnf
+applicationlog=APPLICATION
+actionlog=ACTIONS
+statlog=STATS
+monitorlog=MONITORS
+
+[statistics]
+rootdirectory=/tmp/stats
+#this parameter says to write a CSV file for each provider (in root dir)
+flushrowonfile=false
+providerclass=net.tc.stresstool.statistics.providers.ActionsReporter
+#,net.tc.stresstool.statistics.providers.MySQLStatus
+
+#,net.tc.stresstool.statistics.providers.InnoDBMetrics
+#,net.tc.stresstool.statistics.providers.InnoDB
+#,net.tc.stresstool.statistics.providers.MySQLPerfSchema,net.tc.stresstool.statistics.providers.MySQLSProclist
+eventhistory=350
+actionhistory=120
+processaverage=true
+
+[com.zaxxer.hikari]
+dataSource.cachePrepStmts=true
+dataSource.prepStmtCacheSize=250
+dataSource.prepStmtCacheSqlLimit=2048
+dataSource.useServerPrepStmts=true
+dataSource.useLocalSessionState=true
+dataSource.useLocalTransactionState=true
+dataSource.rewriteBatchedStatements=true
+dataSource.cacheResultSetMetadata=true
+dataSource.cacheServerConfiguration=true
+dataSource.elideSetAutoCommits=true
+dataSource.maintainTimeStats=false
+
+
+[net.tc.stresstool.actions.DeleteBase] 
+sleepDelete=100 
+usePrepareStatement=false
+deleteRange = 100
+batchSize=6
+lazyInterval=0
+lazyDelete=false
+numberOfprimaryTables=1
+batchSize=3
+
+[net.tc.stresstool.actions.SelectBase]
+#for consistency the number of tables should never be higher than the ones declared in the Insert class
+usePrepareStatement=false
+SelectFilterMethod=in
+#range|in|match
+SleepSelect=100 
+
+numberOfprimaryTables=5
+numberOfSecondaryTables=5
+numberOfIntervalKeys=100
+numberOfJoinTables=0
+joinField=a
+forceIndex=false
+indexName=IDX_as
+lazySelect=true
+lazyInterval=1
+#joinCondition=Left - experimental
+batchSize = 4
+textAttributeMaxSearchlength=5
+
+[net.tc.stresstool.actions.InsertBase]
+usePrepareStatement=false
+numberOfprimaryTables=1
+numberOfSecondaryTables=0
+useAutoIncrement=true
+joinField=millid
+sleepWrite=10
+lazyCreation=true
+lazyInterval=5
+batchSize=20
+jsonFile=wind_mill_example2.json
+
+
+
+[net.tc.stresstool.actions.UpdateBase]
+usePrepareStatement=false
+delayStartRecords = 1000
+numberOfprimaryTables=1
+numberOfSecondaryTables=0
+useAutoIncrement=true
+joinField=a
+sleepUpdate=500
+lazyUpdate=false
+lazyInterval=10
+batchSize=5
