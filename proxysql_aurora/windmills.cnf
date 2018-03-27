@@ -7,7 +7,7 @@ user=m8_test
 password=test
 skipPermissionTest=true
 connParameters=autoReconnect=true  
-connectionPool=false
+connectionPool=true
 connectionPoolClass= 
 selectForceAutocommitOff=true
 stickyconnection=false
