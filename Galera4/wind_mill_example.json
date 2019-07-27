@@ -1,0 +1,388 @@
+{
+	"database":"windmills",
+	"characterSet":"utf8",
+	"tables":{
+		"table":[
+				{
+					"database":"windmills",
+					"tablename":"wmillAUTOINC",
+					"engine":"innodb",
+					"primarykey":["id"],
+					"autoincrementvalue":0,
+					"defaultcharset":"utf8",
+					"defaultcollation":"utf8_bin",
+					"haspartition":false,
+					"tablespace":"",
+					"datadir":"",
+					"rowformat":"dynamic",
+					"multiple":true,
+					"rangeLength":"100",
+					"aselectcondition":"millid,id, kwatts_s,date,time,active",
+					"selectcondition":{
+							"condition":[
+								{"weight":100,"condition_string":"millid,id, kwatts_s,date,time,active"},
+								{"weight":100,"condition_string":"millid,id"},
+								{"weight":100,"condition_string":"uuid,date,kwatts_s"},
+								{"weight":100,"condition_string":"id,millid,location"},
+								{"weight":100,"condition_string":"millid,active,date"}
+							]
+					},
+					"example_selectcondition":"autoinc,uuid,serverid,a,b,c,counter,time,partitionid,date,strrecordtype",
+					"updatesetattributes":"#active#",
+					"wherecondition_s":{
+							"condition":[
+								{"weight":100,"condition_string":" #millid#=#?millid?millid# and #active#=#?active?active#"},
+								{"weight":10,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+					"wherecondition_u":{
+							"condition":[
+								{"weight":1,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+					"wherecondition_d":{
+							"condition":[
+								{"weight":1,"condition_string":" #millid#=#?millid?millid# and #active#=0"},
+								{"weight":10,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+				    "example_where":" #autoinc# = #?autoinc?autoinc#  and #date# #?date_RANGE_OPTION_BETWEEN?date#  and #b# like #?b|20?b# " ,
+					"keys":
+							{
+							"key":
+								[
+									{"name":"IDX_millid","unique":false,"attributes":["millid","active"]},
+									{"name":"IDX_active","unique":false,"attributes":["id","active"]}
+								]
+							},	
+					"attributes":{
+						"attribute":
+							[
+								{"name":"id","datatype":"bigint","datadimension":"11","default":"","null":false,"autoincrement":true,"where_attribute":true},
+								{"name":"uuid","datatype":"char","datadimension":"36","default":"","null":false,"specialFunction":"UUID()"},
+								{"name":"millid","datatype":"smallint","datadimension":"6","default":"","null":false,"upperlimit":"400","lazy":"0"},
+								{"name":"kwatts_s","datatype":"int","datadimension":"11","default":"","null":false,"upperlimit":"5000","lazy":"0"},	
+								{"name":"date","datatype":"date","default":"","null":false,"lazy":"0"},			
+								{"name":"location","datatype":"varchar","datadimension":"50","default":"","null":false},
+								{"name":"active","datatype":"tinyint","datadimension":"2","default":"1","null":false,"upperlimit":"2","lazy":"0"},								
+								{"name":"time","datatype":"timestamp","default":"CURRENT_TIMESTAMP","onUpdate":"CURRENT_TIMESTAMP","null":false,"specialFunction":"NOW()","where_attribute":true},
+								{"name":"strrecordtype","datatype":"char","datadimension":"3","default":"","null":true}				
+							]
+					},
+					"partitionDefinition":{
+	
+					}
+				},
+				{
+					"database":"windmills",
+					"tablename":"wmillMID",
+					"engine":"innodb",
+					"primarykey":["millid","id"],
+					"autoincrementvalue":0,
+					"defaultcharset":"utf8",
+					"defaultcollation":"utf8_bin",
+					"haspartition":false,
+					"tablespace":"",
+					"datadir":"",
+					"rowformat":"dynamic",
+					"multiple":true,
+					"rangeLength":"100",
+					"aselectcondition":"millid,id, kwatts_s,date,time,active",
+					"selectcondition":{
+							"condition":[
+								{"weight":100,"condition_string":"millid,id, kwatts_s,date,time,active"},
+								{"weight":100,"condition_string":"millid,id"},
+								{"weight":100,"condition_string":"uuid,date,kwatts_s"},
+								{"weight":100,"condition_string":"id,millid,location"},
+								{"weight":100,"condition_string":"millid,active,date"}
+							]
+					},
+					"example_selectcondition":"autoinc,uuid,serverid,a,b,c,counter,time,partitionid,date,strrecordtype",
+					"updatesetattributes":"#active#",
+					"wherecondition_s":{
+							"condition":[
+								{"weight":100,"condition_string":" #millid#=#?millid?millid# and #active#=#?active?active#"},
+								{"weight":10,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+					"wherecondition_u":{
+							"condition":[
+								{"weight":1,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+					"wherecondition_d":{
+							"condition":[
+								{"weight":1,"condition_string":" #millid#=#?millid?millid# and #active#=0"},
+								{"weight":10,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+				    "example_where":" #autoinc# = #?autoinc?autoinc#  and #date# #?date_RANGE_OPTION_BETWEEN?date#  and #b# like #?b|20?b# " ,
+					"keys":
+							{
+							"key":
+								[
+									{"name":"IDX_id","unique":false,"attributes":["id"]},
+									{"name":"IDX_mid","unique":false,"attributes":["millid","active"]}
+								]
+							},	
+					"attributes":{
+						"attribute":
+							[
+								{"name":"id","datatype":"bigint","datadimension":"11","default":"","null":false,"autoincrement":true,"where_attribute":true},
+								{"name":"uuid","datatype":"char","datadimension":"36","default":"","null":false,"specialFunction":"UUID()"},
+								{"name":"millid","datatype":"smallint","datadimension":"6","default":"","null":false,"upperlimit":"400","lazy":"0"},
+								{"name":"kwatts_s","datatype":"int","datadimension":"11","default":"","null":false,"upperlimit":"5000","lazy":"0"},	
+								{"name":"date","datatype":"date","default":"","null":false,"lazy":"0"},			
+								{"name":"location","datatype":"varchar","datadimension":"50","default":"","null":false},
+								{"name":"active","datatype":"tinyint","datadimension":"2","default":"1","null":false,"upperlimit":"2","lazy":"0"},								
+								{"name":"time","datatype":"timestamp","default":"CURRENT_TIMESTAMP","onUpdate":"CURRENT_TIMESTAMP","null":false,"specialFunction":"NOW()","where_attribute":true},
+								{"name":"strrecordtype","datatype":"char","datadimension":"3","default":"","null":true}				
+							]
+					},
+					"partitionDefinition":{
+	
+					}
+				},
+				{
+					"database":"windmills",
+					"tablename":"wmillMIDUUID",
+					"engine":"innodb",
+					"primarykey":["millid","uuid"],
+					"autoincrementvalue":0,
+					"defaultcharset":"utf8",
+					"defaultcollation":"utf8_bin",
+					"haspartition":false,
+					"tablespace":"",
+					"datadir":"",
+					"rowformat":"dynamic",
+					"multiple":true,
+					"rangeLength":"100",
+					"aselectcondition":"millid,id, kwatts_s,date,time,active",
+					"selectcondition":{
+							"condition":[
+								{"weight":100,"condition_string":"millid,id, kwatts_s,date,time,active"},
+								{"weight":100,"condition_string":"millid,id"},
+								{"weight":100,"condition_string":"uuid,date,kwatts_s"},
+								{"weight":100,"condition_string":"id,millid,location"},
+								{"weight":100,"condition_string":"millid,active,date"}
+							]
+					},
+					"example_selectcondition":"autoinc,uuid,serverid,a,b,c,counter,time,partitionid,date,strrecordtype",
+					"updatesetattributes":"#active#",
+					"wherecondition_s":{
+							"condition":[
+								{"weight":100,"condition_string":" #millid#=#?millid?millid# and #active#=#?active?active#"},
+								{"weight":10,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+					"wherecondition_u":{
+							"condition":[
+								{"weight":1,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+					"wherecondition_d":{
+							"condition":[
+								{"weight":1,"condition_string":" #millid#=#?millid?millid# and #active#=0"},
+								{"weight":10,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+				    "example_where":" #autoinc# = #?autoinc?autoinc#  and #date# #?date_RANGE_OPTION_BETWEEN?date#  and #b# like #?b|20?b# " ,
+					"keys":
+							{
+							"key":
+								[
+									{"name":"IDX_id","unique":true,"attributes":["id"]},
+									{"name":"IDX_mid","unique":false,"attributes":["millid","active"]}
+								]
+							},	
+					"attributes":{
+						"attribute":
+							[
+								{"name":"id","datatype":"bigint","datadimension":"11","default":"","null":false,"autoincrement":true,"where_attribute":true},
+								{"name":"uuid","datatype":"char","datadimension":"36","default":"","null":false,"specialFunction":"REVERSE(UUID())"},
+								{"name":"millid","datatype":"smallint","datadimension":"6","default":"","null":false,"upperlimit":"400","lazy":"0"},
+								{"name":"kwatts_s","datatype":"int","datadimension":"11","default":"","null":false,"upperlimit":"5000","lazy":"0"},	
+								{"name":"date","datatype":"date","default":"","null":false,"lazy":"0"},			
+								{"name":"location","datatype":"varchar","datadimension":"50","default":"","null":false},
+								{"name":"active","datatype":"tinyint","datadimension":"2","default":"1","null":false,"upperlimit":"2","lazy":"0"},								
+								{"name":"time","datatype":"timestamp","default":"CURRENT_TIMESTAMP","onUpdate":"CURRENT_TIMESTAMP","null":false,"specialFunction":"NOW()","where_attribute":true},
+								{"name":"strrecordtype","datatype":"char","datadimension":"3","default":"","null":true}				
+							]
+					},
+					"partitionDefinition":{
+	
+					}
+				},
+				{
+					"database":"windmills",
+					"tablename":"wmillMIDPart",
+					"engine":"innodb",
+					"primarykey":["millid","id"],
+					"autoincrementvalue":0,
+					"defaultcharset":"utf8",
+					"defaultcollation":"utf8_bin",
+					"haspartition":true,
+					"tablespace":"",
+					"datadir":"",
+					"rowformat":"dynamic",
+					"multiple":true,
+					"rangeLength":"100",
+					"aselectcondition":"millid,id, kwatts_s,date,time,active",
+					"selectcondition":{
+							"condition":[
+								{"weight":100,"condition_string":"millid,id, kwatts_s,date,time,active"},
+								{"weight":100,"condition_string":"millid,id"},
+								{"weight":100,"condition_string":"uuid,date,kwatts_s"},
+								{"weight":100,"condition_string":"id,millid,location"},
+								{"weight":100,"condition_string":"millid,active,date"}
+							]
+					},
+
+					"example_selectcondition":"autoinc,uuid,serverid,a,b,c,counter,time,partitionid,date,strrecordtype",
+					"updatesetattributes":"#active#",
+					"wherecondition_s":{
+							"condition":[
+								{"weight":100,"condition_string":" #millid#=#?millid?millid# and #active#=#?active?active#"},
+								{"weight":10,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+					"wherecondition_u":{
+							"condition":[
+								{"weight":1,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+					"wherecondition_d":{
+							"condition":[
+								{"weight":1,"condition_string":" #millid#=#?millid?millid# and #active#=0"},
+								{"weight":10,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+				    "example_where":" #autoinc# = #?autoinc?autoinc#  and #date# #?date_RANGE_OPTION_BETWEEN?date#  and #b# like #?b|20?b# " ,
+					"keys":
+							{
+							"key":
+								[
+									{"name":"IDX_id","unique":false,"attributes":["id"]},
+									{"name":"IDX_mid","unique":false,"attributes":["millid","active"]}
+								]
+							},	
+					"attributes":{
+						"attribute":
+							[
+								{"name":"id","datatype":"bigint","datadimension":"11","default":"","null":false,"autoincrement":true,"where_attribute":true},
+								{"name":"uuid","datatype":"char","datadimension":"36","default":"","null":false,"specialFunction":"UUID()"},
+								{"name":"millid","datatype":"smallint","datadimension":"6","default":"","null":false,"upperlimit":"400","lazy":"0"},
+								{"name":"kwatts_s","datatype":"int","datadimension":"11","default":"","null":false,"upperlimit":"5000","lazy":"0"},	
+								{"name":"date","datatype":"date","default":"","null":false,"lazy":"0"},			
+								{"name":"location","datatype":"varchar","datadimension":"50","default":"","null":false},
+								{"name":"active","datatype":"tinyint","datadimension":"2","default":"1","null":false,"upperlimit":"2","lazy":"0"},								
+								{"name":"time","datatype":"timestamp","default":"CURRENT_TIMESTAMP","onUpdate":"CURRENT_TIMESTAMP","null":false,"specialFunction":"NOW()","where_attribute":true},
+								{"name":"strrecordtype","datatype":"char","datadimension":"3","default":"","null":true}				
+							]
+					},
+						"partitionDefinition":{
+						"partitionBy":"range",
+						"subpartition":false,
+						"attributes":["millid"],
+						"function":"",
+						"interval":"",
+						"starttime":"",
+						"endtime":"",
+						"partitions":"",
+						"lists":{"list":[]},
+						"ranges":{"range":[
+							{"name":"asia","value":"101"},
+							{"name":"europe","value":"201"},
+							{"name":"namerica","value":"301"},
+							{"name":"samerica","value":"401"},
+							{"name":"universe","value":"1001"}						
+						]}
+	
+					}
+				},
+				{
+					"database":"windmills",
+					"tablename":"wmillAUTOINCPART",
+					"engine":"innodb",
+					"primarykey":["date","id"],
+					"autoincrementvalue":0,
+					"defaultcharset":"utf8",
+					"defaultcollation":"utf8_bin",
+					"haspartition":true,
+					"tablespace":"",
+					"datadir":"",
+					"rowformat":"dynamic",
+					"multiple":true,
+					"rangeLength":"100",
+					"aselectcondition":"millid,id, kwatts_s,date,time,active",
+					"selectcondition":{
+							"condition":[
+								{"weight":100,"condition_string":"millid,id, kwatts_s,date,time,active"},
+								{"weight":100,"condition_string":"date,millid,id"},
+								{"weight":100,"condition_string":"uuid,date,kwatts_s"},
+								{"weight":100,"condition_string":"date,id,millid,location"},
+								{"weight":100,"condition_string":"millid,active,date"}
+							]
+					},
+					"example_selectcondition":"autoinc,uuid,serverid,a,b,c,counter,time,partitionid,date,strrecordtype",
+					"updatesetattributes":"#active#",
+					"wherecondition_s":{
+							"condition":[
+								{"weight":100,"condition_string":"  #date# #?date_RANGE_OPTION_BETWEEN?date#  AND #millid#=#?millid?millid# and #active#=#?active?active#"},
+								{"weight":10,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+					"wherecondition_u":{
+							"condition":[
+								{"weight":1,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+					"wherecondition_d":{
+							"condition":[
+								{"weight":1,"condition_string":" #millid#=#?millid?millid# and #date# #?date_RANGE_OPTION_BETWEEN?date#  and #active#=0"},
+								{"weight":10,"condition_string":" #id#=#?id?id#"}
+							]
+					},
+				    "example_where":" #autoinc# = #?autoinc?autoinc#  and #date# #?date_RANGE_OPTION_BETWEEN?date#  and #b# like #?b|20?b# " ,
+					"keys":
+							{
+							"key":
+								[
+									{"name":"IDX_millid","unique":false,"attributes":["millid","active"]},
+									{"name":"IDX_active","unique":false,"attributes":["id","active"]}
+								]
+							},	
+					"attributes":{
+						"attribute":
+							[
+								{"name":"id","datatype":"bigint","datadimension":"11","default":"","null":false,"autoincrement":true,"where_attribute":true},
+								{"name":"uuid","datatype":"char","datadimension":"36","default":"","null":false,"specialFunction":"UUID()"},
+								{"name":"millid","datatype":"smallint","datadimension":"6","default":"","null":false,"upperlimit":"400","lazy":"0"},
+								{"name":"kwatts_s","datatype":"int","datadimension":"11","default":"","null":false,"upperlimit":"5000","lazy":"0"},	
+								{"name":"date","datatype":"date","default":"","null":false,"lazy":"0"},			
+								{"name":"location","datatype":"varchar","datadimension":"50","default":"","null":false},
+								{"name":"active","datatype":"tinyint","datadimension":"2","default":"1","null":false,"upperlimit":"2","lazy":"0"},								
+								{"name":"time","datatype":"timestamp","default":"CURRENT_TIMESTAMP","onUpdate":"CURRENT_TIMESTAMP","null":false,"specialFunction":"NOW()","where_attribute":true},
+								{"name":"strrecordtype","datatype":"char","datadimension":"3","default":"","null":true}				
+							]
+					},
+					"partitionDefinition":{
+						"partitionBy":"range",
+						"subpartition":false,
+						"attributes":["date"],
+						"function":"TO_DAYS",
+						"interval":"MONTH",
+						"starttime":"2017-01-01",
+						"endtime":"2019-12-31",
+						"partitions":"",
+						"lists":{"list":[]},
+						"ranges":{"range":[]}
+	
+					}
+				}								
+				
+				
+
+			]
+		}
+}
