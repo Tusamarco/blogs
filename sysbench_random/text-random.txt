@@ -1,0 +1,242 @@
+let us talk about sysbench random function and how it affects our tests
+
+
+test to do 
+===========
+given 10 tables populate 100 rows and see how this affects the behaviour
+
+
+SYSBENCH
+-----------------------
+
+sysbench ./src/lua/oltp_read.lua  --mysql-host=192.168.4.55 --mysql-port=3306  --mysql-db=sbench_rand --mysql_storage_engine=innodb --db-driver=mysql --tables=10 --table_size=100  --threads=1  prepare
+
+sysbench ./src/lua/oltp_read_write.lua  --mysql-host=192.168.4.55 --mysql-port=3306  --mysql-db=sbench_rand --db-driver=mysql --tables=10 --table_size=100   --skip_trx=off  --report-interval=1 --mysql-ignore-errors=all --mysql_storage_engine=innodb --auto_inc=on --histogram --stats_format=csv --db-ps-mode=disable --threads=10 --time=200  run
+
+
+Command to parse general log
+--------------------------------
+cat general_query.log |grep -i -e "WHERE ID"|awk -F"WHERE id=" '{print $2}'|sort|uniq -c |sort -nr|grep -v -e "'"
+
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=special --verbosity=0 run
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=uniform --verbosity=0 run
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=zipfian --verbosity=0 run
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=pareto --verbosity=0 run
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=gaussian --verbosity=0 run
+
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=1 --rand-spec-res=75 run    <-- default
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=50 --rand-spec-res=80 run   <--  more distributes
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=100 --rand-spec-res=100 run <-- uniform
+
+
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=0.8 run                  <-- default 
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=2.5 run                  <-- Pareto
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=0 run                    <-- uniform 
+
+
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.2 run                     <-- default
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.5 run                     <-- uniform
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.8 run                     <-- pareto inverse 
+
+
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=gaussian --verbosity=0 run
+
+
+
+sysbench ./src/lua/test_random.lua --time=1 --rand-type=zipfian --rand-zipfian-exp=0 --verbosity=0 run
+
+[root@rms1 sysbench]# sysbench ./src/lua/test_random.lua --time=1 --rand-type=zipfian --verbosity=0 run
+       value  ------------- distribution ------------- count
+       1.000 |**************************************** 1025157
+       2.001 |***********************                  590206
+       3.002 |*****************                        426378
+       3.996 |*************                            338795
+       4.997 |***********                              283506
+       5.995 |**********                               245678
+       6.996 |********                                 216229
+       7.997 |********                                 194117
+       8.994 |*******                                  177429
+      10.000 |******                                   162753
+[root@rms1 sysbench]# sysbench ./src/lua/test_random.lua --time=1 --rand-type=pareto --verbosity=0 run
+       value  ------------- distribution ------------- count
+       1.000 |**************************************** 3342662
+       2.001 |****                                     337066
+       3.002 |***                                      212705
+       3.996 |**                                       158166
+       4.997 |**                                       127543
+       5.995 |*                                        106370
+       6.996 |*                                        92649
+       7.997 |*                                        82087
+       8.994 |*                                        73536
+      10.000 |*                                        66927
+[root@rms1 sysbench]# sysbench ./src/lua/test_random.lua --time=1 --rand-type=special --verbosity=0 run
+       value  ------------- distribution ------------- count
+       2.001 |                                         426
+       3.002 |                                         33707
+       3.996 |****                                     354436
+       4.997 |***************************              2274709
+       5.995 |**************************************** 3406890
+       6.996 |                                         33486
+       7.997 |                                         382
+       8.994 |                                         1
+[root@rms1 sysbench]# sysbench ./src/lua/test_random.lua --time=1 --rand-type=uniform --verbosity=0 run
+       value  ------------- distribution ------------- count
+       1.000 |**************************************** 621475
+       2.001 |**************************************** 620756
+       3.002 |**************************************** 620043
+       3.996 |**************************************** 620799
+       4.997 |**************************************** 620387
+       5.995 |**************************************** 620522
+       6.996 |**************************************** 621742
+       7.997 |**************************************** 620440
+       8.994 |**************************************** 621998
+      10.000 |**************************************** 621044
+[root@rms1 sysbench]# sysbench ./src/lua/test_random.lua --time=1 --rand-type=gaussian --verbosity=0 run
+       value  ------------- distribution ------------- count
+       2.001 |                                         434
+       3.002 |*                                        42205
+       3.996 |***********                              616596
+       4.997 |**************************************** 2163939
+       5.995 |**************************************** 2163655
+       6.996 |***********                              617637
+       7.997 |*                                        42117
+       8.994 |                                         415
+      10.000 |                                         1
+[root@rms1 sysbench]#
+[root@rms1 sysbench]# sysbench ./src/lua/test_random.lua --time=1 --rand-type=zipfian --rand-zipfian-exp=0 --verbosity=0 run
+       value  ------------- distribution ------------- count
+       1.000 |**************************************** 350589
+       2.001 |**************************************** 351136
+       3.002 |**************************************** 351012
+       3.996 |**************************************** 349246
+       4.997 |**************************************** 350641
+       5.995 |**************************************** 350924
+       6.996 |**************************************** 351116
+       7.997 |**************************************** 350741
+       8.994 |**************************************** 350407
+      10.000 |**************************************** 350651
+
+
+      
+      
+===== Special default ====
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=1 --rand-spec-res=75 run
+       value  ------------- distribution ------------- count
+       2.001 |                                         1972
+       3.002 |                                         165949
+       3.996 |****                                     1757071
+       4.997 |***************************              11260173
+       5.995 |**************************************** 16872649
+       6.996 |                                         166386
+       7.997 |                                         1917
+
+===== Special better distributed ====
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=50 --rand-spec-res=80 run
+       value  ------------- distribution ------------- count
+       2.001 |                                         1622
+       3.002 |*                                        133066
+       3.996 |************************                 4951762
+       4.997 |**************************************** 8420561
+       5.995 |*********************************        6865462
+       6.996 |***************************              5598667
+       7.997 |*******************                      4104995
+
+===== Special uniform ====
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=100 --rand-spec-res=100 run
+       value  ------------- distribution ------------- count
+       1.000 |**************************************** 3067603
+       2.001 |**************************************** 3068027
+       3.002 |**************************************** 3065195
+       3.996 |**************************************** 3068495
+       4.997 |**************************************** 3066598
+       5.995 |**************************************** 3063691
+       6.996 |**************************************** 3068731
+       7.997 |**************************************** 3070094
+       8.994 |**************************************** 3068288
+      10.000 |**************************************** 3064946
+
+===== Zipfian default ====
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=0.8 run
+       value  ------------- distribution ------------- count
+       1.000 |**************************************** 5075346
+       2.001 |***********************                  2914172
+       3.002 |*****************                        2107946
+       3.996 |*************                            1675207
+       4.997 |***********                              1399880
+       5.995 |**********                               1210962
+       6.996 |********                                 1070133
+       7.997 |********                                 961530
+       8.994 |*******                                  872796
+      10.000 |******                                   803999
+
+===== Zipfian Pareto like ====
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=2.5 run
+       value  ------------- distribution ------------- count
+       1.000 |**************************************** 13018901
+       2.001 |*******                                  2301563
+       3.002 |***                                      834846
+       3.996 |*                                        407207
+       4.997 |*                                        232653
+       5.995 |                                         147973
+       6.996 |                                         100320
+       7.997 |                                         72002
+       8.994 |                                         53847
+      10.000 |                                         41369
+
+===== Zipfian Uniform ====
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=0 run
+       value  ------------- distribution ------------- count
+       1.000 |**************************************** 1734077
+       2.001 |**************************************** 1733033
+       3.002 |**************************************** 1732812
+       3.996 |**************************************** 1733082
+       4.997 |**************************************** 1731588
+       5.995 |**************************************** 1732455
+       6.996 |**************************************** 1734506
+       7.997 |**************************************** 1733695
+       8.994 |**************************************** 1731689
+      10.000 |**************************************** 1732732
+
+===== Pareto default ====
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.2 run
+       value  ------------- distribution ------------- count
+       1.000 |**************************************** 16601066
+       2.001 |****                                     1672604
+       3.002 |***                                      1057588
+       3.996 |**                                       785963
+       4.997 |**                                       631434
+       5.995 |*                                        532062
+       6.996 |*                                        460089
+       7.997 |*                                        405386
+       8.994 |*                                        363872
+      10.000 |*                                        331472
+
+===== Pareto Uniform ====
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.5 run
+       value  ------------- distribution ------------- count
+       1.000 |**************************************** 3013682
+       2.001 |**************************************** 3015150
+       3.002 |**************************************** 3011710
+       3.996 |**************************************** 3011103
+       4.997 |**************************************** 3012373
+       5.995 |**************************************** 3011774
+       6.996 |**************************************** 3010538
+       7.997 |**************************************** 3011205
+       8.994 |**************************************** 3010994
+      10.000 |**************************************** 3011924
+
+===== Pareto Inverse ====
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.8 run
+       value  ------------- distribution ------------- count
+       1.000 |                                         1
+       2.001 |                                         211
+       3.002 |                                         3731
+       3.996 |                                         27230
+       4.997 |                                         123049
+       5.995 |*                                        420528
+       6.996 |****                                     1172373
+       7.997 |*********                                2830385
+       8.994 |********************                     6124591
+      10.000 |**************************************** 12177094      
+      
+      

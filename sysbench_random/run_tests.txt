@@ -1,0 +1,41 @@
+echo "===== Special default ===="
+echo "sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=1 --rand-spec-res=75 run"
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=1 --rand-spec-res=75 run    
+
+
+echo "===== Special better distributed ===="
+echo "sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=50 --rand-spec-res=80 run"
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=50 --rand-spec-res=80 run   
+
+
+echo "===== Special uniform ===="
+echo "sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=100 --rand-spec-res=100 run"
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=special --verbosity=0 --rand-spec-pct=100 --rand-spec-res=100 run 
+
+
+echo "===== Zipfian default ===="
+echo "sysbench ./src/lua/test_random.lua --time=5 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=0.8 run"
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=0.8 run                  
+
+echo "===== Zipfian Pareto like ===="
+echo "sysbench ./src/lua/test_random.lua --time=5 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=2.5 run"
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=2.5 run                  
+
+
+echo "===== Zipfian Uniform ===="
+echo "sysbench ./src/lua/test_random.lua --time=5 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=0 run"
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=zipfian --verbosity=0 --rand-zipfian-exp=0 run                    
+
+
+echo "===== Pareto default ===="
+echo "sysbench ./src/lua/test_random.lua --time=5 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.2 run"
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.2 run                 
+
+
+echo "===== Pareto Uniform ===="
+echo "sysbench ./src/lua/test_random.lua --time=5 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.5 run"
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.5 run                 
+
+echo "===== Pareto Inverse ===="
+echo "sysbench ./src/lua/test_random.lua --time=5 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.8 run"
+sysbench ./src/lua/test_random.lua --time=5 --rand-type=pareto --verbosity=0  --rand-pareto-h=0.8 run                 

@@ -1,0 +1,535 @@
+special
+# table_schema, table_name, total_latency, rows_fetched, fetch_latency, rows_inserted, insert_latency, rows_updated, update_latency, rows_deleted, delete_latency, io_read_requests, io_read, io_read_latency, io_write_requests, io_write, io_write_latency, io_misc_requests, io_misc_latency
+'sbench_rand', 'sbtest10', '22.39 s', '189730', '21.82 s', '863', '129.60 ms', '1736', '248.94 ms', '863', '185.11 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest4', '21.37 s', '192523', '20.28 s', '832', '130.45 ms', '1771', '798.72 ms', '832', '160.46 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest2', '21.31 s', '186878', '20.56 s', '892', '130.73 ms', '1686', '471.92 ms', '892', '145.49 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest7', '21.22 s', '185623', '20.50 s', '801', '131.88 ms', '1756', '453.15 ms', '801', '133.28 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest3', '20.93 s', '184216', '20.30 s', '845', '139.95 ms', '1780', '343.40 ms', '845', '139.05 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest8', '20.92 s', '180770', '20.51 s', '830', '141.49 ms', '1657', '208.64 ms', '830', '65.89 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest1', '19.91 s', '181416', '19.23 s', '861', '149.13 ms', '1704', '416.08 ms', '861', '114.80 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest9', '19.91 s', '182766', '18.92 s', '835', '216.41 ms', '1739', '622.53 ms', '835', '154.85 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest6', '19.34 s', '185606', '18.89 s', '853', '146.17 ms', '1705', '197.73 ms', '853', '106.39 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest5', '19.25 s', '190416', '18.75 s', '847', '147.52 ms', '1667', '269.58 ms', '847', '78.53 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+
+
+'sbench_rand', 'sbtest3', '23.74 s', '192672', '22.36 s', '901', '217.01 ms', '1789', '881.84 ms', '901', '287.90 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest7', '21.61 s', '189226', '21.00 s', '850', '124.13 ms', '1776', '411.73 ms', '850', '79.69 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest4', '21.40 s', '185090', '20.69 s', '885', '142.00 ms', '1753', '359.31 ms', '885', '213.03 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest2', '21.07 s', '186936', '20.21 s', '903', '168.34 ms', '1770', '599.13 ms', '903', '94.95 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest8', '20.83 s', '190610', '20.14 s', '888', '143.17 ms', '1757', '459.41 ms', '888', '86.98 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest9', '20.78 s', '192947', '20.24 s', '832', '136.72 ms', '1718', '325.52 ms', '832', '71.77 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest1', '20.12 s', '190540', '19.54 s', '849', '133.10 ms', '1777', '360.65 ms', '849', '87.67 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest5', '19.24 s', '183937', '18.73 s', '849', '132.17 ms', '1741', '294.17 ms', '849', '74.91 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest6', '18.95 s', '190966', '17.98 s', '895', '137.76 ms', '1704', '691.45 ms', '895', '143.45 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest10', '18.33 s', '191327', '17.85 s', '820', '123.99 ms', '1759', '274.00 ms', '820', '80.99 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+
+
+uniform
+# table_schema, table_name, total_latency, rows_fetched, fetch_latency, rows_inserted, insert_latency, rows_updated, update_latency, rows_deleted, delete_latency, io_read_requests, io_read, io_read_latency, io_write_requests, io_write, io_write_latency, io_misc_requests, io_misc_latency
+'sbench_rand', 'sbtest2', '4.31 s', '228827', '3.30 s', '1042', '174.32 ms', '2142', '751.01 ms', '1042', '77.79 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest9', '4.04 s', '225360', '2.88 s', '1072', '169.04 ms', '2137', '894.63 ms', '1072', '97.36 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest1', '3.45 s', '238971', '2.71 s', '1086', '170.71 ms', '2057', '440.52 ms', '1086', '132.18 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest4', '3.15 s', '232146', '2.48 s', '1087', '213.81 ms', '2171', '309.98 ms', '1087', '147.24 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest7', '3.09 s', '233245', '2.39 s', '1045', '141.03 ms', '2215', '472.31 ms', '1045', '85.80 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest8', '3.07 s', '236876', '2.46 s', '1089', '137.62 ms', '2185', '380.82 ms', '1089', '90.07 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest10', '3.03 s', '230145', '2.33 s', '1059', '165.66 ms', '2229', '306.48 ms', '1059', '233.09 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest5', '2.99 s', '238873', '2.39 s', '1073', '155.06 ms', '2104', '281.61 ms', '1073', '161.59 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest3', '2.94 s', '230786', '2.27 s', '1119', '170.15 ms', '2171', '417.81 ms', '1119', '88.76 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest6', '2.84 s', '231875', '2.26 s', '1105', '171.45 ms', '2143', '272.29 ms', '1105', '134.95 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+
+zipfian
+# table_schema, table_name, total_latency, rows_fetched, fetch_latency, rows_inserted, insert_latency, rows_updated, update_latency, rows_deleted, delete_latency, io_read_requests, io_read, io_read_latency, io_write_requests, io_write, io_write_latency, io_misc_requests, io_misc_latency
+'sbench_rand', 'sbtest6', '6.06 s', '325384', '5.16 s', '1055', '153.93 ms', '2100', '618.31 ms', '1055', '135.10 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest3', '5.41 s', '325496', '4.55 s', '1010', '155.06 ms', '2094', '615.00 ms', '1010', '89.40 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest4', '5.21 s', '315847', '3.99 s', '1020', '196.32 ms', '2067', '793.10 ms', '1020', '228.56 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest1', '5.04 s', '325073', '4.28 s', '1100', '180.71 ms', '2054', '458.31 ms', '1100', '118.29 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest7', '4.85 s', '327712', '4.25 s', '1005', '149.55 ms', '2036', '343.97 ms', '1005', '102.05 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest9', '4.83 s', '327927', '3.99 s', '1023', '197.40 ms', '2058', '523.97 ms', '1023', '116.54 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest5', '4.77 s', '325898', '4.17 s', '1038', '166.40 ms', '2061', '298.10 ms', '1038', '132.27 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest10', '4.73 s', '322460', '4.04 s', '1030', '157.13 ms', '2089', '444.91 ms', '1030', '95.39 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest8', '4.56 s', '330117', '3.88 s', '1048', '138.82 ms', '2094', '388.90 ms', '1048', '145.13 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest2', '4.16 s', '328053', '3.49 s', '1026', '180.84 ms', '2059', '313.22 ms', '1026', '173.43 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+
+with 0
+# table_schema, table_name, total_latency, rows_fetched, fetch_latency, rows_inserted, insert_latency, rows_updated, update_latency, rows_deleted, delete_latency, io_read_requests, io_read, io_read_latency, io_write_requests, io_write, io_write_latency, io_misc_requests, io_misc_latency
+'sbench_rand', 'sbtest2', '4.81 s', '231757', '3.29 s', '1120', '340.91 ms', '2158', '960.28 ms', '1120', '222.40 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest9', '4.64 s', '231734', '3.25 s', '1083', '186.20 ms', '2190', '1.06 s', '1083', '140.36 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest6', '4.25 s', '232732', '3.27 s', '1058', '186.94 ms', '2119', '671.41 ms', '1058', '123.55 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest7', '3.61 s', '228463', '2.59 s', '1053', '180.11 ms', '2096', '578.42 ms', '1053', '255.86 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest1', '3.53 s', '236051', '2.87 s', '1058', '178.50 ms', '2183', '395.33 ms', '1058', '86.83 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest8', '3.49 s', '232819', '2.56 s', '1055', '159.51 ms', '2119', '444.42 ms', '1055', '326.73 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest3', '3.29 s', '225792', '2.65 s', '1044', '162.46 ms', '2161', '399.26 ms', '1044', '84.31 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest4', '3.26 s', '240325', '2.57 s', '1091', '174.80 ms', '2161', '401.81 ms', '1091', '117.40 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest10', '3.12 s', '237628', '2.34 s', '1098', '177.20 ms', '2171', '451.86 ms', '1098', '143.73 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest5', '3.09 s', '231032', '2.22 s', '1098', '190.40 ms', '2158', '442.92 ms', '1098', '239.02 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+
+
+pareto
+# table_schema, table_name, total_latency, rows_fetched, fetch_latency, rows_inserted, insert_latency, rows_updated, update_latency, rows_deleted, delete_latency, io_read_requests, io_read, io_read_latency, io_write_requests, io_write, io_write_latency, io_misc_requests, io_misc_latency
+'sbench_rand', 'sbtest5', '20.55 s', '302366', '19.45 s', '832', '130.62 ms', '1707', '774.08 ms', '832', '193.09 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest4', '20.17 s', '309191', '19.40 s', '818', '126.96 ms', '1729', '570.07 ms', '818', '71.80 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest9', '19.67 s', '310053', '18.91 s', '870', '149.86 ms', '1664', '536.70 ms', '870', '74.54 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest6', '19.47 s', '319687', '18.75 s', '836', '126.01 ms', '1747', '479.10 ms', '836', '117.94 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest10', '19.45 s', '308487', '18.00 s', '845', '203.78 ms', '1705', '1.06 s', '845', '185.57 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest2', '19.28 s', '311235', '18.66 s', '869', '158.75 ms', '1680', '384.57 ms', '869', '78.80 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest8', '17.29 s', '308027', '16.70 s', '849', '155.69 ms', '1594', '250.00 ms', '849', '180.68 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest1', '17.18 s', '301961', '16.57 s', '792', '122.50 ms', '1661', '418.48 ms', '792', '69.72 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest7', '17.04 s', '309481', '16.41 s', '809', '149.39 ms', '1637', '369.18 ms', '809', '116.06 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest3', '16.38 s', '306321', '15.74 s', '798', '145.49 ms', '1680', '348.45 ms', '798', '144.93 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+
+
+gaussian
+# table_schema, table_name, total_latency, rows_fetched, fetch_latency, rows_inserted, insert_latency, rows_updated, update_latency, rows_deleted, delete_latency, io_read_requests, io_read, io_read_latency, io_write_requests, io_write, io_write_latency, io_misc_requests, io_misc_latency
+'sbench_rand', 'sbtest5', '5.18 s', '230592', '4.21 s', '1026', '162.42 ms', '2169', '491.69 ms', '1026', '316.62 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest4', '5.09 s', '225744', '3.89 s', '1055', '170.04 ms', '2124', '399.35 ms', '1055', '629.72 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest1', '4.94 s', '228865', '3.79 s', '1079', '149.35 ms', '2069', '910.74 ms', '1079', '85.16 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest2', '4.83 s', '223859', '4.00 s', '1082', '164.28 ms', '2157', '361.21 ms', '1082', '302.74 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest9', '4.67 s', '232504', '3.82 s', '1080', '240.65 ms', '2176', '430.19 ms', '1080', '179.89 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest10', '4.44 s', '230704', '3.52 s', '1034', '169.57 ms', '2064', '570.69 ms', '1034', '174.50 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest3', '4.42 s', '237140', '3.84 s', '1083', '167.62 ms', '2170', '318.82 ms', '1083', '97.93 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest6', '4.29 s', '229467', '3.51 s', '1013', '182.54 ms', '2109', '520.63 ms', '1013', '80.52 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest7', '4.24 s', '226433', '3.44 s', '1153', '216.78 ms', '2178', '466.88 ms', '1153', '121.67 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+'sbench_rand', 'sbtest8', '4.01 s', '234572', '3.42 s', '1076', '162.24 ms', '2146', '307.56 ms', '1076', '118.08 ms', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+
+cat general_query.log |grep -i -e "WHERE ID"|awk -F"=" '{print $2}'|sort|uniq -c |sort -nr|grep -v -e "'"
+
+
+special-default
+  54396 51
+  27529 50
+   1238 49
+   1216 52
+   1209 48
+   1176 53
+   1152 54
+   1141 46
+   1098 55
+   1091 47
+   1080 45
+   1009 56
+    990 44
+    904 57
+    884 43
+    789 42
+    788 58
+    754 59
+    724 41
+    646 40
+    614 60
+    533 39
+    529 61
+    482 38
+    415 62
+    386 63
+    360 37
+    318 64
+    306 36
+    254 35
+    230 65
+    216 34
+    201 66
+    169 67
+    157 33
+    119 68
+    114 32
+     91 31
+     86 69
+     78 70
+     75 30
+     51 29
+     39 71
+     29 72
+     28 28
+     23 73
+     17 27
+     15 75
+     15 26
+     14 74
+      9 25
+      8 76
+      8 24
+      7 78
+      6 23
+      4 77
+      3 80
+      2 79
+      2 22
+      2 21
+      1 83
+      1 19
+      1 17
+
+Uniform
+   1269 54
+   1257 2
+   1256 84
+   1249 60
+   1249 40
+   1243 99
+   1241 24
+   1236 76
+   1236 48
+   1233 18
+   1233 17
+   1230 94
+   1228 12
+   1225 79
+   1225 10
+   1224 7
+   1223 81
+   1223 25
+   1222 16
+   1218 44
+   1216 88
+   1216 8
+   1216 13
+   1215 22
+   1212 66
+   1211 64
+   1210 63
+   1209 95
+   1209 71
+   1209 27
+   1206 97
+   1206 36
+   1205 6
+   1204 68
+   1203 5
+   1203 20
+   1201 74
+   1200 92
+   1200 78
+   1200 14
+   1199 9
+   1199 23
+   1198 96
+   1198 46
+   1197 75
+   1197 100
+   1196 34
+   1194 91
+   1194 41
+   1193 43
+   1191 83
+   1190 55
+   1190 33
+   1189 87
+   1189 30
+   1188 85
+   1188 15
+   1187 90
+   1186 86
+   1186 61
+   1184 98
+   1184 47
+   1184 29
+   1183 67
+   1180 73
+   1179 35
+   1178 80
+   1177 56
+   1177 51
+   1176 49
+   1175 53
+   1175 32
+   1174 70
+   1174 26
+   1172 50
+   1170 42
+   1170 3
+   1169 11
+   1168 4
+   1165 65
+   1163 19
+   1162 62
+   1161 39
+   1157 21
+   1156 58
+   1156 52
+   1155 93
+   1155 89
+   1153 45
+   1152 57
+   1150 37
+   1147 38
+   1147 28
+   1146 1
+   1145 77
+   1144 59
+   1142 31
+   1133 72
+   1115 69
+   1098 82
+   
+zipfian
+  13990 1
+   8101 2
+   5784 3
+   4609 4
+   3871 5
+   3302 6
+   2951 7
+   2540 8
+   2334 9
+   2163 10
+   2052 11
+   1906 12
+   1768 13
+   1630 14
+   1591 16
+   1585 15
+   1456 17
+   1359 18
+   1325 19
+   1278 20
+   1230 21
+   1194 22
+   1138 23
+   1120 25
+   1102 24
+   1023 26
+   1007 27
+    958 28
+    942 30
+    926 29
+    878 34
+    876 31
+    873 32
+    844 36
+    830 33
+    800 35
+    782 39
+    773 37
+    762 41
+    726 38
+    722 42
+    717 45
+    706 40
+    690 43
+    666 44
+    652 46
+    646 47
+    645 48
+    632 49
+    617 52
+    611 51
+    608 54
+    600 50
+    577 55
+    554 56
+    553 58
+    551 53
+    541 64
+    541 57
+    533 59
+    532 61
+    522 65
+    521 60
+    517 66
+    509 67
+    495 69
+    486 62
+    470 78
+    462 68
+    460 73
+    451 70
+    450 71
+    447 77
+    447 63
+    442 75
+    434 89
+    434 76
+    427 85
+    427 79
+    425 82
+    425 74
+    425 72
+    423 84
+    420 80
+    406 81
+    405 83
+    401 90
+    397 88
+    392 86
+    382 97
+    380 87
+    374 93
+    372 91
+    361 96
+    360 94
+    357 98
+    351 95
+    341 92
+    328 100
+    325 99   
+   
+pareto
+  55013 1
+   5608 2
+   3524 3
+   2696 4
+   2179 5
+   1757 6
+   1534 7
+   1356 8
+   1211 9
+   1069 10
+    989 11
+    894 12
+    891 13
+    751 14
+    736 15
+    710 16
+    691 17
+    601 18
+    600 19
+    591 20
+    556 21
+    538 22
+    531 23
+    510 24
+    479 27
+    479 26
+    478 25
+    456 30
+    449 29
+    444 28
+    407 32
+    407 31
+    373 34
+    366 33
+    359 37
+    358 35
+    339 38
+    333 40
+    325 43
+    325 42
+    322 39
+    312 36
+    309 41
+    292 45
+    285 44
+    273 52
+    272 49
+    267 48
+    267 46
+    264 47
+    253 55
+    252 54
+    248 51
+    243 53
+    235 50
+    234 57
+    233 69
+    233 56
+    225 60
+    219 80
+    214 70
+    212 66
+    212 62
+    210 59
+    209 61
+    209 58
+    208 63
+    206 65
+    196 71
+    194 68
+    192 64
+    191 67
+    190 91
+    190 82
+    185 72
+    182 77
+    181 74
+    180 84
+    180 83
+    177 75
+    175 81
+    174 73
+    173 76
+    167 86
+    163 93
+    162 89
+    160 85
+    159 79
+    154 88
+    153 92
+    149 87
+    148 98
+    144 95
+    144 78
+    144 100
+    141 99
+    140 96
+    139 97
+    139 90
+    137 94   
+   
+gaussian
+   5558 50
+   5548 51
+   5497 49
+   5495 52
+   5457 53
+   5418 48
+   5151 47
+   5110 54
+   4810 46
+   4799 55
+   4704 56
+   4589 45
+   4234 57
+   4127 44
+   3804 43
+   3758 58
+   3414 42
+   3340 59
+   3117 41
+   2994 60
+   2605 61
+   2489 40
+   2250 62
+   2240 39
+   1958 38
+   1905 63
+   1575 37
+   1503 64
+   1335 36
+   1279 65
+   1054 66
+   1041 35
+    864 34
+    824 67
+    667 33
+    649 68
+    477 69
+    477 32
+    386 70
+    377 31
+    284 71
+    254 30
+    220 29
+    193 72
+    134 28
+    120 73
+     99 74
+     88 27
+     80 26
+     75 75
+     59 25
+     45 76
+     40 24
+     27 77
+     21 78
+     19 23
+     11 79
+     10 22
+     10 21
+      7 80
+      4 81
+      3 20
+      3 19
+      2 84
+      2 82
+      1 83   
+   
