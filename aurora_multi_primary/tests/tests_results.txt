@@ -62,29 +62,29 @@ PMM export commands:
 ==========================
 Test suite
 --------------
-./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval auto --from  "2020-09-28 11:43:0" --to  "2020-09-28 12:45:0"  --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb-details" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval auto --from  "2020-09-28 11:43:0" --to  "2020-09-28 12:45:0"  --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb-details" --api_key ""
 
-./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval auto --from  "2020-09-28 11:43:0" --to  "2020-09-28 12:45:0"  --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb-details" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval auto --from  "2020-09-28 11:43:0" --to  "2020-09-28 12:45:0"  --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb-details" --api_key ""
 
 
 Write tests
 --------------
 Baseline
 -------
-./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval 1s --from  "2020-09-28 14:55:0" --to  "2020-09-28 17:15:00"  --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval 1s --from  "2020-09-28 14:55:0" --to  "2020-09-28 17:15:00"  --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key ""
 
-./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval 1s --from  "2020-09-28 14:55:0" --to  "2020-09-28 17:15:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval 1s --from  "2020-09-28 14:55:0" --to  "2020-09-28 17:15:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key ""
 
 Write different schemas
 -------------------------
-./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval 1s --from  "2020-09-28 18:00:0" --to  "2020-09-28 20:10:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval 1s --from  "2020-09-28 18:00:0" --to  "2020-09-28 20:10:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key ""
 
-./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval 1s --from  "2020-09-28 18:00:0" --to  "2020-09-28 20:10:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval 1s --from  "2020-09-28 18:00:0" --to  "2020-09-28 20:10:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key ""
 
 
 Write Same schemas
 -------------------------
-./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval 1s --from  "2020-09-29 10:00:0" --to  "2020-09-29 12:50:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval 1s --from  "2020-09-29 10:00:0" --to  "2020-09-29 12:50:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key ""
 
-./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval 1s --from  "2020-09-29 10:00:0" --to  "2020-09-29 12:50:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval 1s --from  "2020-09-29 10:00:0" --to  "2020-09-29 12:50:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key ""
 
