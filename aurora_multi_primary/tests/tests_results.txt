@@ -1,0 +1,90 @@
+Aurora Multimaster tests
+=============================================
+Finally I will test:
+    Connection speed
+        direct to endpoint
+        use cluster endpoint
+        use proxy with direct endpoint (maybe)
+    Stale read
+    Write single node for baseline
+    Write on both node:
+        Scaling in RR fashion 
+        Scaling splitting the load by schema
+
+running command"
+export da=`date`; time <>;echo $da; date; 
+
+for file in `ls --indicator-style=none /cygdrive/d/work/blogs/2020/amazon_multi_master/tests/sysbench_results_DB_node2_ec2_node1`;do ../.././read_and_get_from_file.sh $file `pwd`  TotalTime  ===============;done
+  
+  
+#Connection speed
+#------------------------
+export da=`date`; time ./run.sh MySQLConnectionTest "loops=100, url=jdbc:mysql://mm-testing.cluster-c7wzm8xxmrze.eu-central-1.rds.amazonaws.com:3306, verbose=true,summary=true,parameters=&characterEncoding=UTF-8,printConnectionTime=true,reportCSV=true,sleep=1000, user=<>,password=<>" ;echo $da; date; 
+
+export da=`date`; time ./run.sh MySQLConnectionTest "loops=100, url=jdbc:mysql://mm-testing-instance-1.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com:3306, verbose=true,summary=true,parameters=&characterEncoding=UTF-8,printConnectionTime=true,reportCSV=true,sleep=1000, user=<>,password=<>" ;echo $da; date; 
+
+export da=`date`; time ./run.sh MySQLConnectionTest "loops=100, url=jdbc:mysql://mm-testing-instance-1-eu-central-1a.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com:3306, verbose=true,summary=true,parameters=&characterEncoding=UTF-8,printConnectionTime=true,reportCSV=true,sleep=1000, user=<>,password=<>" ;echo $da; date; 
+
+
+
+#Stale read
+#--------------------
+export da=`date`; time ./run.sh StaleReadTest 'loops=5000, url=jdbc:mysql://mm-testing-instance-1.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com:3306, urlRead=jdbc:mysql://mm-testing-instance-1-eu-central-1a.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com:3306, user=<>,password=<>,verbose=true,summary=true,parameters=&characterEncoding=UTF-8,printConnectionTime=true,reportCSV=true,sleep=1000, rowsNumber=10000,printStatusDone=true,awsMMsessionConsistencyLevel=INSTANCE_RAW' ;echo $da; date; 
+
+export da=`date`; time ./run.sh StaleReadTest 'loops=5000, url=jdbc:mysql://mm-testing-instance-1.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com:3306, urlRead=jdbc:mysql://mm-testing-instance-1-eu-central-1a.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com:3306, user=<>,password=<>,verbose=true,summary=true,parameters=&characterEncoding=UTF-8,printConnectionTime=true,reportCSV=true,sleep=1000, rowsNumber=10000,printStatusDone=true,awsMMsessionConsistencyLevel=REGIONAL_RAW' ;echo $da; date; 
+
+
+Prepare tpcc
+--------------------
+sysbench ./tpcc.lua --mysql-host=mm-testing-instance-1.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com --mysql-port=3306 --mysql-user=<> --mysql-password=<>  --mysql-db=tpcc --time=300 --threads=32 --report-interval=1 --tables=10 --scale=15  --mysql_table_options=" CHARSET=utf8 COLLATE=utf8_bin"  --db-driver=mysql prepare
+
+ 
+Write/read on one node and define baseline
+--------------------------------------
+On ec2 Node2 subnet2, hitting DB NODE 1
+./run_multiple_sysbench_schema.sh plain tpcc mm-testing-instance-1.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com;
+
+
+Write on both node:
+-------------------------------------
+Scaling splitting the load by schema
+CHANGE SCHEMA NAME inside one of the two script
+ec2 node1 ./run_multiple_sysbench_schemas.sh plain tpcc mm-testing-instance-1-eu-central-1a.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com;
+ec2 node2 ./run_multiple_sysbench_schemas.sh plain tpcc mm-testing-instance-1.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com;
+
+Scaling Both writing same schema
+CHANGE SCHEMA NAME inside one of the two script
+ec2 node1 ./run_multiple_sysbench_schemas.sh plain tpcc mm-testing-instance-1-eu-central-1a.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com;
+ec2 node2 ./run_multiple_sysbench_schemas.sh plain tpcc mm-testing-instance-1.c7wzm8xxmrze.eu-central-1.rds.amazonaws.com;
+
+
+PMM export commands:
+==========================
+Test suite
+--------------
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval auto --from  "2020-09-28 11:43:0" --to  "2020-09-28 12:45:0"  --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb-details" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval auto --from  "2020-09-28 11:43:0" --to  "2020-09-28 12:45:0"  --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb-details" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+
+
+Write tests
+--------------
+Baseline
+-------
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval 1s --from  "2020-09-28 14:55:0" --to  "2020-09-28 17:15:00"  --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval 1s --from  "2020-09-28 14:55:0" --to  "2020-09-28 17:15:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+
+Write different schemas
+-------------------------
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval 1s --from  "2020-09-28 18:00:0" --to  "2020-09-28 20:10:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval 1s --from  "2020-09-28 18:00:0" --to  "2020-09-28 20:10:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+
+
+Write Same schemas
+-------------------------
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1" --pmm_version 2 --interval 1s --from  "2020-09-29 10:00:0" --to  "2020-09-29 12:50:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+
+./pcs-get-pmm-graphs.py --url "http://192.168.4.53:80" --hosts "mm-testing-instance-1-eu-central-1a" --pmm_version 2 --interval 1s --from  "2020-09-29 10:00:0" --to  "2020-09-29 12:50:00" --images_path /tmp/ --dashboards "node-instance-summary,mysql-amazonaurora,mysql-instance-summary,mysql-innodb" --api_key "eyJrIjoidzFyVEZQaG9mSk9CWDM2d2c5OUhnYVlxaWhtTDVlUU0iLCJuIjoiZXhwb3J0IiwiaWQiOjF9"
+
