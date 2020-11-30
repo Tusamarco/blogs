@@ -1,0 +1,285 @@
+This results will compare v2.0.15 and v2.1.0
+
+ProxySQL
+-----------------------------------------
+#delete from proxysql_servers where hostname in ('192.168.4.191','192.168.4.192',192.168.4.193');
+#INSERT INTO proxysql_servers (hostname,port,weight,comment) VALUES('192.168.4.191',6032,100,'PRIMARY');
+#INSERT INTO proxysql_servers (hostname,port,weight,comment) VALUES('192.168.4.192',6032,100,'SECONDARY');
+#INSERT INTO proxysql_servers (hostname,port,weight,comment) VALUES('192.168.4.193',6032,100,'SECONDARY');
+
+
+update global_variables set variable_value='cluster1' where variable_name='admin-cluster_username';
+update global_variables set variable_value='clusterpass' where variable_name='admin-cluster_password';
+update global_variables set variable_value=200 where variable_name='admin-cluster_check_interval_ms';
+update global_variables set variable_value=100 where variable_name='admin-cluster_check_status_frequency';
+
+load admin variables to run;save admin variables to disk;
+load proxysql servers to run;save proxysql servers to disk;
+
+#---
+
+update global_variables set Variable_Value='admin:admin;cluster1:clusterpass'  where Variable_name='admin-admin_credentials';
+update global_variables set Variable_Value=0  where Variable_name='mysql-hostgroup_manager_verbose';
+update global_variables set Variable_Value='true'  where Variable_name='mysql-query_digests_normalize_digest_text';
+update global_variables set Variable_Value='8.0.21'  where Variable_name='mysql-server_version';
+update global_variables set Variable_Value='utf8'  where Variable_name='mysql-default_charset';
+
+update global_variables set Variable_Value='false'  where Variable_name='mysql-verbose_query_error';
+update global_variables set Variable_Value='true'  where Variable_name='mysql-show_processlist_extended';
+update global_variables set Variable_Value='false'  where Variable_name='admin-web_enabled';
+
+
+#update global_variables set Variable_Value=50000  where Variable_name='mysql-max_stmts_cache';
+#update global_variables set Variable_Value='0'  where Variable_name='mysql-set_query_lock_on_hostgroup';
+#debug 
+#update global_variables set Variable_Value='false'  where Variable_name='mysql-monitor_enabled';
+
+
+load admin variables to run;save admin variables to disk;
+load mysql variables to run;save mysql variables to disk;
+
+Users
+-----------------------------------
+delete from mysql_users where username='app_test';
+delete from mysql_users where username='dba';
+insert into mysql_users (username,password,active,default_hostgroup,default_schema,transaction_persistent,comment) values ('app_test','test',1,100,'mysql',1,'application test user DC1');
+insert into mysql_users (username,password,active,default_hostgroup,default_schema,transaction_persistent,comment) values ('dba','dba',1,100,'mysql',1,'generic dba for application');
+LOAD MYSQL USERS TO RUNTIME;SAVE MYSQL USERS TO DISK;
+
+SERVERS
+------------------------------------------
+delete from mysql_servers where hostgroup_id in (100,101);
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.22',100,3306,10000,2000,'Preferred writer');
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.23',100,3306,1000,2000,'Second preferred ');
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.233',100,3306,100,2000,'Las chance');
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.22',101,3306,100,2000,'last reader');
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.23',101,3306,10000,2000,'reader1');    
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.233',101,3306,10000,2000,'reader2');        
+
+LOAD MYSQL SERVERS TO RUNTIME; SAVE MYSQL SERVERS TO DISK;    
+
+
+Query Rules
+-------------------------------------------
+delete from mysql_query_rules where rule_id in(1040,1042,);
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,active,retries,match_digest,apply) values(1040,6033,'app_test',100,1,3,'^SELECT.*FOR UPDATE',1);
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,active,retries,match_digest,apply) values(1042,6033,'app_test',101,1,3,'^SELECT.*$',1);
+
+load mysql query rules to run;save mysql query rules to disk;
+
+
+Galera Native support
+------------------------------------------
+Delete from mysql_galera_hostgroups;
+insert into mysql_galera_hostgroups (writer_hostgroup,backup_writer_hostgroup,reader_hostgroup, offline_hostgroup,active,max_writers,writer_is_also_reader,max_transactions_behind) 
+values (100,102,101,9101,1,1,0,10);
+LOAD MYSQL SERVERS TO RUNTIME; SAVE MYSQL SERVERS TO DISK;
+
+Delete from mysql_galera_hostgroups;
+insert into mysql_galera_hostgroups (writer_hostgroup,backup_writer_hostgroup,reader_hostgroup, offline_hostgroup,active,max_writers,writer_is_also_reader,max_transactions_behind) 
+values (100,102,101,9101,1,1,2,10);
+LOAD MYSQL SERVERS TO RUNTIME; SAVE MYSQL SERVERS TO DISK;
+
+Delete from mysql_galera_hostgroups;
+insert into mysql_galera_hostgroups (writer_hostgroup,backup_writer_hostgroup,reader_hostgroup, offline_hostgroup,active,max_writers,writer_is_also_reader,max_transactions_behind) 
+values (100,102,101,9101,1,1,1,10);
+LOAD MYSQL SERVERS TO RUNTIME; SAVE MYSQL SERVERS TO DISK;
+
+monitor
+----------------------
+ watch -n 1 'mysql -h 192.168.4.108 -P 6032 -ucluster1 -pclusterpass -t -e "select b.weight, c.* from stats_mysql_connection_pool c left JOIN runtime_mysql_servers b ON  c.hostgroup=b.hostgroup_id and c.srv_host=b.hostname and c.srv_port = b.port  where hostgroup in (100,101,102,200,201,8100,8101,9100,9101) order by hostgroup,srv_host desc;" -e " select srv_host,command,avg(time_ms), count(ThreadID) from stats_mysql_processlist group by srv_host,command;" -e "select * from stats_mysql_users;";mysql -h 192.168.4.108 -P 6032 -ucluster1 -pclusterpass -t -e " select * from mysql_server_galera_log  order by time_start_us desc limit 10"'
+
+
+========
+Read test
+========
+
++--------+-----------+---------------+----------+--------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+| weight | hostgroup | srv_host      | srv_port | status | ConnUsed | ConnFree | ConnOK | ConnERR | MaxConnUsed | Queries | Queries_GTID_sync | Bytes_data_sent | Bytes_data_recv | Latency_us |
++--------+-----------+---------------+----------+--------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+| 100    | 100       | 192.168.4.233 | 3306     | ONLINE | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 1248       |
+| 1000   | 100       | 192.168.4.23  | 3306     | ONLINE | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 1243       |
+| 10000  | 100       | 192.168.4.22  | 3306     | ONLINE | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 1487       |
+| 10000  | 101       | 192.168.4.233 | 3306     | ONLINE | 0        | 44       | 45     | 0       | 45          | 60823   | 0                 | 4301943         | 9866474         | 1248       |
+| 10000  | 101       | 192.168.4.23  | 3306     | ONLINE | 0        | 43       | 46     | 0       | 46          | 75977   | 0                 | 5377328         | 12331420        | 1243       |
+| 100    | 101       | 192.168.4.22  | 3306     | ONLINE | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 1487       |
++--------+-----------+---------------+----------+--------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+
+writer_is_also_reader=2
+
+
+mysql: [Warning] Using a password on the command line interface can be insecure.
++--------+-----------+---------------+----------+---------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+| weight | hostgroup | srv_host      | srv_port | status  | ConnUsed | ConnFree | ConnOK | ConnERR | MaxConnUsed | Queries | Queries_GTID_sync | Bytes_data_sent | Bytes_data_recv | Latency_us |
++--------+-----------+---------------+----------+---------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+| 100    | 100       | 192.168.4.233 | 3306     | SHUNNED | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 1602       |
+| 1000   | 100       | 192.168.4.23  | 3306     | SHUNNED | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 5327       |
+| 10000  | 100       | 192.168.4.22  | 3306     | ONLINE  | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 1093       |
+| 100    | 101       | 192.168.4.233 | 3306     | ONLINE  | 0        | 44       | 45     | 0       | 45          | 60823   | 0                 | 4301943         | 9866474         | 1602       |
+| 1000   | 101       | 192.168.4.23  | 3306     | ONLINE  | 0        | 43       | 46     | 0       | 46          | 75977   | 0                 | 5377328         | 12331420        | 5327       |
+| 100    | 102       | 192.168.4.233 | 3306     | ONLINE  | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 0          |
+| 1000   | 102       | 192.168.4.23  | 3306     | ONLINE  | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 0          |
++--------+-----------+---------------+----------+---------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+
+start reads and put down nodes
+
++--------+-----------+---------------+----------+---------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+| weight | hostgroup | srv_host      | srv_port | status  | ConnUsed | ConnFree | ConnOK | ConnERR | MaxConnUsed | Queries | Queries_GTID_sync | Bytes_data_sent | Bytes_data_recv | Latency_us |
++--------+-----------+---------------+----------+---------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+| 100    | 100       | 192.168.4.233 | 3306     | SHUNNED | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 2292       |
+| 1000   | 100       | 192.168.4.23  | 3306     | SHUNNED | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 3380       |
+| 10000  | 100       | 192.168.4.22  | 3306     | ONLINE  | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 1279       |
+| 100    | 101       | 192.168.4.233 | 3306     | ONLINE  | 1        | 43       | 45     | 0       | 45          | 64246   | 0                 | 4543343         | 10384851        | 2292       |
+| 1000   | 101       | 192.168.4.23  | 3306     | ONLINE  | 51       | 13       | 67     | 0       | 64          | 110513  | 0                 | 7819274         | 17837400        | 3380       |
+| 100    | 102       | 192.168.4.233 | 3306     | ONLINE  | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 2292       |
+| 1000   | 102       | 192.168.4.23  | 3306     | ONLINE  | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 3380       |
++--------+-----------+---------------+----------+---------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+
+First problem: node 192.168.4.233 had same weight as node 23, but when Galera support is started the weight is changed to the one existing in the writer hg 100.
+we can also see this is the case from the internal table:
+mysql> select * from mysql_servers_incoming;
++--------------+---------------+------+-----------+--------+--------+-------------+-----------------+---------------------+---------+----------------+-------------------+
+| hostgroup_id | hostname      | port | gtid_port | weight | status | compression | max_connections | max_replication_lag | use_ssl | max_latency_ms | comment           |
++--------------+---------------+------+-----------+--------+--------+-------------+-----------------+---------------------+---------+----------------+-------------------+
+| 100          | 192.168.4.22  | 3306 | 0         | 10000  | 0      | 0           | 2000            | 0                   | 0       | 0              | Preferred writer  |
+| 102          | 192.168.4.23  | 3306 | 0         | 1000   | 0      | 0           | 2000            | 0                   | 0       | 0              | Second preferred  |
+| 100          | 192.168.4.233 | 3306 | 0         | 100    | 1      | 0           | 2000            | 0                   | 0       | 0              | Las chance        |
+| 100          | 192.168.4.23  | 3306 | 0         | 1000   | 1      | 0           | 2000            | 0                   | 0       | 0              | Second preferred  |
+| 102          | 192.168.4.233 | 3306 | 0         | 100    | 0      | 0           | 2000            | 0                   | 0       | 0              | Las chance        |
+| 101          | 192.168.4.23  | 3306 | 0         | 1000   | 0      | 0           | 2000            | 0                   | 0       | 0              | Second preferred  |
+| 101          | 192.168.4.233 | 3306 | 0         | 100    | 0      | 0           | 2000            | 0                   | 0       | 0              | Las chance        |
++--------------+---------------+------+-----------+--------+--------+-------------+-----------------+---------------------+---------+----------------+-------------------+
+7 rows in set (0.02 sec)
+must investigate in the code why this happens
+
+2015 test:
++---------+--------------+---------------+--------------+----------+----------+--------+---------+-------------+
+| weight  | hostgroup_id | srv_host	 | status	| ConnUsed | ConnFree | ConnOK | ConnERR | MaxConnUsed |
++---------+--------------+---------------+--------------+----------+----------+--------+---------+-------------+
+| 100     | 100          | 192.168.4.233 | SHUNNED	| 0        | 0        | 0      | 0	 | 0           |
+| 1000    | 100          | 192.168.4.23  | SHUNNED	| 0        | 0        | 0      | 0	 | 0           |
+| 10000   | 100          | 192.168.4.22  | ONLINE	| 0        | 0        | 0      | 0	 | 0           |
+| 100     | 101          | 192.168.4.233 | ONLINE	| 0        | 0        | 0      | 0	 | 0           |
+| 1000    | 101          | 192.168.4.23  | ONLINE	| 0        | 0        | 0      | 0	 | 0           |
+| 100     | 102          | 192.168.4.233 | ONLINE	| 0        | 0        | 0      | 0	 | 0           |
+| 1000    | 102          | 192.168.4.23  | ONLINE	| 0        | 0        | 0      | 0	 | 0           |
+
+Ok about the order... 
+but if we have different order for the writer the weight will impact the readers as well.
+mysql: [Warning] Using a password on the command line interface can be insecure.
++---------+--------------+---------------+--------------+----------+----------+--------+---------+-------------+
+| weight  | hostgroup_id | srv_host	 | status	| ConnUsed | ConnFree | ConnOK | ConnERR | MaxConnUsed |
++---------+--------------+---------------+--------------+----------+----------+--------+---------+-------------+
+| 100     | 100          | 192.168.4.233 | SHUNNED	| 0        | 0        | 0      | 0	 | 0           |
+| 1000    | 100          | 192.168.4.23  | SHUNNED	| 0        | 0        | 0      | 0	 | 0           |
+| 10000   | 100          | 192.168.4.22  | ONLINE	| 0        | 0        | 0      | 0	 | 0           |
+| 100     | 101          | 192.168.4.233 | ONLINE 	| 0        | 31       | 49     | 18	 | 31          | <----- this should be the same as 
+| 1000    | 101          | 192.168.4.23  | ONLINE	| 40       | 24       | 64     | 0	 | 64          | <--- this
+| 100     | 102          | 192.168.4.233 | ONLINE	| 0        | 0        | 0      | 0	 | 0           |
+| 1000    | 102          | 192.168.4.23  | ONLINE	| 0        | 0        | 0      | 0	 | 0           |
+
+Removing all the readers there is no way to have writer to become reader (or being add to backup_writer list).
+
+Using writer is also reader =1 is ok also with  v210
+mysql: [Warning] Using a password on the command line interface can be insecure.
++--------+-----------+---------------+----------+---------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+| weight | hostgroup | srv_host      | srv_port | status  | ConnUsed | ConnFree | ConnOK | ConnERR | MaxConnUsed | Queries | Queries_GTID_sync | Bytes_data_sent | Bytes_data_recv | Latency_us |
++--------+-----------+---------------+----------+---------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+| 10000  | 100       | 192.168.4.22  | 3306     | ONLINE  | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 3653       |
+| 10000  | 101       | 192.168.4.22  | 3306     | ONLINE  | 54       | 10       | 67     | 0       | 64          | 448583  | 0                 | 31750712        | 73751334        | 3653       |
+| 10000  | 200       | 10.0.0.22     | 3306     | SHUNNED | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 0          |
+
+Still the problem is the usage of the internal reference to the writer also for the readers which means that the weight of the readers is over written by the writers
+
+============================
+pxc maintenance
+============================
+Works ok 210 some issues on 2015
+absolutely no go the issue with weight
+
+==========
+crash test seems working ok
+=========
++--------+-----------+---------------+----------+---------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+| weight | hostgroup | srv_host      | srv_port | status  | ConnUsed | ConnFree | ConnOK | ConnERR | MaxConnUsed | Queries | Queries_GTID_sync | Bytes_data_sent | Bytes_data_recv | Latency_us |
++--------+-----------+---------------+----------+---------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+| 100    | 100       | 192.168.4.233 | 3306     | SHUNNED | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 1136       |
+| 1000   | 100       | 192.168.4.23  | 3306     | ONLINE  | 48       | 2        | 150    | 0       | 50          | 378648  | 0                 | 25602803        | 31515577        | 1597       |
+| 100    | 101       | 192.168.4.233 | 3306     | ONLINE  | 1        | 17       | 18     | 0       | 18          | 76844   | 0                 | 5436150         | 12620049        | 1136       |
+| 1000   | 101       | 192.168.4.23  | 3306     | ONLINE  | 18       | 32       | 54     | 0       | 50          | 830744  | 0                 | 58799536        | 136023252       | 1597       |
+| 100    | 102       | 192.168.4.233 | 3306     | ONLINE  | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 1136       |
+| 10000  | 200       | 10.0.0.22     | 3306     | SHUNNED | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 0          |
+| 10000  | 201       | 10.0.0.33     | 3306     | SHUNNED | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 0          |
+| 10000  | 201       | 10.0.0.23     | 3306     | SHUNNED | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 0          |
+| 100    | 201       | 10.0.0.22     | 3306     | SHUNNED | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 0          |
+| 10000  | 9101      | 192.168.4.22  | 3306     | SHUNNED | 0        | 0        | 0      | 0       | 0           | 0       | 0                 | 0               | 0               | 1391       |
++--------+-----------+---------------+----------+---------+----------+----------+--------+---------+-------------+---------+-------------------+-----------------+-----------------+------------+
+
+98,50,53.00,6472.71,6070.73,221.99,179.99,1327.91,0.00,1.00 <--
+99,50,0.00,2719.17,2719.17,0.00,0.00,0.00,0.00,50.00        <--start
+100,50,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00
+101,50,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00
+102,50,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00
+103,50,0.00,2849.89,2549.90,193.99,106.00,0.00,0.00,0.00
+104,50,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00
+105,50,49.85,2663.99,2556.31,23.93,83.75,7615.89,0.00,6.98  <-- done 6"
+
+  
+
+INSERT OR IGNORE INTO mysql_servers_incoming (hostgroup_id,hostname,port,gtid_port,status,weight,compression,max_connections,max_replication_lag,use_ssl,max_latency_ms,comment) SELECT %d,hostname,port,gtid_port,status,weight,compression,max_connections,max_replication_lag,use_ssl,max_latency_ms,comment FROM mysql_servers_incoming WHERE hostgroup_id=102";
+
+
+SELECT %d,m1.hostname,m1.port,m1.gtid_port,m1.status,m1.weight,m1.compression,m1.max_connections,m1.max_replication_lag,m1.use_ssl,m1.max_latency_ms,m1.comment FROM mysql_servers m1 join mysql_servers_incoming m2 on  m1.hostname=m2.hostname and m1.port=m2.port  WHERE m2.hostgroup_id=%d and m1.hostgroup_id not in (select distinct hostgroup_id from mysql_servers_incoming );
+
+IF NO OTHE READER IS LEFT:
+INSERT OR IGNORE INTO mysql_servers_incoming (hostgroup_id,hostname,port,gtid_port,status,weight,compression,max_connections,max_replication_lag,use_ssl,max_latency_ms,comment) 
+SELECT 101,m1.hostname,m1.port,m1.gtid_port,m1.status,m1.weight,m1.compression,m1.max_connections,m1.max_replication_lag,m1.use_ssl,m1.max_latency_ms,m1.comment FROM mysql_servers m1 join mysql_servers_incoming m2 on  m1.hostname=m2.hostname and m1.port=m2.port  WHERE m2.hostgroup_id=100 and status=0;
+
+ and m1.hostgroup_id not in (select distinct hostgroup_id from mysql_servers_incoming );
+
+INSERT OR IGNORE INTO mysql_servers_incoming (hostgroup_id,hostname,port,gtid_port,status,weight,compression,max_connections,max_replication_lag,use_ssl,max_latency_ms,comment)SELECT 101,m1.hostname,m1.port,m1.gtid_port,m1.status,m1.weight,m1.compression,m1.max_connections,m1.max_replication_lag,m1.use_ssl,m1.max_latency_ms,m1.comment FROM mysql_servers m1 join mysql_servers_incoming m2 on  m1.hostname=m2.hostname and m1.port=m2.port  WHERE m2.hostgroup_id=102 and m1.hostgroup_id not in (select distinct hostgroup_id from mysql_servers_incoming );
+INSERT OR IGNORE INTO mysql_servers_incoming (hostgroup_id,hostname,port,gtid_port,status,weight,compression,max_connections,max_replication_lag,use_ssl,max_latency_ms,comment)SELECT 101,m1.hostname,m1.port,m1.gtid_port,m2.status,m1.weight,m1.compression,m1.max_connections,m1.max_replication_lag,m1.use_ssl,m1.max_latency_ms,m1.comment FROM mysql_servers m1 join mysql_servers_incoming m2 on  m1.hostname=m2.hostname and m1.port=m2.port  WHERE m2.hostgroup_id=102 and m1.hostgroup_id not in (select distinct hostgroup_id from mysql_servers_incoming );
+
+mysql> select * from mysql_servers_incoming;
++--------------+---------------+------+-----------+--------+--------+-------------+-----------------+---------------------+---------+----------------+-------------------+
+| hostgroup_id | hostname      | port | gtid_port | weight | status | compression | max_connections | max_replication_lag | use_ssl | max_latency_ms | comment           |
++--------------+---------------+------+-----------+--------+--------+-------------+-----------------+---------------------+---------+----------------+-------------------+
+| 100          | 192.168.4.22  | 3306 | 0         | 10000  | 0      | 0           | 2000            | 0                   | 0       | 0              | Preferred writer  |
+| 102          | 192.168.4.23  | 3306 | 0         | 1000   | 0      | 0           | 2000            | 0                   | 0       | 0              | Second preferred  |
+| 100          | 192.168.4.233 | 3306 | 0         | 100    | 1      | 0           | 2000            | 0                   | 0       | 0              | Las chance        |
+| 100          | 192.168.4.23  | 3306 | 0         | 1000   | 1      | 0           | 2000            | 0                   | 0       | 0              | Second preferred  |
+| 102          | 192.168.4.233 | 3306 | 0         | 100    | 0      | 0           | 2000            | 0                   | 0       | 0              | Las chance        |
+| 101          | 192.168.4.23  | 3306 | 0         | 10000  | 0      | 0           | 2000            | 0                   | 0       | 0              | reader1           |
+| 101          | 192.168.4.233 | 3306 | 0         | 10000  | 0      | 0           | 2000            | 0                   | 0       | 0              | reader2           |
++--------------+---------------+------+-----------+--------+--------+-------------+-----------------+---------------------+---------+----------------+-------------------+
+7 rows in set (0.00 sec)
+
+SELECT 102, hostname, port, gtid_port, weight, 0, compression, max_connections, max_replication_lag, use_ssl, max_latency_ms, comment FROM mysql_servers_incoming WHERE hostgroup_id=101 AND hostname='%s' AND port=%d";
+sprintf(query,q,info->backup_writer_hostgroup,info->writer_hostgroup,r->fields[1],atoi(r->fields[2]));
+
+
+
+See BUG reported: 
+
+
+INSERT OR IGNORE INTO mysql_servers_incoming SELECT 102, hostname, port, gtid_port, weight, 0, compression, max_connections, max_replication_lag, use_ssl, max_latency_ms, comment FROM mysql_servers_incoming WHERE hostgroup_id=100 AND hostname='192.168.4.23' AND port=3306;
+sprintf(query,q,info->backup_writer_hostgroup,info->writer_hostgroup,r->fields[1],atoi(r->fields[2]))	
+
+INSERT INTO mysql_servers_incoming (hostgroup_id,hostname,port,gtid_port,status,weight,compression,max_connections,max_replication_lag,use_ssl,max_latency_ms,comment)SELECT 101,m1.hostname,m1.port,m1.gtid_port,m2.status,m1.weight,m1.compression,m1.max_connections,m1.max_replication_lag,m1.use_ssl,m1.max_latency_ms,m1.comment FROM mysql_servers m1 join mysql_servers_incoming m2 on  m1.hostname=m2.hostname and m1.port=m2.port  WHERE m2.hostgroup_id=102 and m1.hostgroup_id not in (select distinct hostgroup_id from mysql_servers_incoming );
+
+
+
+
+
+q=(char *)"INSERT OR IGNORE INTO mysql_servers_incoming (hostgroup_id,hostname,port,gtid_port,status,weight,compression,max_connections,max_replication_lag,use_ssl,max_latency_ms,comment) SELECT %d,hostname,port,gtid_port,status,weight,compression,max_connections,max_replication_lag,use_ssl,max_latency_ms,comment FROM mysql_servers_incoming WHERE hostgroup_id=%d";
+
+q=(char *)"INSERT INTO mysql_servers_incoming (hostgroup_id,hostname,port,gtid_port,status,weight,compression,max_connections,max_replication_lag,use_ssl,max_latency_ms,comment) SELECT %d,m1.hostname,m1.port,m1.gtid_port,m2.status,m1.weight,m1.compression,m1.max_connections,m1.max_replication_lag,m1.use_ssl,m1.max_latency_ms,m1.comment FROM mysql_servers m1 join mysql_servers_incoming m2 on  m1.hostname=m2.hostname and m1.port=m2.port  WHERE m2.hostgroup_id=%d and m1.hostgroup_id not in (select distinct hostgroup_id from mysql_servers_incoming )";
+						
+                        
+MT Electing writer as reader given last node available : 
+INSERT INTO mysql_servers_incoming (hostgroup_id,hostname,port,gtid_port,status,weight,compression,max_connections,max_replication_lag,use_ssl,max_latency_ms,comment) SELECT 101,m1.hostname,m1.port,m1.gtid_port,0,m1.weight,m1.compression,m1.max_connections,m1.max_replication_lag,m1.use_ssl,m1.max_latency_ms,m1.comment FROM mysql_servers m1 left  join mysql_servers_incoming m2 on   m2.hostgroup_id=m1.hostgroup_id and m2.hostname=m1.hostname  where m2.hostgroup_id is null and m1.hostname in(select hostname from mysql_servers_incoming where hostgroup_id=100 and status=0);
+
+INSERT INTO mysql_servers_incoming (hostgroup_id,hostname,port,gtid_port,status,weight,compression,max_connections,max_replication_lag,use_ssl,max_latency_ms,comment) SELECT %d,m1.hostname,m1.port,m1.gtid_port,0,m1.weight,m1.compression,m1.max_connections,m1.max_replication_lag,m1.use_ssl,m1.max_latency_ms,m1.comment FROM mysql_servers m1 left  join mysql_servers_incoming m2 on m2.hostgroup_id=m1.hostgroup_id and m2.hostname=m1.hostname  where m2.hostgroup_id is null and m1.hostname in(select hostname from mysql_servers_incoming where hostgroup_id=%d and status=0);
+
+                       
+

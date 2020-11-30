@@ -1,0 +1,180 @@
+PXC - failover scenarios
+=================================
+Scenarios:
+    3 PXC nodes
+    2 ProxySQL in cluster
+    
+Tests:
+    1) Simple fail-over due maintenance
+    2) fail-over due node crash
+    3) fail-over due network glitch 
+    
+Variables:
+    1) writer_is_also_reader = 0|1|2 
+    2) sysbench with skip-trx=false|true
+
+Actions sequence:
+    1) Start-restart Proxysql
+    2) Set writer_is_also_reader
+    3) run sysbench with skip-trx=false|true
+    4) On direct connection to node set pxc_maint_mode = MAINTENANCE
+    5) On direct connection to node set pxc_maint_mode = DISABLED
+
+
+
+Configurations
+=========================================
+ProxySQL
+-----------------------------------------
+delete from proxysql_servers where hostname in ('192.168.4.191','192.168.4.192',192.168.4.193');
+INSERT INTO proxysql_servers (hostname,port,weight,comment) VALUES('192.168.4.191',6032,100,'PRIMARY');
+INSERT INTO proxysql_servers (hostname,port,weight,comment) VALUES('192.168.4.192',6032,100,'SECONDARY');
+INSERT INTO proxysql_servers (hostname,port,weight,comment) VALUES('192.168.4.193',6032,100,'SECONDARY');
+
+
+update global_variables set variable_value='cluster1' where variable_name='admin-cluster_username';
+update global_variables set variable_value='clusterpass' where variable_name='admin-cluster_password';
+update global_variables set variable_value=200 where variable_name='admin-cluster_check_interval_ms';
+update global_variables set variable_value=100 where variable_name='admin-cluster_check_status_frequency';
+
+load admin variables to run;save admin variables to disk;
+load proxysql servers to run;save proxysql servers to disk;
+
+#---
+
+update global_variables set Variable_Value='admin:admin;cluster1:clusterpass'  where Variable_name='admin-admin_credentials';
+update global_variables set Variable_Value=0  where Variable_name='mysql-hostgroup_manager_verbose';
+update global_variables set Variable_Value='true'  where Variable_name='mysql-query_digests_normalize_digest_text';
+update global_variables set Variable_Value='8.0.21'  where Variable_name='mysql-server_version';
+update global_variables set Variable_Value='utf8'  where Variable_name='mysql-default_charset';
+
+update global_variables set Variable_Value='false'  where Variable_name='mysql-verbose_query_error';
+update global_variables set Variable_Value='true'  where Variable_name='mysql-show_processlist_extended';
+update global_variables set Variable_Value='false'  where Variable_name='admin-web_enabled';
+
+
+#update global_variables set Variable_Value=50000  where Variable_name='mysql-max_stmts_cache';
+#update global_variables set Variable_Value='0'  where Variable_name='mysql-set_query_lock_on_hostgroup';
+
+load admin variables to run;save admin variables to disk;
+load mysql variables to run;save mysql variables to disk;
+
+Users
+-----------------------------------
+delete from mysql_users where username='app_test';
+delete from mysql_users where username='dba';
+insert into mysql_users (username,password,active,default_hostgroup,default_schema,transaction_persistent,comment) values ('app_test','test',1,100,'mysql',1,'application test user DC1');
+insert into mysql_users (username,password,active,default_hostgroup,default_schema,transaction_persistent,comment) values ('dba','dba',1,100,'mysql',1,'generic dba for application');
+LOAD MYSQL USERS TO RUNTIME;SAVE MYSQL USERS TO DISK;
+
+SERVERS
+------------------------------------------
+delete from mysql_servers where hostgroup_id in (100,101);
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.22',100,3306,10000,2000,'DC1');
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.23',100,3306,10000,2000,'DC1');
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.233',100,3306,10000,2000,'DC1');
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.22',101,3306,100,2000,'DC1');
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.23',101,3306,10000,2000,'DC1');    
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.233',101,3306,10000,2000,'DC1');        
+
+LOAD MYSQL SERVERS TO RUNTIME; SAVE MYSQL SERVERS TO DISK;    
+
+
+Query Rules
+-------------------------------------------
+delete from mysql_query_rules where rule_id in(1040,1042,);
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,active,retries,match_digest,apply) values(1040,6033,'app_test',100,1,3,'^SELECT.*FOR UPDATE',1);
+insert into mysql_query_rules (rule_id,proxy_port,username,destination_hostgroup,active,retries,match_digest,apply) values(1042,6033,'app_test',101,1,3,'^SELECT.*$',1);
+
+load mysql query rules to run;save mysql query rules to disk;
+
+
+Galera Native support
+------------------------------------------
+insert into mysql_galera_hostgroups (writer_hostgroup,backup_writer_hostgroup,reader_hostgroup, offline_hostgroup,active,max_writers,writer_is_also_reader,max_transactions_behind) 
+values (100,102,101,9101,1,1,0,10);
+LOAD MYSQL SERVERS TO RUNTIME; SAVE MYSQL SERVERS TO DISK;
+
+Delete from mysql_galera_hostgroups;
+insert into mysql_galera_hostgroups (writer_hostgroup,backup_writer_hostgroup,reader_hostgroup, offline_hostgroup,active,max_writers,writer_is_also_reader,max_transactions_behind) 
+values (100,102,101,9101,1,1,2,10);
+LOAD MYSQL SERVERS TO RUNTIME; SAVE MYSQL SERVERS TO DISK;
+
+Delete from mysql_galera_hostgroups;
+insert into mysql_galera_hostgroups (writer_hostgroup,backup_writer_hostgroup,reader_hostgroup, offline_hostgroup,active,max_writers,writer_is_also_reader,max_transactions_behind) 
+values (100,102,101,9101,1,1,1,10);
+LOAD MYSQL SERVERS TO RUNTIME; SAVE MYSQL SERVERS TO DISK;
+
+monitor
+----------------------
+
+
+
+
+
+
+For marco script support
+-----------------------------------
+
+chmod +x /opt/tools/proxy_sql_tools/galera_check.pl
+
+Set the host group servers:
+  
+delete from mysql_servers where hostgroup_id in (8100);
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.22',8100,3306,1000,2000,'Failover server preferred');
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.23',8100,3306,999,2000,'Second preferred');    
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('192.168.4.233',8100,3306,998,2000,'Thirdh and last in the list');      
+    
+LOAD MYSQL SERVERS TO RUNTIME; SAVE MYSQL SERVERS TO DISK;
+
+
+
+delete from scheduler where id=10;
+INSERT  INTO scheduler (id,active,interval_ms,filename,arg1) values (10,0,2000,"/opt/tools/proxy_sql_tools/galera_check.pl","-u=cluster1 -p=clusterpass -h=192.168.4.191 -H=100:W,101:R -P=6032 --retry_down=2 --retry_up=1 --main_segment=1 --debug=0  --log=/var/lib/proxysql/galeraLog --active_failover=1");
+
+INSERT  INTO scheduler (id,active,interval_ms,filename,arg1) values (10,0,2000,"/opt/tools/proxy_sql_tools/galera_check.pl","-u=cluster1 -p=clusterpass -h=192.168.4.191/2/3 -H=100:W,101:R -P=6032  --main_segment=1 --debug=0  --log=/var/lib/proxysql/galeraLog --active_failover=1");
+
+update scheduler set active=1 where id=10;
+load scheduler to runtime;
+
+LOAD SCHEDULER TO RUNTIME;SAVE SCHEDULER TO DISK;
+
+
+For Percona script support
+------------------------------------
+
+
+
+
+
+
+
+
+Monitor
+-------------------------
+watch -n 1 'mysql -h 192.168.4.191 -P 6032 -ucluster1 -pclusterpass -t -e "select b.weight, c.* from stats_mysql_connection_pool c left JOIN runtime_mysql_servers b ON  c.hostgroup=b.hostgroup_id and c.srv_host=b.hostname and c.srv_port = b.port  where hostgroup in (100,101,9101) order by hostgroup,srv_host desc;" -e " select srv_host,command,avg(time_ms), count(ThreadID) from stats_mysql_processlist group by srv_host,command;" -e "select * from stats_mysql_users;";mysql -h 192.168.4.191 -P 6032 -ucluster1 -pclusterpass -t -e " select * from mysql_server_galera_log  order by time_start_us desc limit 10"'
+
+
+Tools
+==========================================
+ i=1;while [ $i -lt 10000 ] ;do  binlogfile=$(mysql -h 127.0.0.1 -P3306 -udba -pdba -e "show master status\G"|grep File|awk -F ' ' '{print $2}');echo "Purging up to $binlogfile"; mysql -h 127.0.0.1 -P3306 -udba -pdba -e "purge binary logs to '${binlogfile}'";i=$((i+1)); sleep 30;done 
+ 
+ 
+Application for testing
+===========================================
+SYSBENCH
+-----------------------
+
+sysbench ./src/lua/windmills/oltp_read.lua  --mysql-host=192.168.4.22 --mysql-port=3306 --mysql-user=app_test --mysql-password=test --mysql-db=windmills_s --mysql_storage_engine=innodb --db-driver=mysql --tables=10 --table_size=10000 --table_name=windmills  --mysql_table_options=" CHARSET=utf8 COLLATE=utf8_bin " --threads=5  prepare
+
+Only reads
+---------------
+sysbench ./src/lua/windmills/oltp_read.lua  --mysql-host=192.168.4.191 --mysql-port=6033 --mysql-user=app_test --mysql-password=test --mysql-db=windmills_s --db-driver=mysql --tables=10 --table_size=10000  --rand-type=zipfian --rand-zipfian-exp=0.5 --skip_trx=true  --report-interval=1 --mysql-ignore-errors=all --mysql_storage_engine=innodb --auto_inc=off --histogram --table_name=windmills  --stats_format=csv --db-ps-mode=disable --point-selects=50 --range-selects=true --threads=1 --time=20   run
+
+
+READ-Write
+-----------
+ sysbench ./src/lua/windmills/oltp_read_write.lua  --mysql-host=192.168.4.191 --mysql-port=6033 --mysql-user=app_test --mysql-password=test --mysql-db=windmills_s --db-driver=mysql --tables=10 --table_size=10000  --rand-type=zipfian --rand-zipfian-exp=0.5 --skip_trx=false  --report-interval=1  --mysql_storage_engine=innodb --auto_inc=off --histogram --table_name=windmills  --stats_format=csv --db-ps-mode=disable --point-selects=50 --range-selects=true --reconnect=50 --threads=50 --time=2000   run
+
+--rand-type=zipfian --rand-zipfian-exp=0
+ --rand-type=pareto --rand-pareto-h=0.50
