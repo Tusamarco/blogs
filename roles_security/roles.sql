@@ -1,0 +1,60 @@
+# Create roles
+# ---------------------
+
+DROP ROLE 'DBA', 'MaintenanceAdmin', 'UserAdmin', 'MonitorUser', 'DBManager', 'DBDesigner', 'ReplicationAdmin', 'BackupAdmin';
+
+CREATE user `secure_test`@`localhost` identified by 'test';
+GRANT USAGE ON *.* TO `secure_test`@`localhost`;
+SET DEFAULT ROLE NONE TO  secure_test@'localhost';
+
+
+CREATE ROLE 'DBA', 'MaintenanceAdmin', 'UserAdmin', 'MonitorUser', 'DBManager', 'DBDesigner', 'ReplicationAdmin', 'BackupAdmin';
+Select user,host from mysql.user where account_locked ='Y' and password_expired='Y' order by 1;
+
+# -- create DBA role --
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, SHUTDOWN, PROCESS, FILE, REFERENCES, INDEX, ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER, CREATE TABLESPACE, CREATE ROLE, DROP ROLE ON *.* TO `DBA`@`%` WITH GRANT OPTION;
+GRANT APPLICATION_PASSWORD_ADMIN,AUDIT_ADMIN,BACKUP_ADMIN,BINLOG_ADMIN,BINLOG_ENCRYPTION_ADMIN,CLONE_ADMIN,CONNECTION_ADMIN,ENCRYPTION_KEY_ADMIN,FLUSH_OPTIMIZER_COSTS,FLUSH_STATUS,FLUSH_TABLES,FLUSH_USER_RESOURCES,GROUP_REPLICATION_ADMIN,INNODB_REDO_LOG_ARCHIVE,INNODB_REDO_LOG_ENABLE,PERSIST_RO_VARIABLES_ADMIN,REPLICATION_APPLIER,REPLICATION_SLAVE_ADMIN,RESOURCE_GROUP_ADMIN,RESOURCE_GROUP_USER,ROLE_ADMIN,SERVICE_CONNECTION_ADMIN,SESSION_VARIABLES_ADMIN,SET_USER_ID,SHOW_ROUTINE,SYSTEM_USER,SYSTEM_VARIABLES_ADMIN,TABLE_ENCRYPTION_ADMIN,XA_RECOVER_ADMIN ON *.* TO `DBA`@`%` WITH GRANT OPTION;
+
+# -- MaintenanceAdmin
+GRANT EVENT, LOCK TABLES, RELOAD, SELECT, SHOW DATABASES, RELOAD, SHUTDOWN ON *.* TO `MaintenanceAdmin`@`%`;
+GRANT BINLOG_ADMIN, CONNECTION_ADMIN, ENCRYPTION_KEY_ADMIN, GROUP_REPLICATION_ADMIN, REPLICATION_SLAVE_ADMIN, SESSION_VARIABLES_ADMIN, SET_USER_ID, SYSTEM_VARIABLES_ADMIN ON *.* TO `MaintenanceAdmin`@`%`;
+
+# -- UserAdmin,
+GRANT CREATE USER, GRANT OPTION, RELOAD, SHOW DATABASES ON *.* TO `UserAdmin`@`%`;
+GRANT ROLE_ADMIN  ON *.* TO `UserAdmin`@`%`;
+
+# -- MonitorUser,
+GRANT PROCESS, REPLICATION CLIENT ON *.* TO `MonitorUser`@`%`;
+GRANT SELECT ON performance_schema.* TO `MonitorUser`@`%`;
+
+# -- DBManager,
+GRANT ALTER, ALTER ROUTINE, CREATE, CREATE ROUTINE, CREATE TABLESPACE, CREATE TEMPORARY TABLES, CREATE VIEW, DELETE, DROP, DROP ROLE, EVENT, INDEX, INSERT, LOCK TABLES, RELOAD, SELECT, SHOW DATABASES, SHOW VIEW, TRIGGER, UPDATE  ON *.* TO `DBManager`@`%`;
+GRANT SET_USER_ID, SHOW_ROUTINE ON *.* TO `DBManager`@`%`;
+
+# -- DBDesigner,
+GRANT ALTER, ALTER ROUTINE, CREATE, CREATE ROUTINE, CREATE VIEW, INDEX, SELECT, SHOW DATABASES, SHOW VIEW, TRIGGER ON *.* TO `DBDesigner`@`%`;
+
+# -- ReplicationAdmin,
+GRANT REPLICATION CLIENT ON *.* TO `ReplicationAdmin`@`%`;
+GRANT REPLICATION_APPLIER, REPLICATION_SLAVE_ADMIN, GROUP_REPLICATION_ADMIN, SERVICE_CONNECTION_ADMIN ON *.* TO `ReplicationAdmin`@`%`;
+GRANT SELECT on performance_schema.* TO `ReplicationAdmin`@`%`;
+GRANT SELECT on mysql.* TO `ReplicationAdmin`@`%`;
+
+# -- BackupAdmin,
+GRANT EVENT, LOCK TABLES, SELECT, SHOW DATABASES ON *.* TO `BackupAdmin`@`%`;
+GRANT BACKUP_ADMIN ON *.* TO `BackupAdmin`@`%`;
+
+
+#-- Grant all role to a test user
+GRANT `DBA`@`%` TO `secure_test`@`localhost`
+GRANT `MaintenanceAdmin`@`%` TO `secure_test`@`localhost` ;
+GRANT `UserAdmin`@`%` TO `secure_test`@`localhost` ;
+GRANT `MonitorUser`@`%` TO `secure_test`@`localhost` ;
+GRANT `DBManager`@`%` TO `secure_test`@`localhost` ;
+GRANT `DBDesigner`@`%` TO `secure_test`@`localhost` ;
+GRANT `ReplicationAdmin`@`%` TO `secure_test`@`localhost` ;
+GRANT `BackupAdmin`@`%` TO `secure_test`@`localhost` ;
+
+
+# -- set default as DBA
+SET DEFAULT ROLE BackupAdmin TO  secure_test@'localhost';
