@@ -1,0 +1,14 @@
+<h1>InnoDB Flush Method May Not Be Optimal</h1>
+-----------------------------------------
+<h2>Problem Description</h2>
+
+<p>
+By default, InnoDB&apos;s log buffer is written out to the log file at each transaction commit and a flush-to-disk operation is performed on the log file, which enforces ACID compliance.  In the event of a crash, if you can afford to lose a second&apos;s worth of transactions, you can achieve better performance by setting __innodb_flush_log_at_trx_commit__ to either 0 or 2.  If you set the value to 2, then only an operating system crash or a power outage can erase the last second of transactions.  This can be very useful on slave servers, where the loss of a second&apos;s worth of data can be recovered from the master server if needed.
+</p>
+
+<h2>Links and Further Reading</h2>
+<a href="http://dev.mysql.com/doc/mysql/en/innodb-parameters.html#optvar_innodb_flush_log_at_trx_commit">Variables</a>
+MySQL Manual: <a href="http://dev.mysql.com/doc/mysql/en/optimizing-innodb.html">InnoDB Performance Tuning Tips</a> 
+
+<h3>Expression</h3>
+<pre>(%innodb_flush_log_at_trx_commit% == THRESHOLD)</pre>
