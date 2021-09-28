@@ -1,0 +1,35 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+    name: mt-test1-cluster1
+    region: eu-central-1
+
+vpc:
+  cidr: "10.1.0.0/16"
+  clusterEndpoints:
+    publicAccess: true
+    privateAccess: true
+
+iam:
+   vpcResourceControllerPolicy: true 
+        
+nodeGroups:
+    - name: ng-1
+      amiFamily: Ubuntu2004 
+      minSize: 1
+      maxSize: 4
+      ssh: # import public key from file
+        allow: true
+        publicKeyPath: <key>
+      instanceType: <machine type>
+      desiredCapacity: 3
+      privateNetworking: false
+      tags:
+        'user': 'mt-cloud'
+      preBootstrapCommands:
+          - "echo 'OPTIONS=\"--default-ulimit nofile=1048576:1048576\"' >> /etc/sysconfig/docker"
+          - "systemctl restart docker"
+
+
+

@@ -1,0 +1,19 @@
+SYSBENCH
+-----------------------
+#small
+sysbench ./src/lua/windmills/oltp_read.lua  --mysql-host=<> --mysql-port=3306 --mysql-user=app_test --mysql-password=test --mysql-db=windmills_s --mysql_storage_engine=innodb --db-driver=mysql --tables=20 --table_size=200000 --table_name=windmills  --mysql_table_options=" CHARSET=utf8 COLLATE=utf8_bin " --mysql-ignore-errors=all --threads=2  prepare
+
+#larger
+sysbench ./src/lua/windmills/oltp_read.lua  --mysql-host=<> --mysql-port=3306 --mysql-user=app_test --mysql-password=test --mysql-db=windmills_s --mysql_storage_engine=innodb --db-driver=mysql --tables=80 --table_size=4000000 --table_name=windmills  --mysql_table_options=" CHARSET=utf8 COLLATE=utf8_bin " --mysql-ignore-errors=all --threads=1  prepare
+
+#run
+ sysbench ./src/lua/windmills/<script>  --mysql-host=<endpoint> --mysql-port=<port> --mysql-user=<user> --mysql-password=<password> --mysql-db=windmills_s --db-driver=mysql --tables=<size> --table_size=<size>  --rand-type=zipfian --rand-zipfian-exp=0.5 --skip_trx=false  --report-interval=1  --mysql_storage_engine=innodb --auto_inc=off --histogram --table_name=windmills  --stats_format=csv --db-ps-mode=disable --point-selects=100 --range-selects=true --mysql-ignore-errors=all --reconnect=10 --threads=<threads> --time=1200
+ 
+ 
+#sysbench - TPCC 
+--------------------
+#large
+sysbench /opt/tools/sysbench-tpcc/tpcc.lua --mysql-host=<> --mysql-port=<>  --mysql-user=app_test --mysql-password=test --mysql-db=tpcc --db-driver=mysql --tables=20 --scale=30 --time=600 --rand-type=zipfian --rand-zipfian-exp=0.5 --report-interval=1 --mysql-ignore-errors=all --histogram --report_csv=yes  --stats_format=csv --db-ps-mode=disable --threads=<> --enable_purge=yes prepare|run 
+
+#small
+sysbench /opt/tools/sysbench-tpcc/tpcc.lua --mysql-host=<> --mysql-port=<>  --mysql-user=app_test --mysql-password=test --mysql-db=tpcc --db-driver=mysql --tables=10 --scale=10 --time=600 --rand-type=zipfian --rand-zipfian-exp=0.5 --report-interval=1 --mysql-ignore-errors=all --histogram --report_csv=yes  --stats_format=csv --db-ps-mode=disable --threads=<> --enable_purge=yes prepare|run 
