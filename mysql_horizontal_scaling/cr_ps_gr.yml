@@ -1,0 +1,215 @@
+apiVersion: ps.percona.com/v1alpha1
+kind: PerconaServerMySQL
+metadata:
+  name: ps-mysql1
+  finalizers:
+    - delete-mysql-pods-in-order
+spec:
+  allowUnsafeConfigurations: true
+  crVersion: 0.6.0
+  secretsName:  ps-mysql1-secrets
+  sslSecretName: ps-mysql1-ssl
+  upgradeOptions:
+    versionServiceEndpoint: https://check.percona.com
+    apply: disabled
+
+  mysql:
+    startupProbe:
+      failureThreshold: 1
+      periodSeconds: 15
+      initialDelaySeconds: 15
+      successThreshold: 1
+      
+    clusterType: group-replication
+    image: perconalab/percona-server-mysql-operator:main-psmysql
+    imagePullPolicy: Always
+
+    size: 3
+    sizeSemiSync: 0
+
+    resources:
+      requests:
+        memory: 3570191565
+        cpu: 1900m
+      limits:
+        memory: 3758096384
+        cpu: 2000m
+
+    affinity:
+      antiAffinityTopologyKey: "kubernetes.io/hostname"
+
+    expose:
+      enabled: true
+      type: LoadBalancer
+
+    volumeSpec:
+      persistentVolumeClaim:
+        storageClassName: io1      
+        resources:
+          requests:
+            storage: 200G
+
+    configuration: |
+      [mysqld]
+        skip-slave-start
+        binlog_cache_size = 131072
+        binlog_expire_logs_seconds = 604800
+        binlog_format = ROW
+        binlog_stmt_cache_size = 131072
+        innodb_adaptive_hash_index = True
+        innodb_buffer_pool_chunk_size = 2097152
+        innodb_buffer_pool_instances = 2
+        innodb_buffer_pool_size = 1499118130
+        innodb_ddl_threads = 2
+        innodb_flush_log_at_trx_commit = 2
+        innodb_flush_method = O_DIRECT
+        innodb_io_capacity_max = 1800
+        innodb_log_files_in_group = 3
+        innodb_log_file_size = 244276288
+        innodb_monitor_enable = ALL
+        innodb_page_cleaners = 2
+        innodb_parallel_read_threads = 1
+        innodb_purge_threads = 4
+        join_buffer_size = 524288
+        loose_binlog_transaction_dependency_tracking = WRITESET
+        loose_group_replication_autorejoin_tries = 4
+        loose_group_replication_communication_max_message_size = 2097152
+        loose_group_replication_member_expel_timeout = 10
+        loose_group_replication_message_cache_size = 333137362
+        loose_group_replication_paxos_single_leader = ON
+        loose_group_replication_poll_spin_loops = 20000
+        loose_group_replication_unreachable_majority_timeout = 1800
+        max_connections = 102
+        max_heap_table_size = 16777216
+        read_rnd_buffer_size = 393216
+        replica_compressed_protocol = 1
+        replica_exec_mode = STRICT
+        replica_parallel_type = LOGICAL_CLOCK
+        replica_parallel_workers = 4
+        replica_preserve_commit_order = ON
+        sort_buffer_size = 524288
+        sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION,TRADITIONAL,STRICT_ALL_TABLES'
+        sync_binlog = 1
+        tablespace_definition_cache = 512
+        table_definition_cache = 4096
+        table_open_cache = 4096
+        table_open_cache_instances = 4
+        thread_cache_size = 10
+        thread_pool_size = 4
+        thread_stack = 1024
+        tmp_table_size = 16777216
+        mysqlx_idle_worker_thread_timeout= 6000
+        mysqlx_write_timeout = 6000
+        net_write_timeout= 6000
+        replica_net_timeout = 6000
+        slave_net_timeout = 6000
+        thread_pool_idle_timeout= 6000
+
+
+    readinessProbe:
+      timeoutSeconds: 540
+    livenessProbe:
+      timeoutSeconds: 540
+
+
+
+  proxy:
+    haproxy:
+      enabled: true
+
+      size: 3
+
+      image: perconalab/percona-server-mysql-operator:main-haproxy
+      imagePullPolicy: Always
+
+      resources:
+        requests:
+          memory: 1G
+          cpu: 600m
+      affinity:
+        antiAffinityTopologyKey: "kubernetes.io/hostname"
+
+      expose:
+        type: LoadBalancer
+    router:
+      image: perconalab/percona-server-mysql-operator:main-router
+      imagePullPolicy: Always
+
+      size: 3
+
+      resources:
+        requests:
+          memory: 400M
+          cpu: 200m
+        limits:
+          memory: 500M
+          cpu: 200m
+          
+      readinessProbe:
+        timeoutSeconds: 27
+      livenessProbe:
+        timeoutSeconds: 27
+
+      affinity:
+        antiAffinityTopologyKey: "kubernetes.io/hostname"
+
+
+      expose:
+        type: LoadBalancer
+
+  orchestrator:
+    enabled: false
+
+    image: perconalab/percona-server-mysql-operator:main-orchestrator
+    imagePullPolicy: Always
+
+    size: 3
+
+    affinity:
+      antiAffinityTopologyKey: "kubernetes.io/hostname"
+
+
+    resources:
+      requests:
+        memory: 128M
+      limits:
+        memory: 256M
+
+    volumeSpec:
+      persistentVolumeClaim:
+        resources:
+          requests:
+            storage: 1G
+
+  pmm:
+    enabled: true
+
+    image: percona/pmm-client:2.30.0
+    imagePullPolicy: Always
+
+    resources:
+      requests:
+        memory: 150M
+        cpu: 300m
+
+    serverHost: 3.73.128.178
+    serverUser: admin
+
+  backup:
+    enabled: true
+    image: perconalab/percona-server-mysql-operator:main-backup
+    imagePullPolicy: Always
+    storages:
+      s3-ondemand:
+        type: s3
+        verifyTLS: true
+        s3:
+          bucket: mt-bucket-backup-tl/ondemand
+          credentialsSecret: mt-cluster-1-backup-s3
+          region: eu-west-3
+
+
+  toolkit:
+    image: perconalab/percona-server-mysql-operator:main-toolkit
+    imagePullPolicy: Always
+

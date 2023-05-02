@@ -1,0 +1,360 @@
+Operator Sharding With Proxysql
+=================================================
+
+Why
+-------------------------------------------------
+Not all customers needs to have an advance sharding solution as Vitess.
+Some of them can easily use proxysql to shard their data, this is a POC on how to achieve that.
+
+ 
+Concept
+-------------------------------------------------
+We want to use 3 different shards based on a value range, it can be numeric or name.
+The data will be hosted in 3 different operators with different dimensions/resources.
+Each operator resources will be tuned on the base of the real needs.
+
+Architecture will be as follows:
+
+
+                      ┌──────────────────┐
+                      │                  │
+                      │   Applications   │
+                      │                  │
+                      └───────┬──┬───────┘
+                              │  │
+                              │  │
+                             ┌┴──┴─┐
+                             │LoadB│
+          ┌────────────┐     └┬──┬─┘   ┌────────────┐
+          │            │      │  │     │            │
+          │ ProxySQL1  ├──────┘  └─────┤ ProxySQL2  │
+          │            │               │            │
+          └───┬─┬───┬──┘               └────────────┘
+              │ │   │
+              │ │   └────────────────────────────────────────┐
+              │ │                                            │
+              │ └──────────────────────┐                     │
+              │                        │                     │
+┌─Cluster┼1───┴─────┐     ┌─Cluster─2──┴──────┐  ┌─Cluster─3─┴───────┐
+│                   │     │                   │  │                   │
+│ ┌───┐ ┌───┐ ┌───┐ │     │ ┌───┐ ┌───┐ ┌───┐ │  │ ┌───┐ ┌───┐ ┌───┐ │
+│ │HP1│ │HP2│ │HP3│ │     │ │HP1│ │HP2│ │HP3│ │  │ │HP1│ │HP2│ │HP3│ │
+│ └───┘ └───┘ └───┘ │     │ └───┘ └───┘ └───┘ │  │ └───┘ └───┘ └───┘ │
+│                   │     │                   │  │                   │
+│ ┌───┐ ┌───┐ ┌───┐ │     │ ┌───┐ ┌───┐ ┌───┐ │  │ ┌───┐ ┌───┐ ┌───┐ │
+│ │DB1│ │DB2│ │DB3│ │     │ │DB1│ │DB2│ │DB3│ │  │ │DB1│ │DB2│ │DB3│ │
+│ └───┘ └───┘ └───┘ │     │ └───┘ └───┘ └───┘ │  │ └───┘ └───┘ └───┘ │
+│                   │     │                   │  │                   │
+└───────────────────┘     └───────────────────┘  └───────────────────┘
+
+
+Where each Cluster will sit on different location or same no matter.
+
+Plan
+-------------------------------------------------
+1) Create a k8s cluster
+2) Rollout:
+    - PXC cluster
+    - GR Cluster
+    - PS nodes
+3) Deploy Proxysql
+4) Create schemas and specific test case with sysbench 
+5) Add rules for sharding 
+6) run Sysbench (or any other test case) to show how this works
+
+
+Machines
+-------------------------------------------------
+APP ssh -i ~/work/mysshkey/keys/mt-aws-testing-2022.pem centos@35.158.96.9
+Proxy ssh -i ~/work/mysshkey/keys/mt-aws-testing-2022.pem ec2-user@54.93.81.76
+
+
+
+
+
+
+
+
+Test
+-------------------------------------------------
+-----------------------
+grant all on *.* to root@'%' with grant option;
+Drop user app_test@'%';
+Drop user dba@'%';
+Drop user dba_g1@'%';
+Drop user dba_g2@'%';
+create user 'dba'@'%' identified with 'mysql_native_password' by 'dba';
+grant all on *.* to dba@'%' with grant option;
+
+create user 'dba_g1'@'%' identified with 'mysql_native_password' by 'dba';
+grant all on *.* to 'dba_g1'@'%' with grant option;
+
+create user 'dba_g2'@'%' identified with 'mysql_native_password' by 'dba';
+grant all on *.* to 'dba_g2'@'%' with grant option;
+
+create user app_test@'%' identified with 'mysql_native_password' by 'test';
+grant all on windmills.* to app_test@'%';
+grant all on windmills_large.* to app_test@'%';
+grant all on tpcc.* to app_test@'%';
+grant all on test.* to app_test@'%';
+
+create user monitor@'%' identified by 'monitor';
+grant select on performance_schema.* to monitor@'%';
+
+create schema windmills;
+create schema windmills_large;
+create schema tpcc;
+
+select user,host, authentication_string,plugin from mysql.user order by 1,2;
+
+select * from performance_schema.replication_group_members;
+
+select group_replication_set_as_primary('c5aed435-d58d-11ea-bb26-5254004d77d3');   
+
+
+Sysbench
+---------------
+sysbench ./src/lua/windmills/oltp_read.lua  --mysql-host=10.0.1.96  --mysql-port=6033 --mysql-user=dba_g1 --mysql-password=dba --mysql-db=windmills_large --mysql_storage_engine=innodb --db-driver=mysql --tables=4 --table_size=400 --table_name=windmills  --mysql_table_options="CHARSET=utf8 COLLATE=utf8_bin " --mysql-ignore-errors=all --threads=1  prepare
+
+
+sysbench ./src/lua/windmills/oltp_read_write.lua --mysql-host= --mysql-port=3306 --mysql-user=app_test --mysql-password=test --mysql-db=windmills_large --mysql_storage_engine=innodb --db-driver=mysql --tables=4 --table_size=400 --mysql-ignore-errors=all --table_name=windmills   --rand-type=zipfian --rand-zipfian-exp=0.5 --skip_trx=false  --report-interval=1 --auto_inc=off --histogram --stats_format=csv --db-ps-mode=disable  --point-selects=100 --range-selects=true --reconnect=40 --threads=<N> --time=600 run 
+
+sysbench ./src/lua/windmills/oltp_read.lua  --mysql-host= --mysql-port=3306 --mysql-user=app_test --mysql-password=test --mysql-db=windmills_large --mysql_storage_engine=innodb --db-driver=mysql --tables=80 --table_size=4000000 --table_name=windmills  --mysql-ignore-errors=all --threads=1  cleanup
+
+
+
+Tpcc
+---------------------
+sysbench /opt/sysbench-tpcc/tpcc.lua --mysql-host=<ip> --mysql-port=3306  --mysql-user=<user> --mysql-password=<pw> --mysql-db=<db> --db-driver=mysql  --force_pk=1 --tables=20 --scale=20  --mysql-ignore-errors=all  --enable_purge=no --threads=3 prepare
+
+sysbench /opt/tools/sysbench-tpcc/tpcc.lua --mysql-host=<ip> --mysql-port=3306  --mysql-user=<user> --mysql-password=<pw> --mysql-db=<db> --db-driver=mysql  --force_pk=1 --tables=20 --scale=20  --mysql-ignore-errors=all  --enable_purge=no--rand-type=zipfian --rand-zipfian-exp=0.5 --report-interval=1 --histogram --report_csv=yes  --stats_format=csv --db-ps-mode=disable --threads=1 --time=600 prepare
+
+sysbench /opt/sysbench-tpcc/tpcc.lua --mysql-host=<ip> --mysql-port=3306  --mysql-user=<user> --mysql-password=<pw> --mysql-db=<db> --db-driver=mysql  --force_pk=1 --tables=20 --scale=20  --mysql-ignore-errors=all  --enable_purge=no --threads=<N> cleanup
+
+
+
+watch -n 1 'mysql -h 127.0.0.1 -P 6032 -ucluster1 -pclusterpass -t -e "select b.weight, c.* from stats_mysql_connection_pool c left JOIN runtime_mysql_servers b ON  c.hostgroup=b.hostgroup_id and c.srv_host=b.hostname and c.srv_port = b.port   order by hostgroup,srv_host desc;" -e " select srv_host,command,avg(time_ms), count(ThreadID) from stats_mysql_processlist group by srv_host,command;" -e "select * from stats_mysql_users;";mysql -h 127.0.0.1 -P 6032 -ucluster1 -pclusterpass -t -e " select * from mysql_server_galera_log  order by time_start_us desc limit 10"'
+
+
+
+
+
+ProxySQL sharding commands:
+-------------------------------------------------
+references:
+https://www.percona.com/blog/mysql-sharding-with-proxysql/
+https://www.tusacentral.com/joomla/index.php/mysql-blogs/197-proxysql-firewalling
+https://www.percona.com/blog/how-to-stop-an-offending-query-with-proxysql/
+
+
+
+PROXYSQL host group
+-------------------------------------------------
+Host group mapping
+
+2 Continents groups
+Group 1:
+--------
+R/W 100
+R   101
+
+Group 2:
+--------
+R/W 200
+R   201
+
+SQL command
+-------------------------------------------------
+Create/DROP/ALTER TABLE ??
+
+Use a rule by user such that we will shift by shard using the user definition
+
+INSERT /* continent=Asia */ INTO %s%u (id,uuid,millid,kwatts_s,date,location,continent,active,strrecordtype) VALUES (?, UUID(), ?, ?, NOW(), ?, ?, ?) ON DUPLICATE KEY UPDATE kwatts_s=kwatts_s+1", t.BIGINT, t.TINYINT,t.INT, {t.VARCHAR, 50},{t.VARCHAR, 50},t.TINYINT, {t.CHAR, 3}}
+
+REPLACE INTO %s%u (id,uuid,millid,kwatts_s,date,location,continent,active,strrecordtype) VALUES (?, UUID(), ?, ?, NOW(), ?, ?, ?) ON DUPLICATE KEY UPDATE kwatts_s=kwatts_s+1",t.BIGINT, t.TINYINT,t.INT, {t.VARCHAR, 50},{t.VARCHAR, 50},t.TINYINT, {t.CHAR, 3}}
+UPDATE %s%u SET strrecordtype=? WHERE id=?   
+DELETE FROM %s%u WHERE id=?
+SELECT id, millid, date,continent,active,kwatts_s FROM %s%u WHERE id=?" 
+
+
+Proxysql setup
+-------------------------------------------------
+delete from proxysql_servers where hostname in ('192.168.4.191','192.168.4.192','192.168.4.193');
+INSERT INTO proxysql_servers (hostname,port,weight,comment) VALUES('192.168.4.191',6032,100,'PRIMARY');
+INSERT INTO proxysql_servers (hostname,port,weight,comment) VALUES('192.168.4.192',6032,100,'SECONDARY');
+INSERT INTO proxysql_servers (hostname,port,weight,comment) VALUES('192.168.4.193',6032,100,'SECONDARY');
+load proxysql servers to run;save proxysql servers to disk;
+
+update global_variables set Variable_Value='admin:admin;cluster1:clusterpass'  where Variable_name='admin-admin_credentials';
+update global_variables set variable_value='cluster1' where variable_name='admin-cluster_username';
+update global_variables set variable_value='clusterpass' where variable_name='admin-cluster_password';
+
+update global_variables set variable_value='true' where variable_name='admin-cluster_mysql_query_rules_save_to_disk';
+update global_variables set variable_value='true' where variable_name='admin-cluster_mysql_servers_save_to_disk';
+update global_variables set variable_value='true' where variable_name='admin-cluster_mysql_users_save_to_disk';
+update global_variables set variable_value='true' where variable_name='admin-cluster_proxysql_servers_save_to_disk';
+
+update global_variables set variable_value=3 where variable_name='admin-cluster_mysql_query_rules_diffs_before_sync';
+update global_variables set variable_value=1 where variable_name='admin-cluster_mysql_servers_diffs_before_sync';
+update global_variables set variable_value=3 where variable_name='admin-cluster_mysql_users_diffs_before_sync';
+load admin variables to run;save admin variables to disk;
+
+---------------------
+Basic Variables
+---------------------
+
+update global_variables set Variable_Value=0  where Variable_name='mysql-hostgroup_manager_verbose';
+update global_variables set Variable_Value='true'  where Variable_name='mysql-query_digests_normalize_digest_text';
+update global_variables set Variable_Value='8.0.33'  where Variable_name='mysql-server_version';
+update global_variables set Variable_Value='utf8'  where Variable_name='mysql-default_charset';
+
+update global_variables set Variable_Value='false'  where Variable_name='mysql-verbose_query_error';
+update global_variables set Variable_Value='true'  where Variable_name='mysql-show_processlist_extended';
+update global_variables set Variable_Value='false'  where Variable_name='admin-web_enabled';
+update global_variables set Variable_Value='true'  where Variable_name='mysql-query_digests_keep_comment';
+#update global_variables set Variable_Value='false'  where Variable_name='mysql-monitor_enabled';
+update global_variables set Variable_Value='4'  where Variable_name='mysql-threads';
+
+
+
+
+load admin variables to run;save admin variables to disk;
+load mysql variables to run;save mysql variables to disk;
+
+Users
+-----------------------------------
+delete from mysql_users where username='app_test';
+delete from mysql_users where username='dba';
+delete from mysql_users where username='dba_g1';
+delete from mysql_users where username='dba_g2';
+insert into mysql_users (username,password,active,default_hostgroup,default_schema,transaction_persistent,comment) values ('app_test','test',1,10,'mysql',1,'application test user DC1');
+insert into mysql_users (username,password,active,default_hostgroup,default_schema,transaction_persistent,comment) values ('dba_g1','dba',1,10,'mysql',1,'DBA for Group 1');
+insert into mysql_users (username,password,active,default_hostgroup,default_schema,transaction_persistent,comment) values ('dba_g2','dba',1,20,'mysql',1,'DBA for Group 2');
+insert into mysql_users (username,password,active,default_hostgroup,default_schema,transaction_persistent,comment) values ('dba','dba',1,100,'mysql',1,'generic dba for application');
+
+LOAD MYSQL USERS TO RUNTIME;SAVE MYSQL USERS TO DISK;
+
+
+
+
+
+SERVERS
+------------------------------------------
+delete from mysql_servers where hostgroup_id in (100,101,200,201);
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('ac966f7d46c04400fb92a3603f0e2634-193113472.eu-central-1.elb.amazonaws.com',100,3306,10000,2000,'Group1_rw ');
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('a5c8836b7c05b41928ca84f2beb48aee-1936458168.eu-central-1.elb.amazonaws.com',101,3306,100,2000,'Group1_r');
+                                                                                               
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('a039ab70e9f564f5e879d5e1374d9ffa-1769267689.eu-central-1.elb.amazonaws.com',200,3306,10000,2000,'Group2_rw');    
+INSERT INTO mysql_servers (hostname,hostgroup_id,port,weight,max_connections,comment) VALUES ('a039ab70e9f564f5e879d5e1374d9ffa-1769267689.eu-central-1.elb.amazonaws.com',201,6447,10000,2000,'Group2_r');        
+LOAD MYSQL SERVERS TO RUNTIME; SAVE MYSQL SERVERS TO DISK;    
+
+
+LOAD MYSQL SERVERS TO RUNTIME; SAVE MYSQL SERVERS TO DISK;    
+
+
+Query Rules
+-------------------------------------------
+delete from mysql_query_rules where rule_id in(20,21,31,32,33,34,35,36,37,41,42,43,44,45,46,47,51,54,50,60,62,2000,2040,2041,2050,2051);
+
+#Continent rule
+#--------------------
+INSERT INTO mysql_query_rules (rule_id,active,username,destination_hostgroup,apply,FlagOUT,FlagIN) VALUES (20,1,'dba_g1',100,0,500,0);
+INSERT INTO mysql_query_rules (rule_id,active,username,destination_hostgroup,apply,FlagOUT,FlagIN) VALUES (21,1,'dba_g2',200,0,600,0);
+
+INSERT INTO mysql_query_rules (rule_id,active,username,destination_hostgroup,match_pattern,replace_pattern,apply,FlagOUT,FlagIN) VALUES (31,1,'dba_g1',100,"\scontinent\s*(=|like)\s*'*(Asia|Africa|Antarctica|Europe|North America|shard1)'*",null,1,0,500);
+INSERT INTO mysql_query_rules (rule_id,active,username, destination_hostgroup,match_pattern,replace_pattern,apply,FlagOUT,FlagIN) VALUES (32,1,'dba_g1',200,"\scontinent\s*(=|like)\s*'*(Oceania|South America|shard2)'*",null,1,0,500);
+
+INSERT INTO mysql_query_rules (rule_id,active,username,destination_hostgroup,match_pattern,replace_pattern,apply,FlagOUT,FlagIN) VALUES (34,1,'dba_g2',100,"\scontinent\s*(=|like)\s*'*(Asia|Africa|Antarctica|Europe|North America|shard1)'*",null,1,0,600);
+INSERT INTO mysql_query_rules (rule_id,active,username, destination_hostgroup,match_pattern,replace_pattern,apply,FlagOUT,FlagIN) VALUES (35,1,'dba_g2',200,"\scontinent\s*(=|like)\s*'*(Oceania|South America|shard2)'*",null,1,0,600);
+
+
+
+INSERT INTO mysql_query_rules (rule_id,active,username,destination_hostgroup,match_pattern,replace_pattern,apply,FlagOUT,FlagIN) VALUES (51,1,'app_test',100,"\scontinent\s*(=|like)\s*'*(Asia|Africa|Antarctica|Europe|North America)'*",null,0,1001,0);
+INSERT INTO mysql_query_rules (rule_id,active,username, destination_hostgroup,match_pattern,replace_pattern,apply,FlagOUT,FlagIN) VALUES (54,1,'app_test',200,"\scontinent\s*(=|like)\s*'*(Oceania|South America)'*",null,0,1002,0);
+
+
+
+
+
+
+#Firewall rule
+#-------------
+insert into mysql_query_rules (rule_id,username,match_digest,error_msg,active,apply) values(2000,'app_test','.','It is impossible to redirect this command to a defined shard. Please be sure you Have the Continent definition in your query, or that you use a defined DBA account (dba_g{1/2})',1, 1); 
+
+#R/W split rules
+#---------------
+insert into mysql_query_rules (rule_id,username,active,retries,match_digest,destination_hostgroup,apply,flagin) values(2040,'app_test',1,3,'^SELECT.*FOR UPDATE',100,1,1001);
+insert into mysql_query_rules (rule_id,username,active,retries,match_digest,destination_hostgroup,apply,flagin) values(2041,'app_test',1,3,'^SELECT.*$',101,1,1001);
+
+insert into mysql_query_rules (rule_id,username,active,retries,match_digest,destination_hostgroup,apply,flagin) values(2050,'app_test',1,3,'^SELECT.*FOR UPDATE',200,1,1002);
+insert into mysql_query_rules (rule_id,username,active,retries,match_digest,destination_hostgroup,apply,flagin) values(2051,'app_test',1,3,'^SELECT.*$',201,1,1002);
+
+
+LOAD MYSQL QUERY RULES TO RUNTIME;SAVE MYSQL QUERY RULES TO DISK;
+
+
+
+
+
+INSERT INTO mysql_query_rules (rule_id,active,username,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (31,1,'app_test',"\scontinent\s*=\s*'*Asia'*",null,0,30,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,username,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (32,1,'app_test',"\scontinent\s*=\s*'*Africa'*",null,0,30,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,username,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (33,1,'app_test',"\scontinent\s*=\s*'*Antarctica'*",null,0,30,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,username,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (34,1,'app_test',"\scontinent\s*=\s*'*Europe'*",null,0,30,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,username,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (35,1,'app_test',"\scontinent\s*=\s*'*North America'*",null,0,40,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,username,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (36,1,'app_test',"\scontinent\s*=\s*'*Oceania'*",null,0,40,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,username,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (37,1,'app_test',"\scontinent\s*=\s*'*South America'*",null,0,40,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,username,destination_hostgroup,apply,FlagOUT,FlagIN,re_modifiers) VALUES (50,1,'app_test',100,0,1001,30,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,username,destination_hostgroup,apply,FlagOUT,FlagIN,re_modifiers) VALUES (52,1,'app_test',200,0,1002,40,"CASELESS,GLOBAL");
+
+
+INSERT INTO mysql_query_rules (rule_id,active,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (41,1,"\scontinent\s*=\s*'*Asia'*",null,0,50,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (42,1,"\scontinent\s*=\s*'*Africa'*",null,0,50,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (43,1,"\scontinent\s*=\s*'*Antarctica'*",null,0,50,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (44,1,"\scontinent\s*=\s*'*Europe'*",null,0,50,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (45,1,"\scontinent\s*=\s*'*North America'*",null,0,60,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (46,1,"\scontinent\s*=\s*'*Oceania'*",null,0,60,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,match_pattern,replace_pattern,apply,FlagOUT,FlagIN,re_modifiers) VALUES (47,1,"\scontinent\s*=\s*'*South America'*",null,0,60,0,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,destination_hostgroup,apply,FlagOUT,FlagIN,re_modifiers) VALUES (60,1,100,1,0,50,"CASELESS,GLOBAL");
+INSERT INTO mysql_query_rules (rule_id,active,destination_hostgroup,apply,FlagOUT,FlagIN,re_modifiers) VALUES (62,1,200,1,0,60,"CASELESS,GLOBAL");
+
+
+
+
+#Firewall rule
+#-------------
+insert into mysql_query_rules (rule_id,username,match_digest,error_msg,active,apply) values(2000,'app_test','.','It is impossible to redirect this command to a defined shard. Please be sure you Have the Continent definition in your query, or that you use a defined DBA account (dba_g{1/2})',1, 1); 
+
+
+#R/W split rules
+#---------------
+insert into mysql_query_rules (rule_id,username,active,retries,match_digest,destination_hostgroup,apply,flagin) values(2040,'app_test',1,3,'^SELECT.*FOR UPDATE',100,1,1001);
+insert into mysql_query_rules (rule_id,username,active,retries,match_digest,destination_hostgroup,apply,flagin) values(2041,'app_test',1,3,'^SELECT.*$',101,1,1001);
+
+insert into mysql_query_rules (rule_id,username,active,retries,match_digest,destination_hostgroup,apply,flagin) values(2050,'app_test',1,3,'^SELECT.*FOR UPDATE',200,1,1002);
+insert into mysql_query_rules (rule_id,username,active,retries,match_digest,destination_hostgroup,apply,flagin) values(2051,'app_test',1,3,'^SELECT.*$',201,1,1002);
+
+LOAD MYSQL QUERY RULES TO RUNTIME;SAVE MYSQL QUERY RULES TO DISK;
+
+
+
+monitor
+----------------------
+  watch -n 1 'mysql -h 127.0.0.1 -P 6032 -ucluster1 -pclusterpass -t -e "select b.weight, c.* from stats_mysql_connection_pool c left JOIN runtime_mysql_servers b ON  c.hostgroup=b.hostgroup_id and c.srv_host=b.hostname and c.srv_port = b.port   order by hostgroup,srv_host desc;" -e " select srv_host,command,avg(time_ms), count(ThreadID) from stats_mysql_processlist group by srv_host,command;" -e "select * from stats_mysql_users;";mysql -h 127.0.0.1 -P 6032 -ucluster1 -pclusterpass -t -e " select * from mysql_server_galera_log  order by time_start_us desc limit 10"'
+  
+  
+
+
+
+select hostgroup,schemaname,count_star,digest,replace(replace(digest_text,'.','\.'),'?','.*') QR from stats_mysql_query_digest where schemaname='windmills_large' order by count_star desc;
+
+Query rules hits
+-------------------------------
+ select active,hits,destination_hostgroup, mysql_query_rules.rule_id, match_digest, match_pattern, replace_pattern, cache_ttl, apply,flagIn,flagOUT FROM mysql_query_rules NATURAL JOIN stats.stats_mysql_query_rules ORDER BY mysql_query_rules.rule_id;
+
+
+Perf schema
+-----------------
+ select event_name event_SHARD1,count_star from performance_schema.events_statements_summary_global_by_event_name where event_name in ('statement/sql/select','statement/sql/insert','statement/sql/update','statement/sql/delete','statement/sql/replace'); select /* continent=shard2 */ event_name event_SHARD2,count_star from performance_schema.events_statements_summary_global_by_event_name where event_name in ('statement/sql/select','statement/sql/insert','statement/sql/update','statement/sql/delete','statement/sql/replace');
+
+
+

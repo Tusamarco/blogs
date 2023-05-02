@@ -1,0 +1,231 @@
+apiVersion: pxc.percona.com/v1
+kind: PerconaXtraDBCluster
+metadata:
+  name: mt-cluster-1
+  finalizers:
+    - delete-pxc-pods-in-order
+spec:
+  crVersion: 1.12.0
+  secretsName: my-cluster-secrets
+  allowUnsafeConfigurations: false
+  updateStrategy: SmartUpdate
+  upgradeOptions:
+    versionServiceEndpoint: https://check.percona.com
+    apply: 8.0-recommended
+    schedule: "0 4 * * *"
+  pxc:
+    size: 3
+    image: percona/percona-xtradb-cluster:8.0.29-21.1
+    autoRecovery: true
+    expose:
+      enabled: true
+      type: LoadBalancer
+    readinessDelaySec: 120
+    livenessDelaySec: 600
+    configuration: |
+     [mysqld]
+        max_connections=1000
+        innodb-adaptive-hash-index=TRUE
+        innodb-buffer-pool-size=26G
+        innodb_buffer_pool_instances=8
+        innodb-flush-method=O_DIRECT
+        innodb_flush_log_at_trx_commit = 1
+        innodb-log-file-size=500M
+        innodb-log-files-in-group=5
+        innodb_monitor_enable=all
+        innodb-page-cleaners=4
+        innodb-purge-threads=4
+        innodb_io_capacity = 1000
+        innodb_io_capacity_max = 4000
+        thread_pool_size=64
+        binlog_cache_size = 10M
+        binlog_stmt_cache_size = 10M
+        binlog_format = ROW
+        binlog_expire_logs_seconds = 3600
+        join_buffer_size = 10M
+        max_heap_table_size = 32M
+        read_buffer_size = 4M
+        read_rnd_buffer_size = 16M
+        sort_buffer_size = 5M
+        tmp_table_size = 32M
+        table_definition_cache  = 4096
+        table_open_cache=4096
+        thread_cache_size= 3000
+        thread_stack= 256K
+        table-open-cache-instances =4
+        tablespace-definition-cache =256 
+        wsrep_sync_wait = 0 
+        wsrep_slave_threads = 4
+        wsrep-provider-options="pc.recovery=true;gcache.size=5G;gcache.recover=yes;evs.delayed_keep_period=PT60S;evs.delay_margin=PT30S;evs.send_window=1024;evs.user_send_window=1024;evs.inactive_check_period=PT5S;evs.inactive_timeout=PT120S;evs.join_retrans_period=PT5S;evs.suspect_timeout=PT60S;evs.stats_report_period=PT1M;gcs.fc_factor=0.9;gcs.fc_limit=128;gcs.max_packet_size=131072;gmcast.peer_timeout=PT15S;gmcast.time_wait=PT18S;evs.max_install_timeouts=5;pc.announce_timeout=PT6S;pc.linger=PT60S;"
+        wsrep_trx_fragment_size=1048576
+    readinessProbes:
+      timeoutSeconds: 600
+    livenessProbes:
+      timeoutSeconds: 600
+    resources:
+      requests:
+        memory: 32G
+        cpu: 4000m
+      limits:
+        memory: 42G
+        cpu: 4500m
+    affinity:
+      antiAffinityTopologyKey: "kubernetes.io/hostname"
+    podDisruptionBudget:
+      maxUnavailable: 1
+    volumeSpec:
+      persistentVolumeClaim:
+        storageClassName: io1
+        resources:
+          requests:
+            storage: 250G
+    gracePeriod: 600
+  haproxy:
+    enabled: true
+    size: 3
+    image: percona/percona-xtradb-cluster-operator:1.12.0-haproxy
+    configuration: |
+      global
+        maxconn 4096
+        external-check
+        insecure-fork-wanted
+        stats socket /etc/haproxy/pxc/haproxy.sock mode 600 expose-fd listeners level admin
+
+      defaults
+        default-server init-addr last,libc,none
+        log global
+        mode tcp
+        retries 10
+        timeout client 28800s
+        timeout connect 100500
+        timeout server 28800s
+
+      frontend galera-in
+        bind *:3309 accept-proxy
+        bind *:3306
+        mode tcp
+        option clitcpka
+        default_backend galera-nodes
+
+      frontend galera-admin-in
+        bind *:33062
+        mode tcp
+        option clitcpka
+        default_backend galera-admin-nodes
+
+      frontend galera-replica-in
+        bind *:3307
+        mode tcp
+        option clitcpka
+        default_backend galera-replica-nodes
+
+      frontend galera-mysqlx-in
+        bind *:33060
+        mode tcp
+        option clitcpka
+        default_backend galera-mysqlx-nodes
+
+      frontend stats
+        bind *:8404
+        mode http
+        option http-use-htx
+        http-request use-service prometheus-exporter if { path /metrics }
+    serviceAnnotations:
+      service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    readinessProbes:
+      timeoutSeconds: 30
+    livenessProbes:
+      timeoutSeconds: 60
+    serviceType: LoadBalancer
+    replicasServiceType: LoadBalancer
+    envVarsSecret: my-env-var-secrets
+    resources:
+      requests:
+        memory: 2G
+        cpu: 2000m
+    affinity:
+      antiAffinityTopologyKey: "kubernetes.io/hostname"
+    podDisruptionBudget:
+      maxUnavailable: 1
+    gracePeriod: 30
+  proxysql:
+    enabled: false
+    size: 3
+    image: percona/percona-xtradb-cluster-operator:1.12.0-proxysql
+    resources:
+      requests:
+        memory: 20M
+        cpu: 1m
+    affinity:
+      antiAffinityTopologyKey: "kubernetes.io/hostname"
+    volumeSpec:
+      persistentVolumeClaim:
+        resources:
+          requests:
+            storage: 1G
+    podDisruptionBudget:
+      maxUnavailable: 1
+    gracePeriod: 30
+  logcollector:
+    enabled: true
+    image: percona/percona-xtradb-cluster-operator:1.12.0-logcollector
+    resources:
+      requests:
+        memory: 100M
+        cpu: 200m
+  pmm:
+    enabled: true
+    image: percona/pmm-client:2.32.0
+    serverHost: 3.73.128.178
+    serverUser: admin
+    pxcParams: "--disable-tablestats-limit=2000"
+    resources:
+      requests:
+        memory: 400M
+        cpu: 500m
+  backup:
+    image: percona/percona-xtradb-cluster-operator:1.12.0-pxc8.0-backup
+    backoffLimit: 2
+    pitr:
+      enabled: false
+      storageName: s3-pir
+      timeBetweenUploads: 600
+    storages:
+      s3-pir:
+        type: s3
+        verifyTLS: true
+        s3:
+          bucket: mt-bucket-backup-tl/pir
+          credentialsSecret: mt-cluster-1-backup-s3
+          region: eu-west-3
+      s3-ondemand:
+        type: s3
+        verifyTLS: true
+        s3:
+          bucket: mt-bucket-backup-tl/ondemand
+          credentialsSecret: mt-cluster-1-backup-s3
+          region: eu-west-3
+      s3-eu-west: 
+        type: s3
+        verifyTLS: true
+        s3:
+          bucket: mt-bucket-backup-tl/scheduled
+          credentialsSecret: mt-cluster-1-backup-s3
+          region: eu-west-3
+      fs-pvc:
+        type: filesystem
+        volume:
+          persistentVolumeClaim:
+            accessModes: [ "ReadWriteOnce" ]
+            resources:
+              requests:
+                storage: 200G
+    schedule:
+      - name: "sat-night-backup"
+        schedule: "0 0 * * 6"
+        keep: 3
+        storageName: s3-eu-west
+      - name: "daily-backup"
+        schedule: "0 3 * * *"
+        keep: 7
+        storageName: s3-eu-west
