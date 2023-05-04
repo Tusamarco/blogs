@@ -63,18 +63,6 @@ Plan
 6) run Sysbench (or any other test case) to show how this works
 
 
-Machines
--------------------------------------------------
-APP ssh -i ~/work/mysshkey/keys/mt-aws-testing-2022.pem centos@35.158.96.9
-Proxy ssh -i ~/work/mysshkey/keys/mt-aws-testing-2022.pem ec2-user@54.93.81.76
-
-
-
-
-
-
-
-
 Test
 -------------------------------------------------
 -----------------------
@@ -114,7 +102,7 @@ select group_replication_set_as_primary('c5aed435-d58d-11ea-bb26-5254004d77d3');
 
 Sysbench
 ---------------
-sysbench ./src/lua/windmills/oltp_read.lua  --mysql-host=10.0.1.96  --mysql-port=6033 --mysql-user=dba_g1 --mysql-password=dba --mysql-db=windmills_large --mysql_storage_engine=innodb --db-driver=mysql --tables=4 --table_size=400 --table_name=windmills  --mysql_table_options="CHARSET=utf8 COLLATE=utf8_bin " --mysql-ignore-errors=all --threads=1  prepare
+sysbench ./src/lua/windmills/oltp_read.lua  --mysql-host=  --mysql-port=6033 --mysql-user=dba_g1 --mysql-password=dba --mysql-db=windmills_large --mysql_storage_engine=innodb --db-driver=mysql --tables=4 --table_size=400 --table_name=windmills  --mysql_table_options="CHARSET=utf8 COLLATE=utf8_bin " --mysql-ignore-errors=all --threads=1  prepare
 
 
 sysbench ./src/lua/windmills/oltp_read_write.lua --mysql-host= --mysql-port=3306 --mysql-user=app_test --mysql-password=test --mysql-db=windmills_large --mysql_storage_engine=innodb --db-driver=mysql --tables=4 --table_size=400 --mysql-ignore-errors=all --table_name=windmills   --rand-type=zipfian --rand-zipfian-exp=0.5 --skip_trx=false  --report-interval=1 --auto_inc=off --histogram --stats_format=csv --db-ps-mode=disable  --point-selects=100 --range-selects=true --reconnect=40 --threads=<N> --time=600 run 
@@ -133,7 +121,7 @@ sysbench /opt/sysbench-tpcc/tpcc.lua --mysql-host=<ip> --mysql-port=3306  --mysq
 
 
 
-watch -n 1 'mysql -h 127.0.0.1 -P 6032 -ucluster1 -pclusterpass -t -e "select b.weight, c.* from stats_mysql_connection_pool c left JOIN runtime_mysql_servers b ON  c.hostgroup=b.hostgroup_id and c.srv_host=b.hostname and c.srv_port = b.port   order by hostgroup,srv_host desc;" -e " select srv_host,command,avg(time_ms), count(ThreadID) from stats_mysql_processlist group by srv_host,command;" -e "select * from stats_mysql_users;";mysql -h 127.0.0.1 -P 6032 -ucluster1 -pclusterpass -t -e " select * from mysql_server_galera_log  order by time_start_us desc limit 10"'
+watch -n 1 'mysql -h 127.0.0.1 -P 6032 -u -p -t -e "select b.weight, c.* from stats_mysql_connection_pool c left JOIN runtime_mysql_servers b ON  c.hostgroup=b.hostgroup_id and c.srv_host=b.hostname and c.srv_port = b.port   order by hostgroup,srv_host desc;" -e " select srv_host,command,avg(time_ms), count(ThreadID) from stats_mysql_processlist group by srv_host,command;" -e "select * from stats_mysql_users;";mysql -h 127.0.0.1 -P 6032 -u -p -t -e " select * from mysql_server_galera_log  order by time_start_us desc limit 10"'
 
 
 
