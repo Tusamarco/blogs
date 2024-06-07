@@ -1,0 +1,37 @@
+Config changes
+
+####################
+##Cache
+####################
+table_definition_cache=4096
+tablespace-definition-cache=256
+table_open_cache=4096
+table-open-cache-instances=4
+thread_cache_size=1024
+thread_handling=one-thread-per-connection
+#####################
+#Perconnection
+#####################
+binlog_cache_size	=1M
+binlog_stmt_cache_size=1M
+join_buffer_size=32M
+max_heap_table_size=16M
+read_buffer_size=1M
+read_rnd_buffer_size=16M
+sort_buffer_size=1M
+tmp_table_size=16M
+#####################
+#InnoDBsettings
+#####################
+innodb-adaptive-hash-index=FALSE
+innodb-autoinc-lock-mode=2
+innodb-buffer-pool-instances=4
+innodb-buffer-pool-size=10G
+innodb-data-file-path=ibdata1:100M:autoextend
+innodb_data_home_dir=/opt/mysql_instances/test-ps834/data
+innodb-flush-method=O_DIRECT
+innodb_use_fdatasync=1
+innodb_redo_log_capacity=3355443200
+innodb_log_group_home_dir=/opt/mysql_instances/test-ps834/logs
+innodb-log-buffer-size=200M
+innodb_sync_array_size=32
