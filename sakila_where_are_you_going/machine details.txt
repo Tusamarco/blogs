@@ -1,0 +1,204 @@
+ Percona Toolkit System Summary Report ######################
+        Date | 2024-06-08 12:57:14 UTC (local TZ: UTC +0000)
+    Hostname | tp-asus-c6fc8c.tp.int.percona.com
+      Uptime | 86 days,  1:31,  4 users,  load average: 0.00, 0.09, 0.71
+      System | ASUSTeK COMPUTER INC.; Z10PE-D16 WS; vSystem Version (Desktop)
+ Service Tag | System Serial Number
+    Platform | Linux
+     Release | CentOS Linux release 7.9.2009 (Core)
+      Kernel | 3.10.0-1160.105.1.el7.x86_64
+Architecture | CPU = 64-bit, OS = 64-bit
+   Threading | NPTL 2.17
+     SELinux | Disabled
+ Virtualized | No virtualization detected
+# Processor ##################################################
+  Processors | physical = 2, cores = 32, virtual = 64, hyperthreading = yes
+      Speeds | 1x1200.439, 1x1306.030, 1x1318.847, 1x1450.683, 1x1535.644, 1x1584.472, 1x1658.691, 1x1782.592, 1x1811.035, 1x1875.854, 1x1923.339, 1x1934.326, 1x1945.434, 1x1963.745, 1x1967.041, 1x2038.940, 1x2055.786, 1x2089.965, 1x2096.801, 1x2164.794, 1x2187.988, 1x2188.354, 1x2198.364, 1x2248.535, 1x2272.216, 1x2310.913, 1x2312.377, 1x2317.626, 1x2335.693, 1x2348.022, 1x2352.416, 1x2397.705, 1x2492.065, 1x2500.610, 1x2517.456, 1x2520.751, 1x2521.118, 1x2570.312, 1x2579.833, 1x2580.200, 1x2585.205, 1x2589.355, 1x2607.910, 1x2616.210, 1x2631.835, 1x2669.067, 1x2673.950, 1x2679.565, 1x2692.993, 1x2730.834, 1x2747.314, 1x2765.747, 1x2785.278, 1x2795.898, 1x2801.391, 1x2821.044, 1x2860.107, 1x2889.404, 1x2985.107, 1x2991.088, 1x2993.164, 1x2999.877, 1x3000.000, 1x3000.976
+      Models | 64xGenuine Intel(R) CPU 0000 @ 2.00GHz
+      Caches | 64x40960 KB
+# Memory #####################################################
+         Total | 251.6G
+          Free | 102.9G
+          Used | physical = 4.8G, swap allocated = 4.0G, swap used = 1.0M, virtual = 4.8G
+        Shared | 427.7M
+       Buffers | 143.9G
+        Caches | 245.5G
+         Dirty | 20 kB
+       UsedRSS | 1.8G
+    Swappiness | 1
+   DirtyPolicy | 20, 10
+   DirtyStatus | 0, 0
+    Numa Nodes | 2
+   Numa Policy | default
+Preferred Node | current
+   Node    Size        Free        CPUs
+   ====    ====        ====        ====
+   node1   129018 MB   54932 MB    16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 
+   node0   128646 MB   50386 MB    0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 
+
+  Locator   Size     Speed             Form Factor   Type          Type Detail
+  ========= ======== ================= ============= ============= ===========
+  DIMM_A1   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_A2   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_B1   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_B2   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_C1   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_C2   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_D1   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_D2   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_E1   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_E2   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_F1   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_F2   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_G1   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_G2   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_H1   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+  DIMM_H2   16384 MB 2400 MT/s         DIMM          DDR4          Synchronous
+# Mounted Filesystems ########################################
+  Filesystem                       Size Used Type     Opts                                                                 Mountpoint
+  /dev/mapper/beastbox--data-home   14T  10% xfs      rw,relatime,attr2,inode64,sunit=512,swidth=1536,noquota              /home
+  /dev/md126p1                     367G  71% ext4     rw,noatime,nodiratime,stripe=32                                      /ssd2
+  /dev/nvme0n1p1                   1.8T  25% ext4     rw,noatime,nodiratime                                                /nvme_ext4
+  /dev/nvme1n1p1                   1.9T   1% xfs      rw,relatime,attr2,inode64,noquota                                    /nvme_xfs
+  /dev/sda2                        910G  49% ext4     rw,noatime,nodiratime,data=ordered                                   /ssd3
+  /dev/sdb1                        974M  40% ext4     rw,relatime,data=ordered                                             /boot
+  /dev/sdb2                        446G   6% xfs      rw,relatime,attr2,inode64,noquota                                    /
+  devtmpfs                         126G   0% devtmpfs rw,nosuid,size=131908220k,nr_inodes=32977055,mode=755                /dev
+  tmpfs                            126G   0% tmpfs    rw,nosuid,nodev                                                      /sys/fs/cgroup
+  tmpfs                            126G   0% tmpfs    rw,nosuid,nodev,mode=755                                             /sys/fs/cgroup
+  tmpfs                            126G   0% tmpfs    rw,nosuid,nodev,relatime,size=26384848k,mode=700,uid=10096,gid=10000 /sys/fs/cgroup
+  tmpfs                            126G   0% tmpfs    ro,nosuid,nodev,noexec,mode=755                                      /sys/fs/cgroup
+  tmpfs                            126G   1% tmpfs    rw,nosuid,nodev                                                      /dev/shm
+  tmpfs                            126G   1% tmpfs    rw,nosuid,nodev,mode=755                                             /dev/shm
+  tmpfs                            126G   1% tmpfs    rw,nosuid,nodev,relatime,size=26384848k,mode=700,uid=10096,gid=10000 /dev/shm
+  tmpfs                            126G   1% tmpfs    ro,nosuid,nodev,noexec,mode=755                                      /dev/shm
+  tmpfs                            126G   1% tmpfs    rw,nosuid,nodev                                                      /run
+  tmpfs                            126G   1% tmpfs    rw,nosuid,nodev,mode=755                                             /run
+  tmpfs                            126G   1% tmpfs    rw,nosuid,nodev,relatime,size=26384848k,mode=700,uid=10096,gid=10000 /run
+  tmpfs                            126G   1% tmpfs    ro,nosuid,nodev,noexec,mode=755                                      /run
+  tmpfs                             26G   0% tmpfs    rw,nosuid,nodev                                                      /run/user/10096
+  tmpfs                             26G   0% tmpfs    rw,nosuid,nodev,mode=755                                             /run/user/10096
+  tmpfs                             26G   0% tmpfs    rw,nosuid,nodev,relatime,size=26384848k,mode=700,uid=10096,gid=10000 /run/user/10096
+  tmpfs                             26G   0% tmpfs    ro,nosuid,nodev,noexec,mode=755                                      /run/user/10096
+# Disk Schedulers And Queue Size #############################
+        dm-0 | 128
+        dm-1 | 128
+       md126 | 128
+       md127 | 128
+     nvme0n1 | [none] 1023
+     nvme1n1 | [none] 1023
+         sda | [deadline] 128
+         sdb | [deadline] 128
+         sdc | [deadline] 128
+         sdd | [deadline] 128
+         sde | [deadline] 128
+         sdf | [deadline] 128
+         sdg | [noop] 128
+         sdh | [noop] 128
+# Disk Partitioning ##########################################
+Device       Type      Start        End               Size
+============ ==== ========== ========== ==================
+/dev/dm-0    Disk                               4294967296
+/dev/dm-1    Disk                           14998239707136
+/dev/md126   Disk                             400099246080
+/dev/md126p1 Part       2048  781443839       400098196992
+/dev/md127   Disk                           15002539917312
+/dev/nvme0n1 Disk                            2000398934016
+/dev/nvme0n1p1 Part       2048 3907029167      2000397884928
+/dev/nvme1n1 Disk                            2000398934016
+/dev/nvme1n1p1 Part       2048 3907029167      2000397884928
+/dev/sda     Disk                            1024209543168
+/dev/sda1    Part       2048   62500863        31999393280
+/dev/sda2    Part   62500864 2000408575       992208748032
+/dev/sdb     Disk                            2000398934016
+/dev/sdb1    Part       2048    2099199         1073741312
+/dev/sdb2    Part    2099200  937701375       479028313600
+/dev/sdc     Disk                            5000981078016
+/dev/sdd     Disk                            5000981078016
+/dev/sde     Disk                            5000981078016
+/dev/sdf     Disk                            5000981078016
+/dev/sdg     Disk                             200049647616
+/dev/sdh     Disk                             200049647616
+# Kernel Inode State #########################################
+dentry-state | 130456	107528	45	0	7361	0
+     file-nr | 5120	0	1000000
+    inode-nr | 122955	43281
+# LVM Volumes ################################################
+  LV   VG            Attr       LSize  Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  home beastbox-data -wi-ao---- 13.64t                                                    
+  swap beastbox-data -wi-ao----  4.00g                                                    
+# LVM Volume Groups ##########################################
+  VG            VSize  VFree
+  beastbox-data 13.64t    0 
+# RAID Controller ############################################
+  Controller | Fusion-MPT SAS
+# Network Config #############################################
+  Controller | Intel Corporation Ethernet Controller 10-Gigabit X540-AT2 (rev 01)
+  Controller | Intel Corporation Ethernet Controller 10-Gigabit X540-AT2 (rev 01)
+  Controller | Intel Corporation I210 Gigabit Network Connection (rev 03)
+  Controller | Intel Corporation I210 Gigabit Network Connection (rev 03)
+ FIN Timeout | 30
+  Port Range | 60999
+# Interface Statistics #######################################
+  interface  rx_bytes rx_packets  rx_errors   tx_bytes tx_packets  tx_errors
+  ========= ========= ========== ========== ========== ========== ==========
+  lo       50000000000000 45000000000          0 50000000000000 45000000000          0
+  enp5s0            0          0          0          0          0          0
+  enp10s0           0          0          0          0          0          0
+  ens2f0   12500000000   80000000          0 300000000000  225000000          0
+  ens2f1       800000       9000          0     800000       9000          0
+  br0      10000000000   80000000          0 300000000000  125000000          0
+  bond0    12500000000   80000000          0 300000000000  225000000          0
+  virbr0            0          0          0          0          0          0
+  virbr0-nic          0          0          0          0          0          0
+# Network Devices ############################################
+  Device    Speed     Duplex
+  ========= ========= =========
+  br0                             
+  bond0      10000Mb/s  Full      
+  virbr0-nic 10Mb/s     Full      
+  enp5s0     Unknown!   Unknown!  
+  enp10s0    Unknown!   Unknown!  
+  ens2f0     10000Mb/s  Full      
+  ens2f1     10000Mb/s  Full      
+  virbr0                          
+# Network Connections ########################################
+  Connections from remote IP addresses
+    3.73.128.178        3
+    10.30.4.180         1
+    10.222.20.82        4
+    127.0.0.1          15
+  Connections to local IP addresses
+    10.30.2.10          8
+    127.0.0.1          15
+  Connections to top 10 local ports
+    22                  4
+    42000               3
+    42002               3
+    43266               1
+    44386               1
+    46492               1
+    48118               1
+    48120               1
+    49946               1
+    55862               1
+  States of connections
+    ESTABLISHED        20
+    LISTEN             20
+# Top Processes ##############################################
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+ 1648 root      20   0  277940   4508   3244 S   5.9  0.0   0:45.63 sssd_nss
+    1 root      20   0  191704   4116   2112 S   0.0  0.0  19:36.36 systemd
+    2 root      20   0       0      0      0 S   0.0  0.0   0:02.07 kthreadd
+    4 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 kworker/0:+
+    6 root      20   0       0      0      0 S   0.0  0.0  20:36.96 ksoftirqd/0
+    7 root      rt   0       0      0      0 S   0.0  0.0   1:17.63 migration/0
+    8 root      20   0       0      0      0 S   0.0  0.0   0:00.00 rcu_bh
+    9 root      20   0       0      0      0 S   0.0  0.0  49:43.35 rcu_sched
+   10 root       0 -20       0      0      0 S   0.0  0.0   0:00.00 lru-add-dr+
+# Notable Processes ##########################################
+  PID    OOM    COMMAND
+ 2381    -17    sshd
+# Memory management ##########################################
+Transparent huge pages are enabled.
+# The End ####################################################
