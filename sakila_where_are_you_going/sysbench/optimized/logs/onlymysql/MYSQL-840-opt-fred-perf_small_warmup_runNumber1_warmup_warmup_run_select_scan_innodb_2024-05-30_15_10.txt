@@ -1,0 +1,70 @@
+[INFO] PMM is correctly set, automatic notation enabled
+[INFO][FLAME Graph check] The perf command is present
+Current path: /opt/tools/benchmarktools/software
+Execution time: 2024-05-30_15_10
+Dry run: false
+Test: percona-840-opt-fred-perf
+Testname: sysbench
+Host: 10.30.2.10
+Port: 3307
+Engine: innodb
+Schemaname: windmills_small
+Table: mill
+TIME: 60
+Thread set: 1
+Rate set: 
+Ignore error set: none
+TESTRUN: false
+Have PMM notation: true
+Use FlameGraph (collect perf report): false
+============= SysBench =============
+Rows Small: 10000000
+Tables Small: 20
+Rows Large: 30000000
+Tables Large: 5
+Using: small
+Tables: 20
+Rows:   10000000
+MySQL Provider mysqlproducer=MySQL Community Server - GPL Version: mysqlversion=8.4.0
+[OK] Mysql running correctly  
+META: mysqlproducer=MySQL Community Server - GPL;mysqlversion=8.4.0;testIdentifyer=percona-840-opt-fred-perf;dimension=small;actionType=warmup;runNumber=1;host=10.30.2.10;producer=sysbench;execDate=2024-05-30_15_10;engine=innodb
+*****************************************
+SUBTEST: warmup_run_select_scan
+BLOCK: [START] warmup_run_select_scan Test percona-840-opt-fred-perf sysbench  (filter: warmup_run_select_scan) 2024-05-30_15_10_21 
+META: testIdentifyer=percona-840-opt-fred-perf;dimension=small;actionType=warmup;runNumber=1;execCommand=warmup;subtest=warmup_run_select_scan;execDate=2024-05-30_15_10_21;engine=innodb;mysqlproducer=MySQL Community Server - GPL;mysqlversion=8.4.0
+NOTE: launcher_threads_override detected, threads set to do not exceed: 20
+======================================
+THREADS=20
+RUNNING Test percona-840-opt-fred-perf sysbench warmup_run_select_scan (filter: warmup_run_select_scan) Thread=20 [START] 2024-05-30_15_10_21 
+======================================
+Executing: sysbench /opt/tools/sysbench/src/lua/windmills/oltp_scan.lua --mysql-host=10.30.2.10 --mysql-port=3307 --mysql-user=app_test --mysql-password=test --mysql-db=windmills_small --db-driver=mysql --skip_trx=on --report-interval=1 --histogram --table_name=mill --stats_format=csv --db-ps-mode=disable --rand-type=uniform  --tables=20 --table_size=10000000 --threads=20 --mysql-ignore-errors=none  --reconnect=0 warmup 
+sysbench 1.1.0-85c3a36 (using bundled LuaJIT 2.1.0-beta3)
+
+Initializing worker threads...
+
+Preloading table mill14
+Preloading table mill10
+Preloading table mill6
+Preloading table mill15
+Preloading table mill13
+Preloading table mill19Preloading table mill18
+
+Preloading table mill16
+Preloading table mill1
+Preloading table mill11
+Preloading table mill5
+Preloading table mill17
+Preloading table mill2
+Preloading table mill9
+Preloading table mill8
+Preloading table mill12
+Preloading table mill4
+Preloading table mill20
+Preloading table mill7
+Preloading table mill3
+======================================
+RUNNING Test percona-840-opt-fred-perf sysbench warmup_run_select_scan (filter: warmup_run_select_scan) Thread=20 [END] 2024-05-30_15_16_45 
+BLOCK: [END] warmup_run_select_scan Test percona-840-opt-fred-perf sysbench  (filter: warmup_run_select_scan) 2024-05-30_15_16_46 
+*****************************************
+
+METACOLLECTION: enddate=2024-05-30_15_16_46

@@ -1,0 +1,70 @@
+[INFO] PMM is correctly set, automatic notation enabled
+[INFO][FLAME Graph check] The perf command is present
+Current path: /opt/tools/benchmarktools/software
+Execution time: 2024-05-16_15_00
+Dry run: false
+Test: MYSQL_57_BASE
+Testname: sysbench
+Host: 10.30.2.10
+Port: 3307
+Engine: innodb
+Schemaname: windmills_small
+Table: mill
+TIME: 60
+Thread set: 1
+Rate set: 
+Ignore error set: none
+TESTRUN: false
+Have PMM notation: true
+Use FlameGraph (collect perf report): false
+============= SysBench =============
+Rows Small: 10000000
+Tables Small: 20
+Rows Large: 30000000
+Tables Large: 5
+Using: small
+Tables: 20
+Rows:   10000000
+MySQL Provider mysqlproducer=MySQL Community Server (GPL) Version: mysqlversion=5.7.44
+[OK] Mysql running correctly  
+META: mysqlproducer=MySQL Community Server (GPL);mysqlversion=5.7.44;testIdentifyer=MYSQL_57_BASE;dimension=small;actionType=warmup;runNumber=1;host=10.30.2.10;producer=sysbench;execDate=2024-05-16_15_00;engine=innodb
+*****************************************
+SUBTEST: warmup_run_select_scan
+BLOCK: [START] warmup_run_select_scan Test MYSQL_57_BASE sysbench  (filter: warmup_run_select_scan) 2024-05-16_15_00_05 
+META: testIdentifyer=MYSQL_57_BASE;dimension=small;actionType=warmup;runNumber=1;execCommand=warmup;subtest=warmup_run_select_scan;execDate=2024-05-16_15_00_05;engine=innodb;mysqlproducer=MySQL Community Server (GPL);mysqlversion=5.7.44
+NOTE: launcher_threads_override detected, threads set to do not exceed: 20
+======================================
+THREADS=20
+RUNNING Test MYSQL_57_BASE sysbench warmup_run_select_scan (filter: warmup_run_select_scan) Thread=20 [START] 2024-05-16_15_00_06 
+======================================
+Executing: sysbench /opt/tools/sysbench/src/lua/windmills/oltp_scan.lua --mysql-host=10.30.2.10 --mysql-port=3307 --mysql-user=app_test --mysql-password=test --mysql-db=windmills_small --db-driver=mysql --skip_trx=on --report-interval=1 --histogram --table_name=mill --stats_format=csv --db-ps-mode=disable --rand-type=uniform  --tables=20 --table_size=10000000 --threads=20 --mysql-ignore-errors=none  --reconnect=0 warmup 
+sysbench 1.1.0-85c3a36 (using bundled LuaJIT 2.1.0-beta3)
+
+Initializing worker threads...
+
+Preloading table mill4Preloading table mill17
+
+Preloading table mill15
+Preloading table mill6Preloading table mill5Preloading table mill16
+
+
+Preloading table mill8
+Preloading table mill3
+Preloading table mill19
+Preloading table mill12
+Preloading table mill20
+Preloading table mill1
+Preloading table mill10
+Preloading table mill2Preloading table mill7
+
+Preloading table mill13
+Preloading table mill14Preloading table mill9
+
+Preloading table mill11
+Preloading table mill18
+======================================
+RUNNING Test MYSQL_57_BASE sysbench warmup_run_select_scan (filter: warmup_run_select_scan) Thread=20 [END] 2024-05-16_15_03_54 
+BLOCK: [END] warmup_run_select_scan Test MYSQL_57_BASE sysbench  (filter: warmup_run_select_scan) 2024-05-16_15_03_55 
+*****************************************
+
+METACOLLECTION: enddate=2024-05-16_15_03_55
