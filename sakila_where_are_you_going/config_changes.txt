@@ -35,3 +35,9 @@ innodb_redo_log_capacity=3355443200
 innodb_log_group_home_dir=/opt/mysql_instances/test-ps834/logs
 innodb-log-buffer-size=200M
 innodb_sync_array_size=32
+
+#############################################
+# IN all tests to be as fair as possible
+# given from 8.0 bingo are active by default
+#############################################
+skip-log-bin
