@@ -1,5 +1,3 @@
-Here is the markdown document with the summary of all uploaded files.
-
 | Server Name | Text File (Variable Dump) | CNF File (Configuration) |
 | --- | --- | --- |
 | **MariaDB 11.8.5** | [mariadb_11-8-5.txt](mariadb_11-8-5.txt) | [mariadb_11_8_5.cnf](mariadb_11_8_5.cnf) |
