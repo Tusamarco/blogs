@@ -1,0 +1,135 @@
+
+# Percona Toolkit System Summary Report ######################
+        Date | 2026-03-31 16:25:35 UTC (local TZ: UTC +0000)
+    Hostname | mt-pxcgr-test-node1.tp.int.percona.com
+      Uptime | 5 days,  3:20,  3 users,  load average: 9.76, 5.92, 26.82
+    Platform | Linux
+     Release | Red Hat Enterprise Linux release 9.6 (Plow)
+      Kernel | 5.14.0-570.55.1.0.1.el9_6.x86_64
+Architecture | CPU = 64-bit, OS = 64-bit
+   Threading | NPTL 2.34
+     SELinux | Permissive
+ Virtualized | No virtualization detected
+# Processor ##################################################
+  Processors | physical = 1, cores = 16, virtual = 16, hyperthreading = no
+      Speeds | 16x2095.076
+      Models | 16xQEMU Virtual CPU version 2.5+
+      Caches | 16x16384 KB
+  Designation               Configuration                  Size     Associativity
+  ========================= ============================== ======== ======================
+# Memory #####################################################
+         Total | 30.9G
+          Free | 597.0M
+          Used | physical = 20.7G, swap allocated = 4.0G, swap used = 72.4M, virtual = 20.7G
+        Shared | 37.4M
+       Buffers | 10.2G
+        Caches | 10.3G
+         Dirty | 120 kB
+       UsedRSS | 20.1G
+    Swappiness | 1
+   DirtyPolicy | 20, 10
+   DirtyStatus | 0, 0
+    Numa Nodes | 1
+   Numa Policy | default
+Preferred Node | current
+   Node    Size        Free        CPUs
+   ====    ====        ====        ====
+   node0   31641 MB    597 MB      0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 
+
+  Locator   Size     Speed             Form Factor   Type          Type Detail
+  ========= ======== ================= ============= ============= ===========
+# Mounted Filesystems ########################################
+  Filesystem                   Size Used Type     Opts                                                                                              Mountpoint
+  /dev/mapper/vg_main-lv_root   32G  17% xfs      rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota                                 /
+  /dev/sda1                    960M  15% xfs      rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota                                 /boot
+  /dev/sda3                    357G  73% ext4     rw,noatime,nodiratime,seclabel,nobarrier                                                          /opt/mysql_instances
+  devtmpfs                     4.0M   0% devtmpfs rw,nosuid,seclabel,size=4096k,nr_inodes=4041108,mode=755,inode64                                  /dev
+  tmpfs                         16G   0% tmpfs    rw,nosuid,nodev,seclabel,inode64                                                                  /dev/shm
+  tmpfs                         16G   0% tmpfs    rw,nosuid,nodev,seclabel,size=6480272k,nr_inodes=819200,mode=755,inode64                          /dev/shm
+  tmpfs                         16G   0% tmpfs    rw,nosuid,nodev,relatime,seclabel,size=3240132k,nr_inodes=810033,mode=700,uid=997,gid=994,inode64 /dev/shm
+  tmpfs                        3.1G   0% tmpfs    rw,nosuid,nodev,seclabel,inode64                                                                  /run/user/997
+  tmpfs                        3.1G   0% tmpfs    rw,nosuid,nodev,seclabel,size=6480272k,nr_inodes=819200,mode=755,inode64                          /run/user/997
+  tmpfs                        3.1G   0% tmpfs    rw,nosuid,nodev,relatime,seclabel,size=3240132k,nr_inodes=810033,mode=700,uid=997,gid=994,inode64 /run/user/997
+  tmpfs                        6.2G   2% tmpfs    rw,nosuid,nodev,seclabel,inode64                                                                  /run
+  tmpfs                        6.2G   2% tmpfs    rw,nosuid,nodev,seclabel,size=6480272k,nr_inodes=819200,mode=755,inode64                          /run
+  tmpfs                        6.2G   2% tmpfs    rw,nosuid,nodev,relatime,seclabel,size=3240132k,nr_inodes=810033,mode=700,uid=997,gid=994,inode64 /run
+# Disk Schedulers And Queue Size #############################
+        dm-0 | UNREADABLE
+        dm-1 | UNREADABLE
+         sda | [none] 256
+         sr0 | [mq-deadline] 2
+# Disk Partitioning ##########################################
+# Kernel Inode State #########################################
+dentry-state | 55695	30451	45	0	4082	0
+     file-nr | 1824	0	9223372036854775807
+    inode-nr | 51808	1044
+# LVM Volumes ################################################
+Unable to collect information
+# LVM Volume Groups ##########################################
+Unable to collect information
+# RAID Controller ############################################
+  Controller | No RAID controller detected
+# Network Config #############################################
+ FIN Timeout | 30
+  Port Range | 60999
+# Interface Statistics #######################################
+  interface  rx_bytes rx_packets  rx_errors   tx_bytes tx_packets  tx_errors
+  ========= ========= ========== ========== ========== ========== ==========
+  lo       12500000000    6000000          0 12500000000    6000000          0
+  eth0     350000000000  500000000          0 1500000000000  450000000          0
+# Network Devices ############################################
+  Device    Speed     Duplex
+  ========= ========= =========
+  eth0       Unknown!   Unknown!  
+# Network Connections ########################################
+  Connections from remote IP addresses
+    10.30.2.7           4
+    10.30.50.203        2
+    10.30.50.204        2
+    10.222.20.206       3
+    54.93.255.116       7
+    127.0.0.1          80
+    147.135.54.159      1
+  Connections to local IP addresses
+    10.30.50.201       20
+    127.0.0.1          80
+  Connections to top 10 local ports
+    22                  3
+    33061               2
+    3306                6
+    42000               3
+    42001               2
+    42002               3
+    58644               1
+    58648               1
+    58652               1
+    58656               1
+  States of connections
+    ESTABLISHED        35
+    LISTEN             10
+    TIME_WAIT          60
+# Top Processes ##############################################
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+  72833 tusa      20   0   27.0g  19.4g  49152 S 306.2  62.7   1125:34 mysqld
+  74870 tusa      20   0   10516   4096   3328 R   6.2   0.0   0:00.02 top
+      1 root      20   0  173916  14228   8064 S   0.0   0.0   0:14.82 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:04.49 kthreadd
+      3 root      20   0       0      0      0 S   0.0   0.0   0:00.00 pool_wo+
+      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker+
+      5 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker+
+      6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker+
+      7 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker+
+# Notable Processes ##########################################
+  PID    OOM    COMMAND
+    ?      ?    sshd doesn't appear to be running
+# Simplified and fuzzy rounded vmstat (wait please) ##########
+  procs  ---swap-- -----io---- ---system---- --------cpu--------
+   r  b    si   so    bi    bo     ir     cs  us  sy  il  wa  st
+   4  1     0    0   600   700      5      3   3   2  94   1   0
+   3  1     0    0 50000 45000  35000  40000  15   9  67   8   0
+   3  1     0    0 45000 40000  30000  40000  13   7  72   8   0
+   3  1    70    0 40000 45000  30000  40000  15   7  71   7   0
+   4  0     0    0 50000 45000  30000  40000  12   7  73   9   0
+# Memory management ##########################################
+Transparent huge pages are enabled.
+# The End ####################################################
