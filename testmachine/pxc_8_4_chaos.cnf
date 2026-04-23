@@ -111,7 +111,7 @@ wsrep-sst-donor-rejects-queries                             = FALSE
 wsrep-sst-method                                            = clone #xtrabackup-v2  #clone
 wsrep_sst_allowed_methods                                   = xtrabackup-v2,clone
 wsrep-sst-receive-address                                   = AUTO
-wsrep-sync-wait                                             = 0 #avod stale read with 3
+wsrep-sync-wait                                             = 0 #avod stale read with 7
 wsrep-trx-fragment-size                                     = 0
 wsrep-trx-fragment-unit                                     = bytes
 [sst]
