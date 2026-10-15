@@ -1,6 +1,6 @@
 -- =====================================================================
 --  Validation and formatting at the door
---  JavaScript functions + a trigger, in MySQL 9 (MLE)
+--  JavaScript functions + a trigger, 
 --
 --  THE ARGUMENT:
 --    Every application promises to validate its input. Only the database
@@ -14,6 +14,7 @@
 --      email  "  FIONA.DELUCA@libero.it  " / "sean.vanderberg@"
 --      phone  "011/8130409" / "0039021234522" / "+39 05 5437 8587"
 --      iban   IT... with a real mod-97 check digit, 10% of them wrong
+--
 --
 -- =====================================================================
 
@@ -42,7 +43,10 @@ DROP TABLE    IF EXISTS contacts_in;
 -- 1a. NAMES.  UPPER() and LOWER() are the only case tools SQL has, and
 --     neither knows that McDonald has a capital D, that o'brien has a
 --     capital B, or that "van der" stays lowercase.
-CREATE FUNCTION proper_name(t VARCHAR(120))  RETURNS VARCHAR(120) DETERMINISTIC NO SQL LANGUAGE JS AS $$
+CREATE FUNCTION proper_name(t VARCHAR(120))
+RETURNS VARCHAR(120)
+DETERMINISTIC NO SQL
+LANGUAGE JS AS $$
   if (t === null) return null
   const PARTICLES = new Set(['van','von','der','den','de','di','del','della',
                              'da','dos','du','la','le','lo','el','bin','ter'])
@@ -71,7 +75,10 @@ SELECT proper_name('  giulia   VAN DER berg ') AS a,   -- Giulia van der Berg
 
 -- 1b. EMAIL.  Trim, lower-case, and reject what is not an address.
 --     Returns NULL when it cannot be salvaged.
-CREATE FUNCTION clean_email(t VARCHAR(200)) RETURNS VARCHAR(200) DETERMINISTIC NO SQL LANGUAGE JS AS $$
+CREATE FUNCTION clean_email(t VARCHAR(200))
+RETURNS VARCHAR(200)
+DETERMINISTIC NO SQL
+LANGUAGE JS AS $$
   if (t === null) return null
   const s = t.trim().toLowerCase()
   // one @, something either side, a dot in the domain, no trailing dot
@@ -87,7 +94,10 @@ SELECT clean_email('  FIONA.DELUCA@libero.it  ') AS ok,       -- fiona.deluca@li
 
 
 -- 1c. PHONE -> E.164.  Arrives in eight shapes, must be stored in one.
-CREATE FUNCTION clean_phone(t VARCHAR(60), cc VARCHAR(4)) RETURNS VARCHAR(20) DETERMINISTIC NO SQL LANGUAGE JS AS $$
+CREATE FUNCTION clean_phone(t VARCHAR(60), cc VARCHAR(4))
+RETURNS VARCHAR(20)
+DETERMINISTIC NO SQL
+LANGUAGE JS AS $$
   if (t === null) return null
   let s = t.trim().replace(/[\s\-().\/]/g, "")      // strip human decoration
   if (s.startsWith("00")) s = "+" + s.slice(2)      // 0039... -> +39...
@@ -103,13 +113,75 @@ SELECT clean_phone('011/8130409','39')      AS slashes,   -- +39118130409
        clean_phone('chiamare ufficio','39') AS rubbish;   -- NULL
 
 
--- 1d. IBAN.  A real checksum: move the first four characters to the end,
---     turn every letter into two digits, and the whole thing mod 97 must
---     equal 1. An Italian IBAN becomes a 29-DIGIT NUMBER.
+-- 1c-bis. WHAT A CHECK CONSTRAINT CAN AND CANNOT DO ABOUT THIS.
 --
---     BIGINT tops out at 19 digits. In SQL you would have to chunk the
---     modulo by hand; JavaScript has BigInt.
-CREATE FUNCTION valid_iban(t VARCHAR(40)) RETURNS TINYINT DETERMINISTIC NO SQL LANGUAGE JS AS $$
+-- Do NOT say "no CHECK constraint would have caught 'chiamare
+-- ufficio'". It is not true, and someone in the room will know it.
+-- CHECK accepts REGEXP from 8.0.16, and this catches it:
+--
+--     ALTER TABLE contacts
+--       ADD CONSTRAINT phone_shape
+--       CHECK (phone REGEXP '^[-0-9 +()./]{6,}$');
+--
+-- Measured against the real feed: 51 of the 2,000 phone values contain
+-- a letter (28 'chiamare ufficio', 23 'n/a'). That CHECK rejects all
+-- 51. It works.
+--
+-- The real limit is that a CHECK is a PREDICATE, never a TRANSFORM. It
+-- can say no; it cannot say "that one is fine, store it like this".
+-- Tighten it to the shape you actually want in the column -
+--
+--     CHECK (phone REGEXP '^\\+[1-9][0-9]{7,14}$')      -- strict E.164
+--
+-- - and it accepts 226 of 2,000 rows = 11.3%. The other 1,774 are
+-- perfectly good Italian phone numbers, typed by humans. A CHECK
+-- throws them away; clean_phone() normalises 1,867 of the 1,949
+-- non-garbage values into E.164 and rejects the rest.
+--
+-- Predicate or transform. That is the whole argument, and it survives
+-- contact with an expert.
+--
+-- The query that proves both numbers is in section 1c-ter, below the
+-- LOAD DATA - contacts_raw does not exist yet at this point in the
+-- script.
+
+
+-- 1d. IBAN.  ISO 7064 MOD-97-10: move the first four characters to the
+--     end, turn every letter into two digits (A=10 .. Z=35), and the
+--     whole thing mod 97 must equal 1. An Italian IBAN becomes a
+--     30-DIGIT NUMBER.
+--
+--     HONEST NOTE - READ BEFORE PRESENTING THIS ONE.
+--     An earlier version of this file claimed SQL could not do it,
+--     because "BIGINT tops out at 19 digits". That claim is FALSE and
+--     section 1d-bis below disproves it on this server:
+--
+--       * DECIMAL holds 65 digits and MOD() on DECIMAL is exact, so the
+--         arithmetic is not the problem. Real IBANs reach 45 digits
+--         (Malta, the longest letter-heavy format) - well inside 65.
+--       * The letter substitution is not the problem either. REPLACE is
+--         global and every replacement emits digits only, so 26 nested
+--         REPLACE calls convert the whole string at any length, in one
+--         expression, in one statement.
+--
+--     So this is NOT a "SQL cannot" example. It is a readability and
+--     maintainability example: compare the two and say so out loud.
+--
+--     What IS true, and is the real reason for BigInt: a JavaScript
+--     Number is an IEEE-754 double, exact only to 2^53-1 (16 digits).
+--     Handed a 30-digit value it does not raise - it rounds, and returns
+--     the WRONG remainder:
+--
+--       Number("330542811101000000123456182960") % 97   -> 69   wrong
+--       BigInt("330542811101000000123456182960") % 97n  ->  1n  right
+--
+--     Rounding error 4,896,193,764,016, no warning, no exception. That
+--     silence is a JavaScript hazard, not a MySQL one - MySQL raises
+--     "BIGINT UNSIGNED value is out of range" in strict mode, loudly.
+CREATE FUNCTION valid_iban(t VARCHAR(40))
+RETURNS TINYINT
+DETERMINISTIC NO SQL
+LANGUAGE JS AS $$
   if (t === null) return 0
   const s = t.replace(/\s/g, "").toUpperCase()
   if (!/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(s)) return 0
@@ -122,13 +194,60 @@ SELECT valid_iban('IT17R2562291209992774772147') AS should_be_1,
        valid_iban('IT18R2562291209992774772147') AS should_be_0;
 
 
+-- 1d-bis. THE SAME CHECK IN PURE SQL.  Run this. It works.
+--
+-- This is the slide. Not "SQL cannot do it" - "SQL can do it, and here
+-- it is." 665 characters of nested REPLACE against six lines of
+-- JavaScript, and the SQL version has no name, no tests and no way to
+-- fix the alphabet in one place.
+WITH t(v) AS (
+  SELECT UPPER(REPLACE('IT17 R256 2291 2099 9277 4772 147', ' ', ''))
+)
+SELECT v,
+       MOD(CAST(
+         REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+         REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+         REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+         REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+           CONCAT(SUBSTRING(v, 5), SUBSTRING(v, 1, 4))
+         ,'A','10'),'B','11'),'C','12'),'D','13'),'E','14'),'F','15'),
+          'G','16'),'H','17'),'I','18'),'J','19'),'K','20'),'L','21'),
+          'M','22'),'N','23'),'O','24'),'P','25'),'Q','26'),'R','27'),
+          'S','28'),'T','29'),'U','30'),'V','31'),'W','32'),'X','33'),
+          'Y','34'),'Z','35')
+       AS DECIMAL(65,0)), 97) = 1 AS iban_ok
+FROM t;
+-- +-----------------------------+---------+
+-- | v                           | iban_ok |
+-- +-----------------------------+---------+
+-- | IT17R2562291209992774772147 |       1 |
+-- +-----------------------------+---------+
+--
+-- VERIFIED against IT, MT, GB and DE sample IBANs - all return 1.
+--
+-- Where the SQL version genuinely runs out:
+--   * it validates nothing about SHAPE. valid_iban() rejects a
+--     malformed string before computing anything; this returns a
+--     remainder for any garbage you feed it.
+--   * DECIMAL(65,0) overflows above 65 digits. No real IBAN format
+--     gets there (max observed 45), so this is a theoretical limit,
+--     not a practical one. Do not claim it on a slide.
+--   * it cannot be called by name from a CHECK, a trigger, a JOIN or
+--     another query without being copied in full, every time.
+--
+-- That last one is the actual argument, and it is enough.
+
+
 -- =====================================================================
 -- 2.  ONE FUNCTION THAT DOES THE WHOLE ROW
 --     Returns the cleaned values AND a list of what was wrong, so the
 --     caller can decide whether to fix, reject or quarantine.
 -- =====================================================================
 
-CREATE FUNCTION clean_contact(raw JSON) RETURNS JSON DETERMINISTIC NO SQL LANGUAGE JS AS $$
+CREATE FUNCTION clean_contact(raw JSON)
+RETURNS JSON
+DETERMINISTIC NO SQL
+LANGUAGE JS AS $$
   const r = typeof raw === 'string' ? JSON.parse(raw) : raw
   const errors = []
 
@@ -178,7 +297,7 @@ SELECT JSON_PRETTY(clean_contact(JSON_OBJECT(
 
 -- =====================================================================
 -- 3.  THE DOOR ITSELF
---     Nothing gets in unclean, no matter which
+--     A BEFORE INSERT trigger. Nothing gets in unclean, no matter which
 --     application, script or human is doing the inserting.
 -- =====================================================================
 
@@ -193,27 +312,103 @@ CREATE TABLE contacts (
 
 DELIMITER //
 
+CREATE TRIGGER contacts_bi BEFORE INSERT ON contacts
+FOR EACH ROW
+BEGIN
+  DECLARE v JSON;
+  SET v = clean_contact(JSON_OBJECT('name',  NEW.name,
+                                    'email', NEW.email,
+                                    'phone', NEW.phone,
+                                    'iban',  NEW.iban));
 
-DROP TABLE IF EXISTS contacts_in;
-CREATE TABLE contacts_in (            -- the door everybody knocks on
-  id    INT AUTO_INCREMENT PRIMARY KEY,
-  name  VARCHAR(120), email VARCHAR(200),
-  phone VARCHAR(60),  iban  VARCHAR(40)
-) ENGINE=InnoDB;
+  IF NOT JSON_VALUE(v, '$.ok' RETURNING UNSIGNED) THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'contact rejected';       -- see errors in $.errors
+  END IF;
 
--- its own reject table, so this section does not collide with the
--- bulk-load `rejects` table built in 4c
-DROP TABLE IF EXISTS rejects_routed;
-CREATE TABLE rejects_routed (
-  id     INT AUTO_INCREMENT PRIMARY KEY,
-  src_id INT NOT NULL,                  -- contacts_in.id it came from
-  errors JSON,
-  raw    JSON
-) ENGINE=InnoDB;
+  SET NEW.name  = JSON_UNQUOTE(JSON_EXTRACT(v, '$.name'));
+  SET NEW.email = JSON_UNQUOTE(JSON_EXTRACT(v, '$.email'));
+  SET NEW.phone = JSON_UNQUOTE(JSON_EXTRACT(v, '$.phone'));
+  SET NEW.iban  = JSON_UNQUOTE(JSON_EXTRACT(v, '$.iban'));
+END //
+
+DELIMITER ;
+
+-- The door works whoever knocks:
+INSERT INTO contacts (name, email, phone, iban)
+VALUES ('  giulia   VAN DER berg ', '  GIULIA.VDB@Libero.IT ',
+        '011/8130409', 'IT17R2562291209992774772147');
+
+SELECT * FROM contacts\G
+--  name  : Giulia van der Berg
+--  email : giulia.vdb@libero.it
+--  phone : +39118130409
+--  iban  : IT17R2562291209992774772147
+
+-- and it refuses the bad one, from any client, forever
+INSERT INTO contacts (name, email, phone, iban)
+VALUES ('JAMES MCGREGOR', 'james.mcgregor@', 'chiamare ufficio', NULL);
+-- ERROR 1644 (45000): contact rejected
 
 
+-- ---------------------------------------------------------------------
+-- 3a. A BUG IN THE TRIGGER ABOVE - fix this before you demo it
+--
+--     JSON_UNQUOTE(JSON_EXTRACT(v, '$.iban')) does NOT give you SQL NULL
+--     when the IBAN is absent. It gives you the four-character STRING
+--     'null', because JSON_EXTRACT returns the JSON literal null and
+--     JSON_UNQUOTE dutifully unquotes it.
+--
+--     53 rows in this feed are accepted with no IBAN. All 53 would land
+--     in the table with iban = 'null'. Then:
+--         WHERE iban IS NULL          finds nothing
+--         WHERE iban IS NOT NULL      finds 2,000 rows
+--     and the column is quietly useless. Prove it:
+-- ---------------------------------------------------------------------
 
--- [Optional] Use the BEFORE Trigger if you want a safe check in case of some direct request and not want to log error
+SELECT JSON_UNQUOTE(JSON_EXTRACT(clean_contact(JSON_OBJECT(
+         'name','Luca Rossi','email','luca.rossi@libero.it',
+         'phone','011/8130409','iban','')), '$.iban'))       AS looks_like_null,
+       JSON_UNQUOTE(JSON_EXTRACT(clean_contact(JSON_OBJECT(
+         'name','Luca Rossi','email','luca.rossi@libero.it',
+         'phone','011/8130409','iban','')), '$.iban')) IS NULL AS is_it_null;
+--  looks_like_null = null      is_it_null = 0     <- a string, not NULL
+
+-- The fix - test the JSON type explicitly:
+--     SET NEW.iban = IF(JSON_TYPE(JSON_EXTRACT(v,'$.iban')) = 'NULL',
+--                       NULL,
+--                       JSON_UNQUOTE(JSON_EXTRACT(v,'$.iban')));
+--
+-- It only bites `iban` here, because that is the only nullable field an
+-- accepted row can have - an invalid phone or email rejects the row
+-- outright. Which is exactly why it survives casual testing.
+
+
+-- =====================================================================
+-- 3b. "CAN THE TRIGGER WRITE THE BAD ROW TO rejects?"
+--
+--     The obvious version does not work, and the reason is worth a slide.
+--     SIGNAL makes the statement fail; a failed statement is rolled back;
+--     and the trigger's INSERT is part of that same statement. So the
+--     reject row is created and then destroyed. You get the error and an
+--     empty rejects table.
+--
+--     Three ways out, in increasing order of how much I would trust them.
+-- =====================================================================
+
+-- ---------------------------------------------------------------------
+-- OPTION 1: log to a NON-TRANSACTIONAL table, so the rollback cannot
+--           reach it. This is the version you asked for, and it does
+--           work - but only because MyISAM cannot roll back.
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS rejects_log;
+CREATE TABLE rejects_log (
+  id        INT AUTO_INCREMENT PRIMARY KEY,
+  logged_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  errors    JSON,
+  raw       JSON
+) ENGINE=MyISAM;              -- deliberately NOT InnoDB
 
 DROP TRIGGER IF EXISTS contacts_bi;
 DELIMITER //
@@ -244,11 +439,56 @@ BEGIN
 END //
 
 DELIMITER ;
--- [Optional - END]
+
+-- Prove that the engine choice is what makes it work:
+INSERT INTO contacts (name, email, phone, iban)
+VALUES ('JAMES MCGREGOR', 'james.mcgregor@', 'chiamare ufficio', NULL);
+-- ERROR 1644 (45000): contact rejected
+
+SELECT COUNT(*) AS survived_the_rollback FROM rejects_log;   -- 1
+SELECT errors, raw FROM rejects_log\G
+
+--  Now change ENGINE=MyISAM to ENGINE=InnoDB, repeat, and the count is 0.
+--  That is the demo. Same trigger, same SIGNAL, different engine.
+--
+--  What you are buying, and the price:
+--    + the caller still gets a hard error - the contract is unchanged
+--    + you get a durable record of what was refused and why
+--    - the log is outside your transaction, so it cannot be rolled back
+--      even when you want it to be (a retried batch double-logs)
+--    - triggers do not fire on a replica under row-based replication, so
+--      the log exists only on the primary
+--    - MyISAM in 2026 is a hard sell in a review meeting
+
+
+-- ---------------------------------------------------------------------
+-- OPTION 2 (recommended): stop making the door SIGNAL. Put a staging
+--           table in front, and let a trigger ROUTE each row to either
+--           contacts or rejects. Nothing fails, nothing rolls back,
+--           everything is InnoDB, and the caller inserts once.
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS contacts_in;
+CREATE TABLE contacts_in (            -- the door everybody knocks on
+  id    INT AUTO_INCREMENT PRIMARY KEY,
+  name  VARCHAR(120), email VARCHAR(200),
+  phone VARCHAR(60),  iban  VARCHAR(40)
+) ENGINE=InnoDB;
+
+-- its own reject table, so this section does not collide with the
+-- bulk-load `rejects` table built in 4c
+DROP TABLE IF EXISTS rejects_routed;
+CREATE TABLE rejects_routed (
+  id     INT AUTO_INCREMENT PRIMARY KEY,
+  src_id INT NOT NULL,                  -- contacts_in.id it came from
+  errors JSON,
+  raw    JSON
+) ENGINE=InnoDB;
 
 DELIMITER //
 
-CREATE TRIGGER contacts_in_ai AFTER INSERT ON contacts_in FOR EACH ROW
+CREATE TRIGGER contacts_in_ai AFTER INSERT ON contacts_in
+FOR EACH ROW
 BEGIN
   DECLARE v   JSON;
   DECLARE dup TINYINT DEFAULT 0;
@@ -334,11 +574,38 @@ CREATE TABLE contacts_raw (
   iban  VARCHAR(40)
 ) ENGINE=InnoDB;
 
-LOAD DATA INFILE '/media/psf/Home/work/mysql/Conferences/2026/pleu/javascript_2026/validation_input/contacts_raw.csv'
+LOAD DATA LOCAL INFILE '/path/to/contacts_raw.csv'
   INTO TABLE contacts_raw FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
   LINES TERMINATED BY '\n' (id, name, email, phone, iban);
 
 SELECT COUNT(*) FROM contacts_raw;      -- 2000
+
+
+-- 1c-ter. THE CHECK-CONSTRAINT NUMBERS, measured on the real feed.
+--         Forward reference from section 1c-bis. This is the slide-17
+--         correction: a CHECK does catch the free text. What it cannot
+--         do is keep the 1,774 good numbers that are merely badly typed.
+SELECT COUNT(*)                                      AS rows_in,
+       SUM(phone REGEXP '[A-Za-z]')                  AS free_text,
+       SUM(phone REGEXP '^[-0-9 +()./]{6,}$' = 0)  AS loose_check_rejects,
+       SUM(phone REGEXP '^\\+[1-9][0-9]{7,14}$')     AS strict_e164_accepts
+FROM contacts_raw;
+-- +---------+-----------+---------------------+---------------------+
+-- | rows_in | free_text | loose_check_rejects | strict_e164_accepts |
+-- +---------+-----------+---------------------+---------------------+
+-- |    2000 |        51 |                  98 |                 226 |
+-- +---------+-----------+---------------------+---------------------+
+--
+-- free_text 51           = 28 'chiamare ufficio' + 23 'n/a'
+-- loose_check_rejects 98 = those 51 plus 47 too short / misshapen.
+--                          So yes, a CHECK catches all of them.
+-- strict_e164_accepts    = 226 / 2000 = 11.3%. Make the CHECK strict
+--                          enough to be worth having and it throws away
+--                          1,774 usable numbers.
+--
+-- clean_phone() turns 1,867 of the 1,949 non-garbage values into valid
+-- E.164 and returns NULL for the rest. Predicate versus transform.
+
 
 -- 4a. Triage the whole feed in one statement. Nothing is written yet,
 --     nothing has left the server, and now you know exactly what you got.
